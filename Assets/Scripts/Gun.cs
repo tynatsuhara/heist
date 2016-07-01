@@ -19,7 +19,7 @@ public abstract class Gun : MonoBehaviour {
 			print("Found an object (" + hit.transform.name + ") - distance: " + hit.distance);
 			Damageable damageScript = hit.transform.root.GetComponent<Damageable>();
 			if (damageScript != null) {
-				damageScript.Damage(source, direction.normalized, damageVal);
+				damageScript.Damage(hit.point, direction.normalized, damageVal);
 			}
 		}
 	}

@@ -14,6 +14,7 @@ public class Character : MonoBehaviour, Damageable {
 	public GameObject gun_;
 	public PicaVoxel.Exploder exploder;
 	private Gun gun;
+	private bool weaponDrawn;
 
 	public Transform lookTarget;
 	public Vector3 lookPosition;
@@ -59,24 +60,31 @@ public class Character : MonoBehaviour, Damageable {
 	}
 
 	public void Damage(Vector3 location, Vector3 angle, float damage) {
-		exploder.transform.position = location;
-		exploder.Explode(Vector3.one * 100);
+		exploder.transform.position = location + angle * Random.Range(-.1f, .2f) + new Vector3(0, Random.Range(-.1f, .1f), 0);
+		exploder.Explode(angle * 3);
+		exploder.ExplosionRadius += .2f;
+		rb.constraints = RigidbodyConstraints.None;
+		KnockBack(100000);
 	}
 
 	public void DrawWeapon() {
-		if (arms.CurrentFrame == weapon) {
+		if (weaponDrawn) {
 			return;
 		}
-
-		this.weapon = weapon;
+		weaponDrawn = true;
 		arms.SetFrame(weapon);
 	}
 
 	public void HideWeapon() {
+		if (!weaponDrawn) {
+			return;
+		}
+
+		weaponDrawn = false;
 	}
 
 	public void Shoot() {
-		if (gun != null) {
+		if (weaponDrawn && gun != null) {
 			gun.Shoot();
 		}
 	}

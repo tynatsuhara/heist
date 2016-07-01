@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class TrackPlayer : MonoBehaviour {
+public class CameraMovement : MonoBehaviour {
 
 	public Transform player;
 	private Vector3 diff;
