@@ -1,19 +1,26 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Character : MonoBehaviour {
+public class Character : MonoBehaviour, Damageable {
+	
+	private Rigidbody rb;
 
 	public PicaVoxel.Volume arms;
 
 	public float moveSpeed;
 	public float rotationSpeed;
+
 	public int weapon;
+	public GameObject gun_;
+	public PicaVoxel.Exploder exploder;
+	private Gun gun;
 
 	public Transform lookTarget;
 	public Vector3 lookPosition;
 
 	void Start () {
-	
+		rb = gameObject.GetComponent<Rigidbody>();
+		gun = gun_.GetComponent<Gun>();
 	}
 	
 	void FixedUpdate () {
@@ -28,7 +35,7 @@ public class Character : MonoBehaviour {
 	}
 
 	public void KnockBack(float force) {
-
+		rb.AddForce(force * -transform.forward);
 	}
 
 	public void LookAt(Transform target) {
@@ -51,6 +58,11 @@ public class Character : MonoBehaviour {
 		}
 	}
 
+	public void Damage(Vector3 location, Vector3 angle, float damage) {
+		exploder.transform.position = location;
+		exploder.Explode(Vector3.one * 100);
+	}
+
 	public void DrawWeapon() {
 		if (arms.CurrentFrame == weapon) {
 			return;
@@ -58,5 +70,14 @@ public class Character : MonoBehaviour {
 
 		this.weapon = weapon;
 		arms.SetFrame(weapon);
+	}
+
+	public void HideWeapon() {
+	}
+
+	public void Shoot() {
+		if (gun != null) {
+			gun.Shoot();
+		}
 	}
 }

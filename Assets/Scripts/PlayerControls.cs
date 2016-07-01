@@ -8,14 +8,19 @@ public class PlayerControls : MonoBehaviour {
 	void Start() {
 		character = gameObject.GetComponent<Character>();
 	}
+
+	void Update() {
+		if (Input.GetKeyDown(KeyCode.Space)) {
+			character.DrawWeapon();
+		}
+		if (Input.GetMouseButtonDown(0)) {
+			character.Shoot();
+		}
+	}
  
 	void FixedUpdate () {
     	LookAtMouse();
 		Movement();
-
-		if (Input.GetKeyDown(KeyCode.Space)) {
-			character.DrawWeapon();
-		}
     }
 
 	void Movement() {
