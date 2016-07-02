@@ -4,24 +4,29 @@ using System.Collections;
 public class Character : MonoBehaviour, Damageable {
 	
 	private Rigidbody rb;
+	private WalkCycle walk;
 
+	public PicaVoxel.Volume body;
 	public PicaVoxel.Volume arms;
 
 	public float moveSpeed;
 	public float rotationSpeed;
 
-	public int weapon;
-	public GameObject gun_;
+	public GameObject gun;
 	public PicaVoxel.Exploder exploder;
-	private Gun gun;
-	private bool weaponDrawn;
+	private Gun gunScript;
+	private bool weaponDrawn_;
+	public bool weaponDrawn {
+		get { return weaponDrawn_; }
+	}
 
 	public Transform lookTarget;
 	public Vector3 lookPosition;
 
 	void Start () {
-		rb = gameObject.GetComponent<Rigidbody>();
-		gun = gun_.GetComponent<Gun>();
+		rb = GetComponent<Rigidbody>();
+		walk = body.GetComponent<WalkCycle>();
+		gunScript = gun.GetComponent<Gun>();
 	}
 	
 	void FixedUpdate () {
@@ -33,6 +38,11 @@ public class Character : MonoBehaviour, Damageable {
 		pos.x += moveSpeed * x;
 		pos.z += moveSpeed * y;
 		transform.position = pos;
+		if ((x != 0 || y != 0) && !walk.isWalking) {
+			walk.StartWalk();
+		} else if (x == 0 && y == 0 && walk.isWalking) {
+			walk.StopWalk();
+		}
 	}
 
 	public void KnockBack(float force) {
@@ -54,7 +64,10 @@ public class Character : MonoBehaviour, Damageable {
 		}
 		if (lookPosition != null) {
 			lookPosition.y = transform.position.y;
-			Quaternion targetRotation = Quaternion.LookRotation(lookPosition - transform.position);
+			Vector3 vec = lookPosition - transform.position;
+			if (vec == Vector3.zero)
+				return;
+			Quaternion targetRotation = Quaternion.LookRotation(vec);
 			transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed);
 		}
 	}
@@ -68,24 +81,25 @@ public class Character : MonoBehaviour, Damageable {
 	}
 
 	public void DrawWeapon() {
-		if (weaponDrawn) {
-			return;
-		}
-		weaponDrawn = true;
-		arms.SetFrame(weapon);
+		SetWeaponDrawn(true);
 	}
 
 	public void HideWeapon() {
-		if (!weaponDrawn) {
-			return;
-		}
+		SetWeaponDrawn(false);
+	}
 
-		weaponDrawn = false;
+	private void SetWeaponDrawn(bool drawn) {
+		if (drawn == weaponDrawn_)
+			return;
+
+		weaponDrawn_ = drawn;
+		arms.gameObject.SetActive(!drawn);
+		gun.SetActive(drawn);
 	}
 
 	public void Shoot() {
-		if (weaponDrawn && gun != null) {
-			gun.Shoot();
+		if (weaponDrawn_ && gunScript != null) {
+			gunScript.Shoot();
 		}
 	}
 }

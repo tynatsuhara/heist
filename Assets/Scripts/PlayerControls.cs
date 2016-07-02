@@ -11,7 +11,11 @@ public class PlayerControls : MonoBehaviour {
 
 	void Update() {
 		if (Input.GetKeyDown(KeyCode.Space)) {
-			character.DrawWeapon();
+			if (!character.weaponDrawn) {
+				character.DrawWeapon();
+			} else {
+				character.HideWeapon();
+			}
 		}
 		if (Input.GetMouseButtonDown(0)) {
 			character.Shoot();
