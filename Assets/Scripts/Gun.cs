@@ -19,7 +19,6 @@ public abstract class Gun : MonoBehaviour {
 		RaycastHit hit;
 		Debug.DrawRay(source, direction * 30, Color.red, 3f);
 		if (Physics.Raycast(source, direction, out hit)) {
-			print("Found an object (" + hit.transform.name + ") - distance: " + hit.distance);
 			Damageable damageScript = hit.transform.root.GetComponent<Damageable>();
 			if (damageScript != null) {
 				damageScript.Damage(hit.point, direction.normalized, damageVal);

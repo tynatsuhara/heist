@@ -20,6 +20,7 @@ public class Character : MonoBehaviour, Damageable {
 		get { return weaponDrawn_; }
 	}
 
+	private bool hasLookTarget = false;
 	public Transform lookTarget;
 	public Vector3 lookPosition;
 
@@ -50,10 +51,12 @@ public class Character : MonoBehaviour, Damageable {
 	}
 
 	public void LookAt(Transform target) {
+		hasLookTarget = true;
 		lookTarget = target;
 	}
 
 	public void LookAt(Vector3 target) {
+		hasLookTarget = true;
 		lookTarget = null;
 		lookPosition = target;
 	}
@@ -62,7 +65,7 @@ public class Character : MonoBehaviour, Damageable {
 		if (lookTarget != null) {
 			lookPosition = lookTarget.position;
 		}
-		if (lookPosition != null) {
+		if (hasLookTarget) {
 			lookPosition.y = transform.position.y;
 			Vector3 vec = lookPosition - transform.position;
 			if (vec == Vector3.zero)
@@ -76,8 +79,8 @@ public class Character : MonoBehaviour, Damageable {
 		exploder.transform.position = location + angle * Random.Range(-.1f, .2f) + new Vector3(0, Random.Range(-.1f, .1f), 0);
 		exploder.Explode(angle * 3);
 		exploder.ExplosionRadius += .2f;
-		rb.constraints = RigidbodyConstraints.None;
-		KnockBack(100000);
+		//rb.constraints = RigidbodyConstraints.None;
+		rb.AddForce(100000 * angle.normalized);
 	}
 
 	public void DrawWeapon() {
