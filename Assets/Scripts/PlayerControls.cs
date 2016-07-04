@@ -3,7 +3,7 @@ using System.Collections;
 
 public class PlayerControls : MonoBehaviour {
 
-	Character character;
+	private Character character;
 
 	void Start() {
 		character = gameObject.GetComponent<Character>();

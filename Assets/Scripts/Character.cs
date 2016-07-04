@@ -6,6 +6,8 @@ public class Character : MonoBehaviour, Damageable {
 	private Rigidbody rb;
 	private WalkCycle walk;
 
+	public float health;
+
 	public PicaVoxel.Volume body;
 	public PicaVoxel.Volume arms;
 
@@ -64,6 +66,7 @@ public class Character : MonoBehaviour, Damageable {
 	void Rotate() {
 		if (lookTarget != null) {
 			lookPosition = lookTarget.position;
+			hasLookTarget = true;
 		}
 		if (hasLookTarget) {
 			lookPosition.y = transform.position.y;
@@ -76,11 +79,22 @@ public class Character : MonoBehaviour, Damageable {
 	}
 
 	public void Damage(Vector3 location, Vector3 angle, float damage) {
+		rb.AddForce(1000 * angle.normalized, ForceMode.Impulse);
 		exploder.transform.position = location + angle * Random.Range(-.1f, .2f) + new Vector3(0, Random.Range(-.1f, .1f), 0);
+		health -= damage;
+		if (health <= 0)
+			Die(angle);
+	}
+
+	public void Die() {
+		Die(Vector3.one);
+	}
+
+	public void Die(Vector3 angle) {
 		exploder.Explode(angle * 3);
-		exploder.ExplosionRadius += .2f;
-		//rb.constraints = RigidbodyConstraints.None;
-		rb.AddForce(100000 * angle.normalized);
+		rb.constraints = RigidbodyConstraints.None;
+		HideWeapon();
+		Debug.Log("ded");
 	}
 
 	public void DrawWeapon() {
