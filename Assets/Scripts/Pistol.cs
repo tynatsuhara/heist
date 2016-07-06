@@ -11,12 +11,15 @@ public class Pistol : Gun {
 		if (!canShoot)
 			return;
 		
-		//owner.KnockBack(knockback);
-		RaycastForward(transform.root.position, transform.root.forward, 1f);
+		owner.KnockBack(knockback);
+		RaycastShoot(transform.root.position, transform.root.forward, 1f);
 		volume.SetFrame(1);
 		anim.Play();
 		canShoot = false;
 		Invoke("ResetShoot", shootSpeed);
+
+		if (transform.root.name == "Player")
+			CameraMovement.mainCamera.Shake(.3f, .3f);
 	}
 
 	private void ResetShoot() {

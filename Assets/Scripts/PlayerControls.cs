@@ -10,6 +10,17 @@ public class PlayerControls : MonoBehaviour {
 	}
 
 	void Update() {
+		GetInput();
+	}
+
+	void GetInput() {
+		if (!character.isAlive)
+			return;
+
+		if (Input.GetKeyDown(KeyCode.E)) {
+			character.Interact();
+		}
+
 		if (Input.GetKeyDown(KeyCode.Space)) {
 			if (!character.weaponDrawn) {
 				character.DrawWeapon();
@@ -17,6 +28,13 @@ public class PlayerControls : MonoBehaviour {
 				character.HideWeapon();
 			}
 		}
+
+		if (Input.GetKeyDown(KeyCode.E)) {
+			character.DragBody();
+		} else if (Input.GetKeyUp(KeyCode.E)) {
+			character.ReleaseBody();
+		}
+
 		if (Input.GetMouseButtonDown(0)) {
 			character.Shoot();
 		}

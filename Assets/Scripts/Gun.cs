@@ -15,10 +15,10 @@ public abstract class Gun : MonoBehaviour {
 	abstract public void Shoot();
 	abstract public void Release();
 
-	public void RaycastForward(Vector3 source, Vector3 direction, float damageVal) {
+	public void RaycastShoot(Vector3 source, Vector3 direction, float damageVal, float range = 30f) {
 		RaycastHit hit;
-		Debug.DrawRay(source, direction * 30, Color.red, 3f);
-		if (Physics.Raycast(source, direction, out hit)) {
+		// Debug.DrawRay(source, direction * range, Color.red, 3f);
+		if (Physics.Raycast(source, direction, out hit, range)) {
 			Damageable damageScript = hit.transform.root.GetComponent<Damageable>();
 			if (damageScript != null) {
 				damageScript.Damage(hit.point, direction.normalized, damageVal);

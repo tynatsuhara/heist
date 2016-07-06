@@ -5,36 +5,50 @@ public class PoliceAI : MonoBehaviour {
 
 	private Character character;
 	private GameObject player;
+	private Character playerScript;
 
 	public bool alerted;
 
 	// Use this for initialization
 	void Start () {
 		character = GetComponent<Character>();
-		character.DrawWeapon();
-
 		player = GameObject.FindWithTag("Player");
+		playerScript = player.GetComponent<Character>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if (player == null)
+		if (!character.isAlive)
+			return;
+		
+		if (alerted)
+			AggroBehavior();
+		else
+			PassiveBehavior();
+	}
+
+	private void PassiveBehavior() {
+		// follow path if has one
+
+		if (character.CanSeeCharacter(player) && playerScript.PoliceShouldAttack()) {
+			float reactionTime = (Random.Range(0, 15) + 1) * 1f;
+			Invoke("BecomeAggro", reactionTime);
+		}
+	}
+
+	private void BecomeAggro() {
+		if (!character.isAlive)
 			return;
 
-		Debug.Log(CanSeePlayer());
+		alerted = true;
+		character.DrawWeapon();
+		character.LookAt(player.transform);
 	}
 
-	public bool CanSeePlayer() {
-		float angle = Vector3.Dot(Vector3.Normalize(transform.position - player.transform.position), transform.forward);
-		if (angle >= -.2f)
-			return false;
-
-		RaycastHit hit;
-		if (Physics.Raycast(transform.position, player.transform.position - transform.position, out hit)) {
-			return hit.collider.transform.root.gameObject == player;
-		}
-
-		return false;
+	private void AggroBehavior() {
+		character.Shoot();
 	}
+
+
 }
 
