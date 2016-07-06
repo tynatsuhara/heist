@@ -43,6 +43,9 @@ public class Character : MonoBehaviour, Damageable {
 	}
 	
 	void FixedUpdate () {
+		if (!isAlive)
+			return;
+		
 		Rotate();
 		Drag();
 	}
@@ -112,12 +115,10 @@ public class Character : MonoBehaviour, Damageable {
 	}
 
 	public void Die(Vector3 angle) {
-		rb.AddForce(400 * angle.normalized, ForceMode.Impulse);
 		exploder.Explode(angle * 3);
 		rb.constraints = RigidbodyConstraints.None;
+		rb.AddForce(400 * angle.normalized, ForceMode.Impulse);
 		HideWeapon();
-
-		this.enabled = false;
 	}
 
 	public void DrawWeapon() {
