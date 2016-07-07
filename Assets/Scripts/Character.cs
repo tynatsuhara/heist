@@ -51,9 +51,13 @@ public class Character : MonoBehaviour, Damageable {
 	}
 
 	public void Move(float x, float z) {
+		float speed = moveSpeed;
+		if (draggedBody != null)
+			speed *= .5f;
+
 		Vector3 pos = transform.position;
-		pos.x += moveSpeed * x;
-		pos.z += moveSpeed * z;
+		pos.x += speed * x;
+		pos.z += speed * z;
 		transform.position = pos;
 		if ((x != 0 || z != 0) && !walk.isWalking) {
 			walk.StartWalk();
@@ -115,10 +119,20 @@ public class Character : MonoBehaviour, Damageable {
 	}
 
 	public void Die(Vector3 angle) {
+		walk.StopWalk();
 		exploder.Explode(angle * 3);
 		rb.constraints = RigidbodyConstraints.None;
 		rb.AddForce(400 * angle.normalized, ForceMode.Impulse);
 		HideWeapon();
+	}
+
+	private void Flash() {
+		float flashSpeed = .1f;
+		body.GetComponent<Recolor>().Flash(Color.white, flashSpeed);
+		if (arms.gameObject.activeInHierarchy)
+			arms.GetComponent<Recolor>().Flash(Color.white, flashSpeed);
+		if (gun.activeInHierarchy)
+			gun.GetComponent<Recolor>().Flash(Color.white, flashSpeed);
 	}
 
 	public void DrawWeapon() {
@@ -187,7 +201,8 @@ public class Character : MonoBehaviour, Damageable {
 	private void Drag() {
 		if (draggedBody != null) {
 			Vector3 dragPos = transform.position + transform.forward.normalized * 1.2f;
-			draggedBody.transform.position = Vector3.Lerp(draggedBody.transform.position, dragPos, .1f);
+			dragPos.y = draggedBody.transform.position.y;
+			draggedBody.transform.position = Vector3.Lerp(draggedBody.transform.position, dragPos, .3f);
 		}
 	}
 

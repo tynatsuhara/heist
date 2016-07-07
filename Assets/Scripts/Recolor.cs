@@ -75,4 +75,18 @@ public class Recolor : MonoBehaviour {
 		}
 		return resultMap;
 	}
+
+	private Dictionary<Vector3, Color> oldState;
+	public void Flash(Color color, float duration) {
+		if (oldState != null)
+			return;
+
+		oldState = ColorAll(color);
+		Invoke("Unflash", duration);
+	}
+
+	private void Unflash() {
+		Colorize(oldState);
+		oldState = null;
+	}
 }

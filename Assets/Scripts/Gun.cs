@@ -6,7 +6,7 @@ public abstract class Gun : MonoBehaviour {
 	public PicaVoxel.Volume volume;
 	public PicaVoxel.BasicAnimator anim;
 
-	void Start() {
+	void Awake() {
 		owner = transform.root.GetComponent<Character>();
 		volume = GetComponent<PicaVoxel.Volume>();
 		anim = GetComponent<PicaVoxel.BasicAnimator>();

@@ -41,17 +41,20 @@ public class PlayerControls : MonoBehaviour {
 	}
  
 	void FixedUpdate () {
+		if (!character.isAlive)
+			return;
+		
     	LookAtMouse();
 		Movement();
     }
 
-	void Movement() {
+	void Movement() {		
 		character.Move(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 	}
 
 	void LookAtMouse() {
 		// Generate a plane that intersects the transform's position with an upwards normal.
-    	Plane playerPlane = new Plane(Vector3.up, transform.position);
+		Plane playerPlane = new Plane(Vector3.up, transform.position);
      	Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
     	float hitdist = 0f;
     	// If the ray is parallel to the plane, Raycast will return false.

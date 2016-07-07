@@ -8,6 +8,7 @@ public class PoliceAI : MonoBehaviour {
 	private Character playerScript;
 
 	public bool alerted;
+	private bool invoked;
 
 	// Use this for initialization
 	void Start () {
@@ -20,7 +21,7 @@ public class PoliceAI : MonoBehaviour {
 	void Update () {
 		if (!character.isAlive)
 			return;
-		
+
 		if (alerted)
 			AggroBehavior();
 		else
@@ -30,16 +31,17 @@ public class PoliceAI : MonoBehaviour {
 	private void PassiveBehavior() {
 		// follow path if has one
 
-		if (character.CanSeeCharacter(player) && playerScript.PoliceShouldAttack()) {
+		if (!invoked && character.CanSeeCharacter(player) && playerScript.PoliceShouldAttack()) {
 			float reactionTime = (Random.Range(0, 3) + 1) * 1f;
 			Invoke("BecomeAggro", reactionTime);
+			invoked = true;
 		}
 	}
 
 	private void BecomeAggro() {
 		if (!character.isAlive)
 			return;
-
+		
 		alerted = true;
 		character.DrawWeapon();
 		character.LookAt(player.transform);
