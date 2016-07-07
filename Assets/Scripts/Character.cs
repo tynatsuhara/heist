@@ -4,7 +4,7 @@ using System.Collections;
 public class Character : MonoBehaviour, Damageable {
 	
 	private Rigidbody rb;
-	private WalkCycle walk;
+	public WalkCycle walk;
 
 	public float health;
 
@@ -59,6 +59,7 @@ public class Character : MonoBehaviour, Damageable {
 		pos.x += speed * x;
 		pos.z += speed * z;
 		transform.position = pos;
+
 		if ((x != 0 || z != 0) && !walk.isWalking) {
 			walk.StartWalk();
 		} else if (x == 0 && z == 0 && walk.isWalking) {
@@ -68,6 +69,7 @@ public class Character : MonoBehaviour, Damageable {
 			lastMoveDirection = new Vector3(x, 0, z).normalized;
 		}
 	}
+
 
 	public void KnockBack(float force) {
 		rb.AddForce(force * -transform.forward, ForceMode.Impulse);
@@ -107,6 +109,9 @@ public class Character : MonoBehaviour, Damageable {
 	}
 
 	public void Damage(Vector3 location, Vector3 angle, float damage) {
+		if (!weaponDrawn)
+			damage *= 2f;
+		
 		rb.AddForce(400 * angle.normalized, ForceMode.Impulse);
 		exploder.transform.position = location + angle * Random.Range(-.1f, .2f) + new Vector3(0, Random.Range(-.1f, .1f), 0);
 		health -= damage;
@@ -119,6 +124,11 @@ public class Character : MonoBehaviour, Damageable {
 	}
 
 	public void Die(Vector3 angle) {
+		NavMeshAgent agent = GetComponent<NavMeshAgent>();
+		if (agent != null) {
+			agent.enabled = false;
+		}
+
 		walk.StopWalk();
 		exploder.Explode(angle * 3);
 		rb.constraints = RigidbodyConstraints.None;

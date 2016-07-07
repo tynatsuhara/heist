@@ -8,7 +8,7 @@ public class Car : MonoBehaviour, Damageable {
 	public PicaVoxel.Exploder exploder;
 
 	private int spotsFilled;
-	public int isEmpty {
+	public bool isEmpty {
 		get { return spotsFilled == 0; }
 	}
 
@@ -51,11 +51,15 @@ public class Car : MonoBehaviour, Damageable {
 	}
 
 	public void Damage(Vector3 location, Vector3 angle, float damage) {
-		Debug.Log("damage");
 		if (exploder == null)
 			return;
 		
-		exploder.transform.position = location + angle * Random.Range(-.1f, .2f) + new Vector3(0, Random.Range(-.1f, .1f), 0);
-		exploder.Explode();	
+		Vector3 pos = location + angle * Random.Range(-.1f, .2f);
+		exploder.transform.position = pos;
+		pos = exploder.transform.localPosition;
+		Random.Range(-0.025f, 0.4f);
+		pos.y = Random.Range(-0.02f, 0.4f);
+		exploder.transform.localPosition = pos;
+		exploder.Explode(angle * 2);
 	}
 }

@@ -6,6 +6,7 @@ public class PoliceAI : MonoBehaviour {
 	private Character character;
 	private GameObject player;
 	private Character playerScript;
+	private NavMeshAgent agent;
 
 	public bool alerted;
 	private bool invoked;
@@ -15,12 +16,15 @@ public class PoliceAI : MonoBehaviour {
 		character = GetComponent<Character>();
 		player = GameObject.FindWithTag("Player");
 		playerScript = player.GetComponent<Character>();
+		agent = GetComponent<NavMeshAgent>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		if (!character.isAlive)
 			return;
+
+		LegAnimation();
 
 		if (alerted)
 			AggroBehavior();
@@ -32,7 +36,7 @@ public class PoliceAI : MonoBehaviour {
 		// follow path if has one
 
 		if (!invoked && character.CanSeeCharacter(player) && playerScript.PoliceShouldAttack()) {
-			float reactionTime = (Random.Range(0, 3) + 1) * 1f;
+			float reactionTime = (Random.Range(0f, 1.5f));
 			Invoke("BecomeAggro", reactionTime);
 			invoked = true;
 		}
@@ -48,9 +52,26 @@ public class PoliceAI : MonoBehaviour {
 	}
 
 	private void AggroBehavior() {
-		character.Shoot();
+		if (character.CanSeeCharacter(player)) {
+			agent.destination = transform.position;
+			if (playerScript.isAlive) {
+				character.Shoot();
+			}
+		} else {
+			agent.destination = player.transform.position;
+		}
 	}
 
-
+	private void LegAnimation() {
+		if (agent.velocity == Vector3.zero) {
+			if (character.walk.isWalking) {
+				character.walk.StopWalk();
+			}
+		} else {
+			if (!character.walk.isWalking) {
+				character.walk.StartWalk();
+			}
+		}
+	}
 }
 
