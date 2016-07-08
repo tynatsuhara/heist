@@ -54,12 +54,14 @@ public class Car : MonoBehaviour, Damageable {
 		if (exploder == null)
 			return;
 		
-		Vector3 pos = location + angle * Random.Range(-.1f, .2f);
+		Vector3 pos = location + angle * Random.Range(-.1f, .2f) + new Vector3(0, Random.Range(-.3f, 0), 0);;
 		exploder.transform.position = pos;
 		pos = exploder.transform.localPosition;
 		Random.Range(-0.025f, 0.4f);
 		pos.y = Random.Range(-0.02f, 0.4f);
 		exploder.transform.localPosition = pos;
 		exploder.Explode(angle * 2);
+
+		// Damage people inside?
 	}
 }
