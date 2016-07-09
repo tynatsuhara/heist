@@ -7,6 +7,7 @@ public class Character : MonoBehaviour, Damageable {
 	public WalkCycle walk;
 
 	public float health;
+	public Inventory inventory;
 
 	public PicaVoxel.Volume body;
 	public PicaVoxel.Volume arms;
@@ -38,7 +39,6 @@ public class Character : MonoBehaviour, Damageable {
 
 	void Start () {
 		rb = GetComponent<Rigidbody>();
-		walk = body.GetComponent<WalkCycle>();
 		gunScript = gun.GetComponent<Gun>();
 	}
 	
@@ -175,7 +175,8 @@ public class Character : MonoBehaviour, Damageable {
 		}
 	}
 
-	public bool PoliceShouldAttack() {
+	// Basically, they're not a civilian. Has a weapon/mask/whatever.
+	public bool IsEquipped() {
 		return weaponDrawn;
 	}
 

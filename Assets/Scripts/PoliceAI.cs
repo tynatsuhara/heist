@@ -35,8 +35,8 @@ public class PoliceAI : MonoBehaviour {
 	private void PassiveBehavior() {
 		// follow path if has one
 
-		if (!invoked && character.CanSeeCharacter(player) && playerScript.PoliceShouldAttack()) {
-			float reactionTime = (Random.Range(0f, 1.5f));
+		if (!invoked && character.CanSeeCharacter(player) && playerScript.IsEquipped()) {
+			float reactionTime = (Random.Range(0f, 1f));
 			Invoke("BecomeAggro", reactionTime);
 			invoked = true;
 		}
