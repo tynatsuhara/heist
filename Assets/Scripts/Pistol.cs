@@ -18,8 +18,7 @@ public class Pistol : Gun {
 		canShoot = false;
 		Invoke("ResetShoot", shootSpeed);
 
-		if (transform.root.name == "Player")
-			CameraMovement.mainCamera.Shake(.3f, .3f);
+		ScreenShake(.3f, .3f);
 	}
 
 	private void ResetShoot() {

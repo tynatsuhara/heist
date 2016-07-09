@@ -168,15 +168,26 @@ public class Character : MonoBehaviour, Damageable {
 	}
 
 	private Interactable currentInteractScript;
-	public void InteractStart() {
-		Debug.DrawRay(transform.position, transform.forward * 1.8f, Color.red, 10f);
+	public void Interact() {
+		if (currentInteractScript != null) {
+			currentInteractScript.Interact(this);
+			return;
+		}
+
 		RaycastHit hit;
-		if (Physics.Raycast(transform.position, transform.forward * 1.8f, out hit)) {
-			// interact with whatever you hit, if possible
+		Debug.DrawRay(transform.position, transform.forward * 1.8f, Color.red);
+		if (Physics.Raycast(transform.position, transform.forward, out hit, 1.8f)) {
+			currentInteractScript = hit.collider.transform.root.GetComponent<Interactable>();
+			if (currentInteractScript != null) {
+				currentInteractScript.Interact(this);
+			}
 		}
 	}
-	public void InteractStop() {
-
+	public void InteractCancel() {
+		if (currentInteractScript != null) {
+			currentInteractScript.Cancel(this);
+			currentInteractScript = null;
+		}
 	}
 
 	// Basically, they're not a civilian. Has a weapon/mask/whatever.

@@ -25,10 +25,10 @@ public class PlayerControls : MonoBehaviour {
 			}
 		}
 
-		if (Input.GetKeyDown(KeyCode.E)) {
-			character.InteractStart();
+		if (Input.GetKey(KeyCode.E)) {
+			character.Interact();
 		} else if (Input.GetKeyUp(KeyCode.E)) {
-			character.InteractStop();
+			character.InteractCancel();
 		}
 
 		if (Input.GetKeyDown(KeyCode.E)) {
@@ -37,7 +37,7 @@ public class PlayerControls : MonoBehaviour {
 			character.ReleaseBody();
 		}
 
-		if (Input.GetMouseButtonDown(0)) {
+		if (Input.GetMouseButton(0)) {
 			character.Shoot();
 		}
 	}

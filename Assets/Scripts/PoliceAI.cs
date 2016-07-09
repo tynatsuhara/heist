@@ -36,7 +36,7 @@ public class PoliceAI : MonoBehaviour {
 		// follow path if has one
 
 		if (!invoked && character.CanSeeCharacter(player) && playerScript.IsEquipped()) {
-			float reactionTime = (Random.Range(0f, 1f));
+			float reactionTime = (Random.Range(.2f, 1f));
 			Invoke("BecomeAggro", reactionTime);
 			invoked = true;
 		}

@@ -25,4 +25,9 @@ public abstract class Gun : MonoBehaviour {
 			}
 		}
 	}
+
+	public void ScreenShake(float power, float duration) {
+		if (transform.root.name == "Player")
+			CameraMovement.mainCamera.Shake(power, duration);
+	}
 }

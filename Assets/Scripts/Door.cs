@@ -7,14 +7,20 @@ public class Door : MonoBehaviour, Interactable {
 	private int key;
 	private bool open;
 
-	public void InteractStart(Character character) {
+	public void Interact(Character character) {
 		if (open)
 			return;
 
+		if (locked && character.inventory.Has(key))
+			character.inventory.Remove(key);
+		else if (locked)
+			return;
+
+		open = true;
 		Debug.Log("open door");
 	}
 
-	public void InteractStop(Character character) {}
+	public void Cancel(Character character) {}
 
 	public void SetKey(Inventory.Item key) {
 		SetKey((int)key);
