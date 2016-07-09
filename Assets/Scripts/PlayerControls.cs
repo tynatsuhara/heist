@@ -17,16 +17,18 @@ public class PlayerControls : MonoBehaviour {
 		if (!character.isAlive)
 			return;
 
-		if (Input.GetKeyDown(KeyCode.E)) {
-			character.Interact();
-		}
-
 		if (Input.GetKeyDown(KeyCode.Space)) {
 			if (!character.weaponDrawn) {
 				character.DrawWeapon();
 			} else {
 				character.HideWeapon();
 			}
+		}
+
+		if (Input.GetKeyDown(KeyCode.E)) {
+			character.InteractStart();
+		} else if (Input.GetKeyUp(KeyCode.E)) {
+			character.InteractStop();
 		}
 
 		if (Input.GetKeyDown(KeyCode.E)) {

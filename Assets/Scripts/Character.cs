@@ -70,7 +70,6 @@ public class Character : MonoBehaviour, Damageable {
 		}
 	}
 
-
 	public void KnockBack(float force) {
 		rb.AddForce(force * -transform.forward, ForceMode.Impulse);
 	}
@@ -168,11 +167,16 @@ public class Character : MonoBehaviour, Damageable {
 		} 
 	}
 
-	public void Interact() {
+	private Interactable currentInteractScript;
+	public void InteractStart() {
+		Debug.DrawRay(transform.position, transform.forward * 1.8f, Color.red, 10f);
 		RaycastHit hit;
-		if (Physics.Raycast(transform.position, transform.forward * 2f, out hit)) {
+		if (Physics.Raycast(transform.position, transform.forward * 1.8f, out hit)) {
 			// interact with whatever you hit, if possible
 		}
+	}
+	public void InteractStop() {
+
 	}
 
 	// Basically, they're not a civilian. Has a weapon/mask/whatever.

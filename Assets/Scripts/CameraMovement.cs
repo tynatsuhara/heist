@@ -4,6 +4,9 @@ using System.Collections;
 public class CameraMovement : MonoBehaviour {
 
 	public static CameraMovement mainCamera;
+	public float minZoom;
+	public float maxZoom;
+	private Camera cam;
 
 	public Transform player;
 
@@ -15,6 +18,7 @@ public class CameraMovement : MonoBehaviour {
 
 	void Start () {
 		mainCamera = this;
+		cam = GetComponent<Camera>();
 		diff = player.position - transform.position;
 	}
 	
@@ -25,6 +29,8 @@ public class CameraMovement : MonoBehaviour {
 			transform.position += Random.insideUnitSphere * power * (duration - timeElapsed);
 			timeElapsed += Time.deltaTime;
 		}
+
+		cam.orthographicSize = Mathf.Min(Mathf.Max(minZoom, cam.orthographicSize - Input.GetAxis("Mouse ScrollWheel")), maxZoom);
 	}
 
 	public void Shake(float power, float duration) {
