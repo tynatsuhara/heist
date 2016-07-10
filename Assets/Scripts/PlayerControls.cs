@@ -51,6 +51,31 @@ public class PlayerControls : Character {
 		Rotate();
     }
 
+	public void Move(float x, float z) {
+		float cameraRotation = CameraMovement.instance.transform.eulerAngles.y;
+		Vector3 cameraPosition = CameraMovement.instance.transform.position;
+
+		float speed = moveSpeed;
+		if (draggedBody != null)
+			speed *= .5f;
+
+		Vector3 pos = transform.position;
+		pos.x += speed * (z * Mathf.Sin(cameraRotation * Mathf.Deg2Rad) + 
+			x * Mathf.Sin((cameraRotation + 90) * Mathf.Deg2Rad));
+		pos.z += speed * (z * Mathf.Cos(cameraRotation * Mathf.Deg2Rad) + 
+			x * Mathf.Cos((cameraRotation + 90) * Mathf.Deg2Rad));
+		transform.position = pos;
+
+		if ((x != 0 || z != 0) && !walk.isWalking) {
+			walk.StartWalk();
+		} else if (x == 0 && z == 0 && walk.isWalking) {
+			walk.StopWalk();
+		}
+		if (x != 0 || z != 0) {
+			lastMoveDirection = new Vector3(x, 0, z).normalized;
+		}
+	}
+
 	void LookAtMouse() {
 		// Generate a plane that intersects the transform's position with an upwards normal.
 		Plane playerPlane = new Plane(Vector3.up, transform.position);

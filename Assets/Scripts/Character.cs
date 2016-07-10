@@ -39,26 +39,6 @@ public abstract class Character : MonoBehaviour, Damageable {
 
 	public abstract void Alert();
 
-	public void Move(float x, float z) {
-		float speed = moveSpeed;
-		if (draggedBody != null)
-			speed *= .5f;
-
-		Vector3 pos = transform.position;
-		pos.x += speed * x;
-		pos.z += speed * z;
-		transform.position = pos;
-
-		if ((x != 0 || z != 0) && !walk.isWalking) {
-			walk.StartWalk();
-		} else if (x == 0 && z == 0 && walk.isWalking) {
-			walk.StopWalk();
-		}
-		if (x != 0 || z != 0) {
-			lastMoveDirection = new Vector3(x, 0, z).normalized;
-		}
-	}
-
 	public void KnockBack(float force) {
 		rb.AddForce(force * -transform.forward, ForceMode.Impulse);
 	}
@@ -93,10 +73,12 @@ public abstract class Character : MonoBehaviour, Damageable {
 			transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed);
 		}
 	}
-
-	public void Damage(Vector3 location, Vector3 angle, float damage) {
+		
+	public bool Damage(Vector3 location, Vector3 angle, float damage) {
 		if (!weaponDrawn)
 			damage *= 2f;
+
+		bool returnVal = !isAlive;  // save it because it could change right after
 
 		health -= damage;
 		exploder.transform.position = location + angle * Random.Range(-.1f, .2f) + new Vector3(0, Random.Range(-.1f, .1f), 0);
@@ -104,6 +86,8 @@ public abstract class Character : MonoBehaviour, Damageable {
 			Die(angle);
 		}
 		rb.AddForce(400 * angle.normalized, ForceMode.Impulse);
+
+		return returnVal;
 	}
 
 	public void Die() {		

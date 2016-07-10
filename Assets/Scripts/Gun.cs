@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Linq;
 
 public abstract class Gun : MonoBehaviour {
 
@@ -18,18 +19,21 @@ public abstract class Gun : MonoBehaviour {
 	abstract public void Release();
 
 	public void RaycastShoot(Vector3 source, Vector3 direction) {
-		RaycastHit hit;
-		// Debug.DrawRay(source, direction * range, Color.red, 3f);
-		if (Physics.Raycast(source, direction, out hit, range)) {
-			Damageable damageScript = hit.transform.root.GetComponent<Damageable>();
-			if (damageScript != null) {
-				damageScript.Damage(hit.point, direction.normalized, damage);
-			}
+		RaycastHit[] hits = Physics.RaycastAll(source, direction, range)
+			.OrderBy(h => h.distance)
+			.ToArray();
+		bool keepGoing = true;
+		for (int i = 0; i < hits.Length && keepGoing; i++) {
+			Damageable damageScript = hits[i].transform.root.GetComponent<Damageable>();
+			if (damageScript == null)
+				return;
+			
+			keepGoing = damageScript.Damage(hits[i].point, direction.normalized, damage);
 		}
 	}
 
 	public void ScreenShake(float power, float duration) {
 		if (transform.root.name == "Player")
-			CameraMovement.mainCamera.Shake(power, duration);
+			CameraMovement.instance.Shake(power, duration);
 	}
 }

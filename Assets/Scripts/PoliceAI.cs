@@ -67,7 +67,6 @@ public class PoliceAI : Character {
 	}
 
 	private void AggroBehavior() {
-		Debug.Log((player.transform.position - transform.position).magnitude);
 		bool inRange = (player.transform.position - transform.position).magnitude < gunScript.range;
 
 		if (CanSeeCharacter(player)) {

@@ -50,10 +50,7 @@ public class Car : MonoBehaviour, Damageable {
 		return false;
 	}
 
-	public void Damage(Vector3 location, Vector3 angle, float damage) {
-		if (exploder == null)
-			return;
-		
+	public bool Damage(Vector3 location, Vector3 angle, float damage) {
 		Vector3 pos = location + angle * Random.Range(-.1f, .2f) + new Vector3(0, Random.Range(-.3f, 0), 0);;
 		exploder.transform.position = pos;
 		pos = exploder.transform.localPosition;
@@ -63,5 +60,7 @@ public class Car : MonoBehaviour, Damageable {
 		exploder.Explode(angle * 2);
 
 		// Damage people inside?
+
+		return false;
 	}
 }

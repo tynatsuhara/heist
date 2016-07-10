@@ -2,6 +2,9 @@
 using UnityEngine;
 
 public interface Damageable {
-	void Damage(Vector3 location, Vector3 angle, float damage);
+
+	// The return value is used for projectile damage. If the bullet should go
+	// through the object and continue, return true. Otherwise return false.
+	bool Damage(Vector3 location, Vector3 angle, float damage);
 }
 
