@@ -17,10 +17,6 @@ public class CameraMovement : MonoBehaviour {
 	private float duration;
 	private float timeElapsed;
 
-	private bool rotating;
-	private Vector3 goalPosDiff;
-	private Quaternion goalRot;
-
 	void Start () {
 		instance = this;
 		cam = GetComponent<Camera>();
@@ -29,29 +25,14 @@ public class CameraMovement : MonoBehaviour {
 	
 	void Update () {
 		transform.position = player.position - diff;
+		transform.LookAt(player.position);
 
 		// rotation
-		if (!rotating && Input.GetKeyDown(KeyCode.Z)) {
-			transform.RotateAround(player.position, Vector3.up, rotationAngle);
-			goalPosDiff = player.position - transform.position;
-			goalRot = transform.rotation;
-			rotating = true;
-			transform.RotateAround(player.position, Vector3.up, -rotationAngle);
-		} else if (!rotating && Input.GetKeyDown(KeyCode.C)) {
-			transform.RotateAround(player.position, Vector3.up, -rotationAngle);
-			goalPosDiff = player.position - transform.position;
-			goalRot = transform.rotation;
-			rotating = true;
-			transform.RotateAround(player.position, Vector3.up, rotationAngle);
-		}
-		if (rotating) {
-			transform.position = Vector3.Slerp(transform.position, player.position - goalPosDiff, .1f);
-			transform.rotation = Quaternion.Slerp(transform.rotation, goalRot, .1f);
-			diff = player.position - transform.position;
-			if ((transform.position - player.position + goalPosDiff).magnitude < .05f) {
-				rotating = false;
-			}
-		}
+		bool rotateButtonPress = Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.C);
+		if (!rotating && rotateButtonPress) {
+			int dir = Input.GetKeyDown(KeyCode.Z) ? -1 : 1;
+			transform.RotateAround(player.position, Vector3.up, -rotationAngle * dir);
+		} 
 
 		// shaking
 		if (timeElapsed < duration) {
