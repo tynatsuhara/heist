@@ -17,6 +17,8 @@ public class CameraMovement : MonoBehaviour {
 	private float duration;
 	private float timeElapsed;
 
+	private bool rotating;
+
 	void Start () {
 		instance = this;
 		cam = GetComponent<Camera>();
