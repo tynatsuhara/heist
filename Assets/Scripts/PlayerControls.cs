@@ -1,12 +1,11 @@
 using UnityEngine;
 using System.Collections;
 
-public class PlayerControls : MonoBehaviour {
-
-	private Character character;
+public class PlayerControls : Character {
 
 	void Start() {
-		character = gameObject.GetComponent<Character>();
+		rb = GetComponent<Rigidbody>();
+		gunScript = gun.GetComponent<Gun>();
 	}
 
 	void Update() {
@@ -14,45 +13,43 @@ public class PlayerControls : MonoBehaviour {
 	}
 
 	void GetInput() {
-		if (!character.isAlive)
+		if (!isAlive)
 			return;
 
 		if (Input.GetKeyDown(KeyCode.Space)) {
-			if (!character.weaponDrawn) {
-				character.DrawWeapon();
+			if (!weaponDrawn) {
+				DrawWeapon();
 			} else {
-				character.HideWeapon();
+				HideWeapon();
 			}
 		}
 
-		if (Input.GetKey(KeyCode.E)) {
-			character.Interact();
+		if (Input.GetKeyDown(KeyCode.E)) {
+			Interact();
 		} else if (Input.GetKeyUp(KeyCode.E)) {
-			character.InteractCancel();
+			InteractCancel();
 		}
 
 		if (Input.GetKeyDown(KeyCode.E)) {
-			character.DragBody();
+			DragBody();
 		} else if (Input.GetKeyUp(KeyCode.E)) {
-			character.ReleaseBody();
+			ReleaseBody();
 		}
 
 		if (Input.GetMouseButton(0)) {
-			character.Shoot();
+			Shoot();
 		}
 	}
  
 	void FixedUpdate () {
-		if (!character.isAlive)
+		if (!isAlive)
 			return;
 		
     	LookAtMouse();
-		Movement();
+		Move(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+		Drag();
+		Rotate();
     }
-
-	void Movement() {		
-		character.Move(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-	}
 
 	void LookAtMouse() {
 		// Generate a plane that intersects the transform's position with an upwards normal.
@@ -61,7 +58,9 @@ public class PlayerControls : MonoBehaviour {
     	float hitdist = 0f;
     	// If the ray is parallel to the plane, Raycast will return false.
     	if (playerPlane.Raycast(ray, out hitdist)) {
-			character.LookAt(ray.GetPoint(hitdist));
+			LookAt(ray.GetPoint(hitdist));
 		}
 	}
+
+	public override void Alert() {}
 }

@@ -12,12 +12,18 @@ public class Pistol : Gun {
 			return;
 		
 		owner.KnockBack(knockback);
-		RaycastShoot(transform.root.position, transform.root.forward, 1f);
+		RaycastShoot(transform.root.position, transform.root.forward);
 		volume.SetFrame(1);
 		anim.Play();
 		canShoot = false;
 		Invoke("ResetShoot", shootSpeed);
 
+		byte[] bytes = new byte[6];
+		bytes[0] = (byte)PicaVoxel.VoxelState.Active;
+		PicaVoxel.Voxel vox = new PicaVoxel.Voxel(bytes);
+		PicaVoxel.VoxelParticleSystem.Instance.SpawnSingle(transform.root.position + transform.root.forward * .4f,
+			vox, .05f, (transform.up - transform.right) * 2.5f);
+				
 		ScreenShake(.3f, .3f);
 	}
 

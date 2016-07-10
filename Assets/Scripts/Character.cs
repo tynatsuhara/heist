@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Character : MonoBehaviour, Damageable {
+public abstract class Character : MonoBehaviour, Damageable {
 	
-	private Rigidbody rb;
+	protected Rigidbody rb;
 	public WalkCycle walk;
 
 	public float health;
@@ -18,13 +18,13 @@ public class Character : MonoBehaviour, Damageable {
 
 	public GameObject gun;
 	public PicaVoxel.Exploder exploder;
-	private Gun gunScript;
-	private bool weaponDrawn_;
+	protected Gun gunScript;
+	protected bool weaponDrawn_;
 	public bool weaponDrawn {
 		get { return weaponDrawn_; }
 	}
 
-	private bool hasLookTarget = false;
+	protected bool hasLookTarget = false;
 	public Transform lookTarget;
 	public Vector3 lookPosition;
 
@@ -37,18 +37,7 @@ public class Character : MonoBehaviour, Damageable {
 		get { return draggedBody != null; }
 	}
 
-	void Start () {
-		rb = GetComponent<Rigidbody>();
-		gunScript = gun.GetComponent<Gun>();
-	}
-	
-	void FixedUpdate () {
-		if (!isAlive)
-			return;
-		
-		Rotate();
-		Drag();
-	}
+	public abstract void Alert();
 
 	public void Move(float x, float z) {
 		float speed = moveSpeed;
@@ -90,14 +79,12 @@ public class Character : MonoBehaviour, Damageable {
 		lookTarget = null;
 	}
 
-	void Rotate() {
+	protected void Rotate() {
 		if (lookTarget != null) {
 			lookPosition = lookTarget.position;
 			hasLookTarget = true;
 		}
 		if (hasLookTarget) {
-			// TODO: I don't think this actually works at all
-
 			lookPosition.y = transform.position.y;
 			Vector3 vec = lookPosition - transform.position;
 			if (vec == Vector3.zero)
@@ -110,32 +97,32 @@ public class Character : MonoBehaviour, Damageable {
 	public void Damage(Vector3 location, Vector3 angle, float damage) {
 		if (!weaponDrawn)
 			damage *= 2f;
-		
-		rb.AddForce(400 * angle.normalized, ForceMode.Impulse);
-		exploder.transform.position = location + angle * Random.Range(-.1f, .2f) + new Vector3(0, Random.Range(-.1f, .1f), 0);
+
 		health -= damage;
-		if (health <= 0)
+		exploder.transform.position = location + angle * Random.Range(-.1f, .2f) + new Vector3(0, Random.Range(-.1f, .1f), 0);
+		if (health <= 0) {
 			Die(angle);
+		}
+		rb.AddForce(400 * angle.normalized, ForceMode.Impulse);
 	}
 
-	public void Die() {
+	public void Die() {		
 		Die(Vector3.one);
 	}
 
 	public void Die(Vector3 angle) {
 		NavMeshAgent agent = GetComponent<NavMeshAgent>();
-		if (agent != null) {
+		if (agent != null)
 			agent.enabled = false;
-		}
 
 		walk.StopWalk();
-		exploder.Explode(angle * 3);
 		rb.constraints = RigidbodyConstraints.None;
 		rb.AddForce(400 * angle.normalized, ForceMode.Impulse);
 		HideWeapon();
+		exploder.Explode(angle * 3);
 	}
 
-	private void Flash() {
+	protected void Flash() {
 		float flashSpeed = .1f;
 		body.GetComponent<Recolor>().Flash(Color.white, flashSpeed);
 		if (arms.gameObject.activeInHierarchy)
@@ -152,7 +139,7 @@ public class Character : MonoBehaviour, Damageable {
 		SetWeaponDrawn(false);
 	}
 
-	private void SetWeaponDrawn(bool drawn) {
+	protected void SetWeaponDrawn(bool drawn) {
 		if (drawn == weaponDrawn_)
 			return;
 
@@ -167,7 +154,7 @@ public class Character : MonoBehaviour, Damageable {
 		} 
 	}
 
-	private Interactable currentInteractScript;
+	protected Interactable currentInteractScript;
 	public void Interact() {
 		if (currentInteractScript != null) {
 			currentInteractScript.Interact(this);
@@ -175,7 +162,6 @@ public class Character : MonoBehaviour, Damageable {
 		}
 
 		RaycastHit hit;
-		Debug.DrawRay(transform.position, transform.forward * 1.8f, Color.red);
 		if (Physics.Raycast(transform.position, transform.forward, out hit, 1.8f)) {
 			currentInteractScript = hit.collider.transform.root.GetComponent<Interactable>();
 			if (currentInteractScript != null) {
@@ -224,7 +210,7 @@ public class Character : MonoBehaviour, Damageable {
 		}
 	}
 
-	private void Drag() {
+	protected void Drag() {
 		if (draggedBody != null) {
 			Vector3 dragPos = transform.position + transform.forward.normalized * 1.2f;
 			dragPos.y = draggedBody.transform.position.y;

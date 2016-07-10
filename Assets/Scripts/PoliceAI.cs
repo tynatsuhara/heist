@@ -1,19 +1,21 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PoliceAI : MonoBehaviour {
+public class PoliceAI : Character {
 
-	private Character character;
 	private GameObject player;
 	private Character playerScript;
 	private NavMeshAgent agent;
 
 	public bool alerted;
+	public float walkingAnimationThreshold;
 	private bool invoked;
 
 	// Use this for initialization
 	void Start () {
-		character = GetComponent<Character>();
+		rb = GetComponent<Rigidbody>();
+		gunScript = gun.GetComponent<Gun>();
+
 		player = GameObject.FindWithTag("Player");
 		playerScript = player.GetComponent<Character>();
 		agent = GetComponent<NavMeshAgent>();
@@ -21,7 +23,7 @@ public class PoliceAI : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (!character.isAlive)
+		if (!isAlive)
 			return;
 
 		LegAnimation();
@@ -32,30 +34,50 @@ public class PoliceAI : MonoBehaviour {
 			PassiveBehavior();
 	}
 
+	void FixedUpdate () {
+		if (!isAlive)
+			return;
+
+		Drag();
+		Rotate();
+	}
+
 	private void PassiveBehavior() {
 		// follow path if has one
 
-		if (!invoked && character.CanSeeCharacter(player) && playerScript.IsEquipped()) {
+		if (!invoked && CanSeeCharacter(player) && playerScript.IsEquipped()) {
 			float reactionTime = (Random.Range(.2f, 1f));
-			Invoke("BecomeAggro", reactionTime);
+			Invoke("Alert", reactionTime);
 			invoked = true;
 		}
 	}
 
-	private void BecomeAggro() {
-		if (!character.isAlive)
+	public override void Alert() {
+		if (!isAlive)
 			return;
-		
+
+		if (!CanSeeCharacter(player) || !playerScript.IsEquipped()) {
+			invoked = false;
+			return;
+		}
+
 		alerted = true;
-		character.DrawWeapon();
-		character.LookAt(player.transform);
+		DrawWeapon();
+		LookAt(player.transform);
 	}
 
 	private void AggroBehavior() {
-		if (character.CanSeeCharacter(player)) {
-			agent.destination = transform.position;
+		Debug.Log((player.transform.position - transform.position).magnitude);
+		bool inRange = (player.transform.position - transform.position).magnitude < gunScript.range;
+
+		if (CanSeeCharacter(player)) {
+			if (inRange) {
+				agent.destination = transform.position;
+			} else {
+				agent.destination = player.transform.position;
+			}
 			if (playerScript.isAlive) {
-				character.Shoot();
+				Shoot();
 			}
 		} else {
 			agent.destination = player.transform.position;
@@ -64,12 +86,12 @@ public class PoliceAI : MonoBehaviour {
 
 	private void LegAnimation() {
 		if (agent.velocity == Vector3.zero) {
-			if (character.walk.isWalking) {
-				character.walk.StopWalk();
+			if (walk.isWalking) {
+				walk.StopWalk();
 			}
-		} else {
-			if (!character.walk.isWalking) {
-				character.walk.StartWalk();
+		} else if (agent.velocity.magnitude > walkingAnimationThreshold) {
+			if (!walk.isWalking) {
+				walk.StartWalk();
 			}
 		}
 	}

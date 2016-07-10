@@ -5,6 +5,8 @@ public abstract class Gun : MonoBehaviour {
 	public Character owner;
 	public PicaVoxel.Volume volume;
 	public PicaVoxel.BasicAnimator anim;
+	public float damage;
+	public float range;
 
 	void Awake() {
 		owner = transform.root.GetComponent<Character>();
@@ -15,13 +17,13 @@ public abstract class Gun : MonoBehaviour {
 	abstract public void Shoot();
 	abstract public void Release();
 
-	public void RaycastShoot(Vector3 source, Vector3 direction, float damageVal, float range = 30f) {
+	public void RaycastShoot(Vector3 source, Vector3 direction) {
 		RaycastHit hit;
 		// Debug.DrawRay(source, direction * range, Color.red, 3f);
 		if (Physics.Raycast(source, direction, out hit, range)) {
 			Damageable damageScript = hit.transform.root.GetComponent<Damageable>();
 			if (damageScript != null) {
-				damageScript.Damage(hit.point, direction.normalized, damageVal);
+				damageScript.Damage(hit.point, direction.normalized, damage);
 			}
 		}
 	}
