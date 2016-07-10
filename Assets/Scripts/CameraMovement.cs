@@ -34,6 +34,7 @@ public class CameraMovement : MonoBehaviour {
 		if (!rotating && rotateButtonPress) {
 			int dir = Input.GetKeyDown(KeyCode.Z) ? -1 : 1;
 			transform.RotateAround(player.position, Vector3.up, -rotationAngle * dir);
+			diff = player.position - transform.position;
 		} 
 
 		// shaking
