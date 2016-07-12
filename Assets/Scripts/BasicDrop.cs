@@ -10,8 +10,22 @@ public class BasicDrop : PossibleObjective {
 	public bool onlyForPlayer = true;
 	public bool mustBeEquipped = true;
 
+	public bool floaty;
+	public float floatHeight;
+	public float rotationAngle;
+	Vector3 initialPos;
+
 	void Start() {
 		itemID = (int)item;
+		initialPos = transform.position;
+	}
+
+	void Update() {
+		float height = (Mathf.Sin(Time.time) + 1) / 2;
+		Debug.Log(height);
+		Vector3 newPos = initialPos + new Vector3(0, floatHeight * height, 0);
+		transform.RotateAround(transform.position, Vector3.up, rotationAngle * Time.deltaTime);
+		transform.position = newPos;
 	}
 
 	void OnTriggerEnter(Collider other) {
