@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public abstract class Character : MonoBehaviour, Damageable {
+public abstract class Character : PossibleObjective, Damageable {
 	
 	protected Rigidbody rb;
 	public WalkCycle walk;
@@ -104,6 +104,9 @@ public abstract class Character : MonoBehaviour, Damageable {
 		rb.AddForce(400 * angle.normalized, ForceMode.Impulse);
 		HideWeapon();
 		exploder.Explode(angle * 3);
+
+		if (isObjective && !isCompleted)
+			MarkCompleted();
 	}
 
 	protected void Flash() {

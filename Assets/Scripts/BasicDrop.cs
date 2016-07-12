@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class BasicDrop : MonoBehaviour {
+public class BasicDrop : PossibleObjective {
 
 	public Inventory.Item item;
 	private int itemID;
@@ -28,6 +28,10 @@ public class BasicDrop : MonoBehaviour {
 			return;
 
 		c.inventory.Add(item, amount);
+
+		if (isObjective && !isCompleted)
+			MarkCompleted();
+
 		gameObject.SetActive(false);
 	}
 

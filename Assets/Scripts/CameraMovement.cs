@@ -17,8 +17,6 @@ public class CameraMovement : MonoBehaviour {
 	private float duration;
 	private float timeElapsed;
 
-	private bool rotating;
-
 	void Start () {
 		instance = this;
 		cam = GetComponent<Camera>();
@@ -31,7 +29,7 @@ public class CameraMovement : MonoBehaviour {
 
 		// rotation
 		bool rotateButtonPress = Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.C);
-		if (!rotating && rotateButtonPress) {
+		if (rotateButtonPress) {
 			int dir = Input.GetKeyDown(KeyCode.Z) ? -1 : 1;
 			transform.RotateAround(player.position, Vector3.up, -rotationAngle * dir);
 			diff = player.position - transform.position;

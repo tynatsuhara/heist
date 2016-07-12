@@ -1,10 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
-public class Car : MonoBehaviour, Damageable {
+public class Car : MonoBehaviour, Damageable, Interactable {
 
+	public bool locked;
 	public int spots = 2;
 	public Character[] characters;
+	private List<Character> charactersByDoors;
 	public PicaVoxel.Exploder exploder;
 
 	private int spotsFilled;
@@ -14,9 +17,13 @@ public class Car : MonoBehaviour, Damageable {
 
 	void Start() {
 		characters = new Character[spots];
+		charactersByDoors = new List<Character>();
 	}
 
 	public bool GetIn(Character c) {
+		if (locked)
+			return false;
+
 		int firstNullSpot = -1;
 		for (int i = 0; i < characters.Length; i++) {
 			if (characters[i] == c) {
@@ -62,5 +69,27 @@ public class Car : MonoBehaviour, Damageable {
 		// Damage people inside?
 
 		return false;
+	}
+
+	public void Interact(Character c) {
+		if (charactersByDoors.Contains(c)) {
+			if (GetIn(c)) {
+				c.gameObject.SetActive(false);
+			}
+		}
+	}
+
+	public void Cancel(Character character) {}
+
+	void OnTriggerEnter(Collider other) {
+		Character c = other.transform.root.GetComponent<Character>();
+		if (c != null)
+			charactersByDoors.Add(c);
+	}
+
+	void OnTriggerExit(Collider other) {
+		Character c = other.transform.root.GetComponent<Character>();
+		if (c != null)
+			charactersByDoors.Remove(c);
 	}
 }

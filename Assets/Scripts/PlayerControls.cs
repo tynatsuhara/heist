@@ -53,7 +53,6 @@ public class PlayerControls : Character {
 
 	public void Move(float x, float z) {
 		float cameraRotation = CameraMovement.instance.transform.eulerAngles.y;
-		Vector3 cameraPosition = CameraMovement.instance.transform.position;
 
 		float speed = moveSpeed;
 		if (draggedBody != null)
