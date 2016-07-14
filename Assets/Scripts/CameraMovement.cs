@@ -7,33 +7,39 @@ public class CameraMovement : MonoBehaviour {
 	public float minZoom;
 	public float maxZoom;
 	public float rotationAngle;
-	private Camera cam;
+	public float rotationSpeed;
+	public Camera cam;
 
 	public Transform player;
-
-	private Vector3 diff;
 
 	private float power;
 	private float duration;
 	private float timeElapsed;
+	private bool rotating;
+	private Quaternion rotationGoal;
 
 	void Start () {
 		instance = this;
-		cam = GetComponent<Camera>();
-		diff = player.position - transform.position;
 	}
 	
 	void Update () {
-		transform.position = player.position - diff;
-		transform.LookAt(player.position);
+		transform.position = player.transform.position;
+		cam.transform.LookAt(player.position);
 
 		// rotation
 		bool rotateButtonPress = Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.C);
 		if (rotateButtonPress) {
 			int dir = Input.GetKeyDown(KeyCode.Z) ? -1 : 1;
+			Quaternion tempRot = transform.rotation;
+			transform.rotation = rotationGoal;
 			transform.RotateAround(player.position, Vector3.up, -rotationAngle * dir);
-			diff = player.position - transform.position;
+			rotationGoal = transform.rotation;
+			transform.RotateAround(player.position, Vector3.up, rotationAngle * dir);
+			transform.rotation = tempRot;
+			rotating = true;
 		} 
+		if (rotating)
+			transform.rotation = Quaternion.Slerp(transform.rotation, rotationGoal, rotationSpeed * Time.deltaTime);
 
 		// shaking
 		if (timeElapsed < duration) {

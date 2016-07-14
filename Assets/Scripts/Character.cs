@@ -169,8 +169,15 @@ public abstract class Character : PossibleObjective, Damageable {
 	}
 
 	public bool CanSeeCharacter(GameObject target) {
+		float viewDist = 20f;
+
+		Vector3 diff = transform.position - target.transform.position;
+		if (diff.magnitude > viewDist)
+			return false;
+		
 		float angle = Vector3.Dot(Vector3.Normalize(transform.position - target.transform.position), transform.forward);
-		if (angle >= -.2f)
+		float viewingAngle = -.3f;
+		if (angle >= viewingAngle)
 			return false;
 
 		RaycastHit hit;
