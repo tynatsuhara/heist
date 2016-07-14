@@ -17,11 +17,7 @@ public class PlayerControls : Character {
 			return;
 
 		if (Input.GetKeyDown(KeyCode.Space)) {
-			if (!weaponDrawn) {
-				DrawWeapon();
-			} else {
-				HideWeapon();
-			}
+			DrawWeapon();
 		}
 
 		if (Input.GetKeyDown(KeyCode.E)) {

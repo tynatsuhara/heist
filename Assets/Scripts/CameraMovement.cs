@@ -17,12 +17,16 @@ public class CameraMovement : MonoBehaviour {
 	private float timeElapsed;
 	private bool rotating;
 	private Quaternion rotationGoal;
+	private Vector3 diff;
 
 	void Start () {
 		instance = this;
+
+		diff = transform.localPosition;
 	}
 	
 	void Update () {
+		transform.localPosition = diff;
 		transform.position = player.transform.position;
 		cam.transform.LookAt(player.position);
 
