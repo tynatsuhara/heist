@@ -12,7 +12,13 @@ public abstract class PossibleObjective : MonoBehaviour {
 
 	public void MarkCompleted() {
 		isCompleted = true;
+		foreach (PossibleObjective po in nextObjectives) {
+			po.Unlock();
+		}
 		GameManager.instance.MarkObjectiveComplete(this);
 	}
-}
 
+	public void Unlock() {
+		isLocked = false;
+	}
+}

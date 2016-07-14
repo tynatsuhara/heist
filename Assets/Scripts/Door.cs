@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Door : MonoBehaviour, Interactable {
+public class Door : MonoBehaviour, Interactable, Powerable {
 
 	public bool locked;
 	public Inventory.Item key;
@@ -21,26 +21,29 @@ public class Door : MonoBehaviour, Interactable {
 		}
 
 		if (open) {
-			doorStates[0].SetActive(true);
-			doorStates[1].SetActive(false);
-			doorStates[2].SetActive(false);
+			SetState(0);
 		} else {
-			doorStates[0].SetActive(false);
 			// open away from the character
 			float distFrom1 = (doorStates[1].transform.position - character.transform.position).magnitude;
 			float distFrom2 = (doorStates[2].transform.position - character.transform.position).magnitude;
-			if (distFrom1 > distFrom2) {
-				doorStates[1].SetActive(true);
-				doorStates[2].SetActive(false);
-			} else {
-				doorStates[2].SetActive(true);
-				doorStates[1].SetActive(false);
-			}
+			SetState(distFrom1 > distFrom2 ? 1 : 2);
 		}
 		open = !open;
 	}
 
-	public void Cancel(Character character) {}
+	private void SetState(int state) {
+		for (int i = 0; i < doorStates.Length; i++) {
+			doorStates[i].SetActive(i == state);
+		}
+	}
+
+	public void Uninteract(Character character) {}
+
+	public void Power() {
+		locked = false;
+	}
+
+	public void Unpower() {}
 
 	public void SetKey(Inventory.Item key) {
 		SetKey((int)key);

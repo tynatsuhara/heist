@@ -22,7 +22,6 @@ public class BasicDrop : PossibleObjective {
 
 	void Update() {
 		float height = (Mathf.Sin(Time.time) + 1) / 2;
-		Debug.Log(height);
 		Vector3 newPos = initialPos + new Vector3(0, floatHeight * height, 0);
 		transform.RotateAround(transform.position, Vector3.up, rotationAngle * Time.deltaTime);
 		transform.position = newPos;

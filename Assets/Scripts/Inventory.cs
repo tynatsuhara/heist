@@ -7,7 +7,7 @@ public class Inventory : MonoBehaviour {
 	public enum Item : int {
 		NONE,
 		KEYCARD,
-		C4
+		THERMITE
 	};
 
 	public Dictionary<int, int> inv;

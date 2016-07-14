@@ -158,7 +158,7 @@ public abstract class Character : PossibleObjective, Damageable {
 	}
 	public void InteractCancel() {
 		if (currentInteractScript != null) {
-			currentInteractScript.Cancel(this);
+			currentInteractScript.Uninteract(this);
 			currentInteractScript = null;
 		}
 	}

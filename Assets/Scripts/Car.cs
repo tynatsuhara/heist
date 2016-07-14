@@ -79,7 +79,7 @@ public class Car : MonoBehaviour, Damageable, Interactable {
 		}
 	}
 
-	public void Cancel(Character character) {}
+	public void Uninteract(Character character) {}
 
 	void OnTriggerEnter(Collider other) {
 		Character c = other.transform.root.GetComponent<Character>();
