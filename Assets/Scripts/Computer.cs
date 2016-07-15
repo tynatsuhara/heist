@@ -3,14 +3,16 @@ using System.Collections;
 
 public class Computer : MonoBehaviour, Interactable {
 
-	public Powerable[] connectedItems;
+	public GameObject[] itemsToPower;
 
 	public void Interact(Character character) {
-		if (connectedItems == null)
+		if (itemsToPower == null)
 			return;
 
-		foreach (Powerable item in connectedItems) {
-			item.Power();
+		foreach (GameObject item in itemsToPower) {
+			Powerable p = item.GetComponent<Powerable>();
+			if (p != null)
+				p.Power();
 		}
 	}
 
