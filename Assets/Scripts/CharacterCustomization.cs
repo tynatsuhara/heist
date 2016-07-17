@@ -8,21 +8,41 @@ public class CharacterCustomization : MonoBehaviour {
 	private byte[] GORE = {255};
 	
 	// Each character component
-	public Recolor head;
-	public Recolor body;
-	public Recolor legs;
-	public Recolor arms;
-	public Recolor gunz;
+	public PicaVoxel.Volume head;
+	public PicaVoxel.Volume body;
+	public PicaVoxel.Volume legs;
+	public PicaVoxel.Volume arms;
+	public PicaVoxel.Volume gunz;
 
 	// Use this for initialization
 	void Start () {
-		byte[] a = Range(0, 7);
-		byte[] b = Range(5, 12);
-		byte[] c = Range(20, 30);
-		DebugBytes(a);
-		DebugBytes(b);
-		DebugBytes(c);
-		DebugBytes(Merge(a, b, c));
+//		byte[] a = Range(0, 7);
+//		byte[] b = Range(5, 12);
+//		byte[] c = Range(20, 30);
+//		DebugBytes(a);
+//		DebugBytes(b);
+//		DebugBytes(c);
+//		DebugBytes(Merge(a, b, c));
+		ColorInsides();
+	}
+
+	public void ColorInsides() {
+		PicaVoxel.Volume[] volumez = {head, body};
+		foreach (PicaVoxel.Volume volume in volumez) {
+			for (int x = 0; x < volume.XSize; x++) {
+				for (int y = 0; y < volume.YSize; y++) {
+					for (int z = 0; z < volume.ZSize; z++) {
+						PicaVoxel.Voxel? voxq = volume.GetVoxelAtArrayPosition(x, y, z);
+						PicaVoxel.Voxel vox = (PicaVoxel.Voxel)voxq;
+						if (voxq != null && vox.State == PicaVoxel.VoxelState.Active && vox.Value == 255) {
+							byte gb = (byte)Random.Range(0, 50);
+							vox.Color = new Color32(160, gb, gb, 255);
+							volume.SetVoxelAtArrayPosition(new PicaVoxel.PicaVoxelPoint(new Vector3(x, y, z)), vox);
+						} 
+					}
+				}
+			}
+		}
 	}
 
 	// Takes a dict from colors to byte[] and returns a dict
