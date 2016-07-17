@@ -1,7 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class CharacterCustomization : MonoBehaviour {
+
+	private byte[] EYES = {37, 40};
+	private byte[] GORE = {255};
+	
+	// Each character component
+	public Recolor head;
+	public Recolor body;
+	public Recolor legs;
+	public Recolor arms;
+	public Recolor gunz;
 
 	// Use this for initialization
 	void Start () {
@@ -14,19 +25,16 @@ public class CharacterCustomization : MonoBehaviour {
 		DebugBytes(Merge(a, b, c));
 	}
 
-	// Private helper method for testing
-	private void DebugBytes(byte[] bytes) {
-		if (bytes.Length == 0) {
-			Debug.Log("[]");
-		} else if (bytes.Length == 1) {
-			Debug.Log("[" + (int)bytes[0] + "]");
-		} else {
-			string s = "[" + (int)bytes[0];
-			for (int i = 1; i < bytes.Length; i++) {
-				s += "," + (int)bytes[i];
+	// Takes a dict from colors to byte[] and returns a dict
+	// mapping bytes to colors
+	private Dictionary<byte, Color32> BytesToColors(Dictionary<Color32, byte[]> dict) {
+		Dictionary<byte, Color32> res = new Dictionary<byte, Color32>();
+		foreach (Color32 color in dict.Keys) {
+			foreach (byte b in dict[color]) {
+				res.Add(b, color);
 			}
-			Debug.Log(s + "]");
 		}
+		return res;
 	}
 
 	// Returns a byte array from start to end (both inclusive)
@@ -53,5 +61,20 @@ public class CharacterCustomization : MonoBehaviour {
 			}
 		}
 		return res;
+	}
+
+	// Private helper method for testing
+	private void DebugBytes(byte[] bytes) {
+		if (bytes.Length == 0) {
+			Debug.Log("[]");
+		} else if (bytes.Length == 1) {
+			Debug.Log("[" + (int)bytes[0] + "]");
+		} else {
+			string s = "[" + (int)bytes[0];
+			for (int i = 1; i < bytes.Length; i++) {
+				s += "," + (int)bytes[i];
+			}
+			Debug.Log(s + "]");
+		}
 	}
 }

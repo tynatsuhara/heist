@@ -9,7 +9,6 @@ public abstract class Character : PossibleObjective, Damageable {
 	public float health;
 	public Inventory inventory;
 
-	public PicaVoxel.Volume body;
 	public PicaVoxel.Volume arms;
 
 	public float moveSpeed;
@@ -107,15 +106,6 @@ public abstract class Character : PossibleObjective, Damageable {
 
 		if (isObjective && !isCompleted)
 			MarkCompleted();
-	}
-
-	protected void Flash() {
-		float flashSpeed = .1f;
-		body.GetComponent<Recolor>().Flash(Color.white, flashSpeed);
-		if (arms.gameObject.activeInHierarchy)
-			arms.GetComponent<Recolor>().Flash(Color.white, flashSpeed);
-		if (gun.activeInHierarchy)
-			gun.GetComponent<Recolor>().Flash(Color.white, flashSpeed);
 	}
 
 	public void DrawWeapon() {
