@@ -22,7 +22,7 @@ public class Pistol : Gun {
 		bytes[0] = (byte)PicaVoxel.VoxelState.Active;
 		PicaVoxel.Voxel vox = new PicaVoxel.Voxel(bytes);
 		PicaVoxel.VoxelParticleSystem.Instance.SpawnSingle(transform.root.position + transform.root.forward * .45f,
-			vox, .05f, (transform.up - transform.right) * 2.5f);
+			vox, .05f, (transform.up - transform.right) * 2.5f + Random.insideUnitSphere * .5f);
 				
 		ScreenShake(.3f, .3f);
 	}
