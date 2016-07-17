@@ -6,6 +6,8 @@ public class CharacterCustomization : MonoBehaviour {
 
 	private byte[] EYES = {37, 40};
 	private byte[] GORE = {255};
+
+	public Color32 skinColor;
 	
 	// Each character component
 	public PicaVoxel.Volume head;
@@ -16,31 +18,35 @@ public class CharacterCustomization : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-//		byte[] a = Range(0, 7);
-//		byte[] b = Range(5, 12);
-//		byte[] c = Range(20, 30);
-//		DebugBytes(a);
-//		DebugBytes(b);
-//		DebugBytes(c);
-//		DebugBytes(Merge(a, b, c));
-		ColorInsides();
+		GenerateNakedness();
 	}
 
-	public void ColorInsides() {
-		PicaVoxel.Volume[] volumez = {head, body};
+	public void GenerateNakedness() {
+		PicaVoxel.Volume[] volumez = {head, body, legs, arms, gunz};
 		foreach (PicaVoxel.Volume volume in volumez) {
-			for (int x = 0; x < volume.XSize; x++) {
-				for (int y = 0; y < volume.YSize; y++) {
-					for (int z = 0; z < volume.ZSize; z++) {
-						PicaVoxel.Voxel? voxq = volume.GetVoxelAtArrayPosition(x, y, z);
-						PicaVoxel.Voxel vox = (PicaVoxel.Voxel)voxq;
-						if (voxq != null && vox.State == PicaVoxel.VoxelState.Active && vox.Value == 255) {
-							byte gb = (byte)Random.Range(0, 50);
-							vox.Color = new Color32(160, gb, gb, 255);
-							volume.SetVoxelAtArrayPosition(new PicaVoxel.PicaVoxelPoint(new Vector3(x, y, z)), vox);
-						} 
+			foreach (PicaVoxel.Frame frame in volume.Frames) {
+				for (int x = 0; x < frame.XSize; x++) {
+					for (int y = 0; y < frame.YSize; y++) {
+						for (int z = 0; z < frame.ZSize; z++) {
+							PicaVoxel.Voxel? voxq = frame.GetVoxelAtArrayPosition(x, y, z);
+							PicaVoxel.Voxel vox = (PicaVoxel.Voxel)voxq;
+							if (voxq == null || vox.State != PicaVoxel.VoxelState.Active)
+								continue;
+
+							if (vox.Value == 255) {
+								byte gb = (byte)Random.Range(0, 30);
+								vox.Color = new Color32((byte)(120 + Random.Range(0, 60)), gb, gb, 0);
+							} else if (volume == head && (vox.Value == 37 || vox.Value == 40)) {
+								vox.Color = new Color32(50, 50, 50, 0);
+							} else if (volume == head || volume == body || volume == legs ||
+								(volume == arms && vox.Value <= 4) || (volume == gunz && vox.Value <= 4)) {
+								vox.Color = skinColor;
+							}
+							frame.SetVoxelAtArrayPosition(new PicaVoxel.PicaVoxelPoint(new Vector3(x, y, z)), vox);
+						}
 					}
 				}
+				frame.UpdateChunks(true);
 			}
 		}
 	}
