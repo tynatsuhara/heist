@@ -62,7 +62,13 @@ public class CharacterCustomization : MonoBehaviour {
 								continue;
 
 							if (palette != null && palette.ContainsKey(vox.Value)) {
-								vox.Color = palette[vox.Value];
+								Color32 c = palette[vox.Value];
+								// DISCOLORATION FACTOR (maybe disable this randomness for later optimization)
+								int r = 12;
+								Color32 d = new Color32((byte)(c.r + Random.Range(-r/2, r/2)),
+									(byte)(c.g + (byte)Random.Range(-r/2, r/2)),
+									(byte)(c.b + (byte)Random.Range(-r/2, r/2)), (byte)0); 
+								vox.Color = d;
 							} else if (vox.Value == 255) {
 								// guts
 								byte gb = (byte)Random.Range(0, 30);
