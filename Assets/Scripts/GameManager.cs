@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour {
 
 		// generate level
 
+
 		objectives = Object.FindObjectsOfType<PossibleObjective>().Where(x => x.isObjective && !x.isCompleted).ToList();
 		objectivesComplete = CheckObjectivesComplete();
 	}

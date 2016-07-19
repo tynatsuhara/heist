@@ -4,10 +4,13 @@ using System.Collections.Generic;
 
 public class CharacterCustomization : MonoBehaviour {
 
-	private byte[] EYES = {37, 40};
-	private byte[] GORE = {255};
+	private byte[] EYES = { 37, 40 };
+	private byte[] GORE = { 255 };
 
 	public Color32 skinColor;
+	public Color32 shirtColor1;
+	public Color32 shirtColor2;
+	public Color32 pantsColor;
 	
 	// Each character component
 	public PicaVoxel.Volume head;
@@ -16,14 +19,39 @@ public class CharacterCustomization : MonoBehaviour {
 	public PicaVoxel.Volume arms;
 	public PicaVoxel.Volume gunz;
 
+
+	Dictionary<Color32, byte[]> bodyColors = new Dictionary<Color32, byte[]>();
+	Dictionary<Color32, byte[]> headColors = new Dictionary<Color32, byte[]>();
+	Dictionary<Color32, byte[]> legColors = new Dictionary<Color32, byte[]>();
+	Dictionary<Color32, byte[]> armColors = new Dictionary<Color32, byte[]>();
+
+
 	// Use this for initialization
 	void Start () {
-		GenerateNakedness();
+		bodyColors.Add(pantsColor, Merge(Range(0, 13), Range(70, 73)));
+		bodyColors.Add(shirtColor1, Range(14, 69));
+		bodyColors.Add(shirtColor2, Merge(Range(58, 59), Range(44, 45), Range(30, 31), Range(16, 17)));
+
+		headColors.Add(new Color32(50, 50, 50, 0), EYES);
+
+		legColors.Add(new Color32(50, 50, 50, 0), Range(0, 0));
+		legColors.Add(pantsColor, Range(1, 1));
+
+		armColors.Add(shirtColor1, Range(1, 3));
+
+		
+
+
+		ColorCharacter();
 	}
 
-	public void GenerateNakedness() {
-		PicaVoxel.Volume[] volumez = {head, body, legs, arms, gunz};
-		foreach (PicaVoxel.Volume volume in volumez) {
+	public void ColorCharacter() {
+		PicaVoxel.Volume[] volumez = { head, body, legs, arms, gunz };
+		Dictionary<Color32, byte[]>[] palettes = { headColors, bodyColors, legColors, armColors, armColors };
+		for (int i = 0; i < volumez.Length; i++) {
+			PicaVoxel.Volume volume = volumez[i];
+			Dictionary<byte, Color32> palette = (palettes[i] == null) ? null : BytesToColors(palettes[i]);
+
 			foreach (PicaVoxel.Frame frame in volume.Frames) {
 				for (int x = 0; x < frame.XSize; x++) {
 					for (int y = 0; y < frame.YSize; y++) {
@@ -33,11 +61,12 @@ public class CharacterCustomization : MonoBehaviour {
 							if (voxq == null || vox.State != PicaVoxel.VoxelState.Active)
 								continue;
 
-							if (vox.Value == 255) {
+							if (palette != null && palette.ContainsKey(vox.Value)) {
+								vox.Color = palette[vox.Value];
+							} else if (vox.Value == 255) {
+								// guts
 								byte gb = (byte)Random.Range(0, 30);
 								vox.Color = new Color32((byte)(120 + Random.Range(0, 60)), gb, gb, 0);
-							} else if (volume == head && (vox.Value == 37 || vox.Value == 40)) {
-								vox.Color = new Color32(50, 50, 50, 0);
 							} else if (volume == head || volume == body || volume == legs ||
 								(volume == arms && vox.Value <= 4) || (volume == gunz && vox.Value <= 4)) {
 								vox.Color = skinColor;
@@ -57,14 +86,16 @@ public class CharacterCustomization : MonoBehaviour {
 		Dictionary<byte, Color32> res = new Dictionary<byte, Color32>();
 		foreach (Color32 color in dict.Keys) {
 			foreach (byte b in dict[color]) {
-				res.Add(b, color);
+				if (!res.ContainsKey(b))
+					res.Add(b, color);
+				res[b] = color;
 			}
 		}
 		return res;
 	}
 
 	// Returns a byte array from start to end (both inclusive)
-	private byte[] Range(int start, int end) {
+	private static byte[] Range(int start, int end) {
 		byte startByte = (byte)start;
 		byte endByte = (byte)end;
 		byte[] res = new byte[end - start + 1];
@@ -74,7 +105,7 @@ public class CharacterCustomization : MonoBehaviour {
 		return res;
 	}
 
-	private byte[] Merge(params byte[][] lists) {
+	private static byte[] Merge(params byte[][] lists) {
 		int len = 0;
 		foreach (byte[] b in lists) {
 			len += b.Length;
@@ -90,7 +121,7 @@ public class CharacterCustomization : MonoBehaviour {
 	}
 
 	// Private helper method for testing
-	private void DebugBytes(byte[] bytes) {
+	private static void DebugBytes(byte[] bytes) {
 		if (bytes.Length == 0) {
 			Debug.Log("[]");
 		} else if (bytes.Length == 1) {

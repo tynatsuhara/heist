@@ -80,7 +80,7 @@ public abstract class Character : PossibleObjective, Damageable {
 		bool returnVal = !isAlive;  // save it because it could change right after
 
 		health -= damage;
-		exploder.transform.position = location + angle * Random.Range(-.1f, .2f) + new Vector3(0, Random.Range(-.1f, .1f), 0);
+		exploder.transform.position = location + angle * Random.Range(-.1f, .15f) + new Vector3(0, Random.Range(-.1f, .1f), 0);
 		if (health <= 0) {
 			Die(angle);
 		}
