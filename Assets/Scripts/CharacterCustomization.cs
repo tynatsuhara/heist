@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class CharacterCustomization : MonoBehaviour {
 
@@ -28,9 +29,11 @@ public class CharacterCustomization : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		bodyColors.Add(pantsColor, Merge(Range(0, 13), Range(70, 73)));
-		bodyColors.Add(shirtColor1, Range(14, 69));
-		bodyColors.Add(shirtColor2, Merge(Range(58, 59), Range(44, 45), Range(30, 31), Range(16, 17)));
+		string bodyString = "0 0 13 70 73; 1 14 69; 2 58 59 44 45 30 31 16 17";
+		bodyColors = Parse(bodyString, new Color32[]{ pantsColor, shirtColor1, shirtColor2 });
+//		bodyColors.Add(pantsColor, Merge(Range(0, 13), Range(70, 73)));
+//		bodyColors.Add(shirtColor1, Range(14, 69));
+//		bodyColors.Add(shirtColor2, Merge(Range(58, 59), Range(44, 45), Range(30, 31), Range(16, 17)));
 
 		headColors.Add(new Color32(50, 50, 50, 0), EYES);
 
@@ -43,6 +46,25 @@ public class CharacterCustomization : MonoBehaviour {
 
 
 		ColorCharacter();
+	}
+
+	private Dictionary<Color32, byte[]> Parse(string palette, Color32[] colors) {
+		Dictionary<Color32, byte[]> dict = new Dictionary<Color32, byte[]>();
+		List<string> strings = palette.Split(';').ToList();
+		strings.ForEach(str => str.Trim());
+		foreach (string s in strings) {
+			string[] ranges = s.Trim().Split(' ');
+			Color32 color = colors[int.Parse(ranges[0])];
+			if (!dict.ContainsKey(color))
+				dict.Add(color, new byte[0]);
+			for (int i = 1; i < ranges.Length; i += 2) {
+				int a = int.Parse(ranges[i]);
+				int b = int.Parse(ranges[i + 1]);
+				dict[color] = Merge(dict[color], Range(a, b));
+			}
+		}
+
+		return dict;
 	}
 
 	public void ColorCharacter() {
@@ -64,10 +86,10 @@ public class CharacterCustomization : MonoBehaviour {
 							if (palette != null && palette.ContainsKey(vox.Value)) {
 								Color32 c = palette[vox.Value];
 								// DISCOLORATION FACTOR (maybe disable this randomness for later optimization)
-								int r = 12;
-								Color32 d = new Color32((byte)(c.r + Random.Range(-r/2, r/2)),
-									(byte)(c.g + (byte)Random.Range(-r/2, r/2)),
-									(byte)(c.b + (byte)Random.Range(-r/2, r/2)), (byte)0); 
+								int r = 5;
+								Color32 d = new Color32((byte)(c.r + Random.Range(-r, r)),
+									(byte)(c.g + (byte)Random.Range(-r, r)),
+									(byte)(c.b + (byte)Random.Range(-r, r)), (byte)0); 
 								vox.Color = d;
 							} else if (vox.Value == 255) {
 								// guts
