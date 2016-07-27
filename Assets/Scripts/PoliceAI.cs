@@ -52,6 +52,12 @@ public class PoliceAI : Character {
 		}
 	}
 
+
+	// States to be in:
+	//    passive
+	//    suspicious
+	//    alerted without knowing location   <- could accomplish with global lastKnownLocation?
+	//    alerted with knowing location
 	public override void Alert() {
 		if (!isAlive)
 			return;

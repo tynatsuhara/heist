@@ -5,14 +5,16 @@ using System.Linq;
 
 public class CharacterCustomization : MonoBehaviour {
 
-	private byte[] EYES = { 37, 40 };
-	private byte[] GORE = { 255 };
+	public Color32 shirtColor1;   // 0
+	public Color32 shirtColor2;   // 1
+	public Color32 shirtColor3;   // 2
+	public Color32 pantsColor1;   // 3
+	public Color32 pantsColor2;   // 4
+	public Color32 shoesColor;    // 5
+	public Color32 skinColor;     // 6
+	public Color32 hairColor;     // 7
+	public Color32 eyeColor;      // 8
 
-	public Color32 skinColor;
-	public Color32 shirtColor1;
-	public Color32 shirtColor2;
-	public Color32 pantsColor;
-	
 	// Each character component
 	public PicaVoxel.Volume head;
 	public PicaVoxel.Volume body;
@@ -21,58 +23,39 @@ public class CharacterCustomization : MonoBehaviour {
 	public PicaVoxel.Volume gunz;
 
 
-	Dictionary<Color32, byte[]> bodyColors = new Dictionary<Color32, byte[]>();
-	Dictionary<Color32, byte[]> headColors = new Dictionary<Color32, byte[]>();
-	Dictionary<Color32, byte[]> legColors = new Dictionary<Color32, byte[]>();
-	Dictionary<Color32, byte[]> armColors = new Dictionary<Color32, byte[]>();
+	// [body, head, legs, arms]
+	private string[] outfit = {
+		"3 0-13 70-73; 0 14-69; 1 58-59 44-45 30-31 16-17",
+		"8 37 40",
+		"3 1; 5 0",
+		"0 1-3"
+	};
 
 
 	// Use this for initialization
 	void Start () {
-		string bodyString = "0 0 13 70 73; 1 14 69; 2 58 59 44 45 30 31 16 17";
-		bodyColors = Parse(bodyString, new Color32[]{ pantsColor, shirtColor1, shirtColor2 });
-//		bodyColors.Add(pantsColor, Merge(Range(0, 13), Range(70, 73)));
-//		bodyColors.Add(shirtColor1, Range(14, 69));
-//		bodyColors.Add(shirtColor2, Merge(Range(58, 59), Range(44, 45), Range(30, 31), Range(16, 17)));
+		var bodyColors = Parse(outfit);
 
-		headColors.Add(new Color32(50, 50, 50, 0), EYES);
-
-		legColors.Add(new Color32(50, 50, 50, 0), Range(0, 0));
-		legColors.Add(pantsColor, Range(1, 1));
-
-		armColors.Add(shirtColor1, Range(1, 3));
-
-		
-
-
-		ColorCharacter();
+		ColorCharacter(bodyColors);
 	}
 
-	private Dictionary<Color32, byte[]> Parse(string palette, Color32[] colors) {
-		Dictionary<Color32, byte[]> dict = new Dictionary<Color32, byte[]>();
-		List<string> strings = palette.Split(';').ToList();
-		strings.ForEach(str => str.Trim());
-		foreach (string s in strings) {
-			string[] ranges = s.Trim().Split(' ');
-			Color32 color = colors[int.Parse(ranges[0])];
-			if (!dict.ContainsKey(color))
-				dict.Add(color, new byte[0]);
-			for (int i = 1; i < ranges.Length; i += 2) {
-				int a = int.Parse(ranges[i]);
-				int b = int.Parse(ranges[i + 1]);
-				dict[color] = Merge(dict[color], Range(a, b));
-			}
-		}
+	public void ColorCharacter(Dictionary<byte, int>[] palettes) {
+		Color32[] colors = {
+			shirtColor1,
+			shirtColor2,
+			shirtColor3,
+			pantsColor1,
+			pantsColor2,
+			shoesColor,
+			skinColor,
+			hairColor,
+			eyeColor
+		};
 
-		return dict;
-	}
-
-	public void ColorCharacter() {
-		PicaVoxel.Volume[] volumez = { head, body, legs, arms, gunz };
-		Dictionary<Color32, byte[]>[] palettes = { headColors, bodyColors, legColors, armColors, armColors };
+		PicaVoxel.Volume[] volumez = { body, head, legs, arms, gunz };
 		for (int i = 0; i < volumez.Length; i++) {
 			PicaVoxel.Volume volume = volumez[i];
-			Dictionary<byte, Color32> palette = (palettes[i] == null) ? null : BytesToColors(palettes[i]);
+			Dictionary<byte, int> palette = palettes[i == 4 ? 3 : i];
 
 			foreach (PicaVoxel.Frame frame in volume.Frames) {
 				for (int x = 0; x < frame.XSize; x++) {
@@ -84,13 +67,10 @@ public class CharacterCustomization : MonoBehaviour {
 								continue;
 
 							if (palette != null && palette.ContainsKey(vox.Value)) {
-								Color32 c = palette[vox.Value];
+								Color32 c = colors[palette[vox.Value]];
 								// DISCOLORATION FACTOR (maybe disable this randomness for later optimization)
-								int r = 5;
-								Color32 d = new Color32((byte)(c.r + Random.Range(-r, r)),
-									(byte)(c.g + (byte)Random.Range(-r, r)),
-									(byte)(c.b + (byte)Random.Range(-r, r)), (byte)0); 
-								vox.Color = d;
+								int r = 10;
+								vox.Color = new Color32(JiggleByte(c.r, r), JiggleByte(c.g, r), JiggleByte(c.b, r), (byte)0);
 							} else if (vox.Value == 255) {
 								// guts
 								byte gb = (byte)Random.Range(0, 30);
@@ -108,11 +88,47 @@ public class CharacterCustomization : MonoBehaviour {
 		}
 	}
 
-	// Takes a dict from colors to byte[] and returns a dict
-	// mapping bytes to colors
-	private Dictionary<byte, Color32> BytesToColors(Dictionary<Color32, byte[]> dict) {
-		Dictionary<byte, Color32> res = new Dictionary<byte, Color32>();
-		foreach (Color32 color in dict.Keys) {
+	// Randomizes a byte and clamps it
+	private byte JiggleByte(byte b, int jiggleFactor) {
+		return (byte)Mathf.Clamp(b + Random.Range(0, jiggleFactor + 1), 0, 255);
+	}
+
+	private static Dictionary<byte, int>[] Parse(string[] outfit) {
+
+		Dictionary<byte, int>[] res = new Dictionary<byte, int>[outfit.Length];
+
+		for (int j = 0; j < outfit.Length; j++) {
+			var palette = outfit[j];
+			Dictionary<int, byte[]> dict = new Dictionary<int, byte[]>();
+			List<string> strings = palette.Split(';').ToList();
+			foreach (string s in strings) {
+				string[] ranges = s.Trim().Split(' ');
+				int color = int.Parse(ranges[0]);
+				if (!dict.ContainsKey(color))
+					dict.Add(color, new byte[0]);
+				for (int i = 1; i < ranges.Length; i++) {
+					if (ranges[i].Contains("-")) {
+						string[] ab = ranges[i].Split('-');
+						byte a = (byte)int.Parse(ab[0]);
+						byte b = (byte)int.Parse(ab[1]);
+						dict[color] = Merge(dict[color], Range(a, b));
+					} else {
+						byte a = (byte)int.Parse(ranges[i]);
+						dict[color] = Merge(dict[color], new byte[]{ a });
+					}
+				}
+			}
+			res[j] = ByteKeyMap(dict);
+		}
+
+		return res;
+	}
+
+	// Takes a dict from ints to byte[] and returns a dict
+	// mapping bytes to ints
+	private static Dictionary<byte, int> ByteKeyMap(Dictionary<int, byte[]> dict) {
+		Dictionary<byte, int> res = new Dictionary<byte, int>();
+		foreach (int color in dict.Keys) {
 			foreach (byte b in dict[color]) {
 				if (!res.ContainsKey(b))
 					res.Add(b, color);
