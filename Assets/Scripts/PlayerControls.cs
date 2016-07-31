@@ -3,10 +3,18 @@ using System.Collections;
 
 public class PlayerControls : Character {
 
+	private string[] outfit = {
+		"3 0-13 70-73; 0 14-69; 1 58-59 44-45 30-31 16-17",
+		"8 37 40",
+		"3 1; 5 0",
+		"0 1-3"
+	};
+
 	void Start() {
 		rb = GetComponent<Rigidbody>();
 		gunScript = gun.GetComponent<Gun>();
 		speech = GetComponentInChildren<TextObject>();
+		GetComponent<CharacterCustomization>().ColorCharacter(outfit);
 	}
 
 	void Update() {

@@ -23,8 +23,8 @@ public class CharacterCustomization : MonoBehaviour {
 	public PicaVoxel.Volume gunz;
 
 
-	// [body, head, legs, arms]
-	private string[] outfit = {
+	// outfit format: [body, head, legs, arms]
+	private string[] exampleOutfit = {
 		"3 0-13 70-73; 0 14-69; 1 58-59 44-45 30-31 16-17",
 		"8 37 40",
 		"3 1; 5 0",
@@ -32,14 +32,9 @@ public class CharacterCustomization : MonoBehaviour {
 	};
 
 
-	// Use this for initialization
-	void Start () {
-		var bodyColors = Parse(outfit);
+	public void ColorCharacter(string[] outfit) {
+		var palettes = Parse(outfit);
 
-		ColorCharacter(bodyColors);
-	}
-
-	public void ColorCharacter(Dictionary<byte, int>[] palettes) {
 		Color32[] colors = {
 			shirtColor1,
 			shirtColor2,

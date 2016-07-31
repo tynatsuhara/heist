@@ -11,6 +11,13 @@ public class Enemy : Character {
 	public float walkingAnimationThreshold;
 	private bool invoked;
 
+	private string[] outfit = {
+		"3 0-13 70-73; 0 14-69; 1 58-59 44-45 30-31 16-17",
+		"8 37 40",
+		"3 1; 5 0",
+		"0 1-3"
+	};
+
 	// Use this for initialization
 	void Start () {
 		rb = GetComponent<Rigidbody>();
@@ -20,6 +27,7 @@ public class Enemy : Character {
 		playerScript = player.GetComponent<Character>();
 		agent = GetComponent<NavMeshAgent>();
 		speech = GetComponentInChildren<TextObject>();
+		GetComponent<CharacterCustomization>().ColorCharacter(outfit);
 	}
 	
 	// Update is called once per frame

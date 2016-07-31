@@ -85,7 +85,8 @@ public abstract class Character : PossibleObjective, Damageable {
 		if (Random.Range(0, 2) == 1)
 			Bleed(Random.Range(0, 10), location, angle);
 
-		bool returnVal = !isAlive;  // save it because it could change right after
+		if (!isAlive)
+			return true;
 
 		health -= damage;
 		exploder.transform.position = location + angle * Random.Range(-.1f, .15f) + new Vector3(0, Random.Range(-.1f, .1f), 0);
@@ -95,7 +96,7 @@ public abstract class Character : PossibleObjective, Damageable {
 
 		rb.AddForce(400 * angle.normalized, ForceMode.Impulse);
 
-		return returnVal;
+		return false;
 	}
 
 	public void Die() {		
