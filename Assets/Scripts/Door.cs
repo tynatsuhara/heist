@@ -8,6 +8,11 @@ public class Door : MonoBehaviour, Interactable, Powerable {
 	private int key_;
 	private bool open;
 	public GameObject[] doorStates;
+	private TextObject text;
+
+	public void Start() {
+		text = GetComponentInChildren<TextObject>();
+	}
 
 	public void Interact(Character character) {		
 		if (key != Inventory.Item.NONE)
@@ -17,6 +22,7 @@ public class Door : MonoBehaviour, Interactable, Powerable {
 			character.inventory.Remove(key_);
 			locked = false;
 		} else if (locked) {
+			text.Say("locked");
 			return;
 		}
 

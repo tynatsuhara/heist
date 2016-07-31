@@ -6,6 +6,7 @@ public class PlayerControls : Character {
 	void Start() {
 		rb = GetComponent<Rigidbody>();
 		gunScript = gun.GetComponent<Gun>();
+		speech = GetComponentInChildren<TextObject>();
 	}
 
 	void Update() {

@@ -19,6 +19,7 @@ public class PoliceAI : Character {
 		player = GameObject.FindWithTag("Player");
 		playerScript = player.GetComponent<Character>();
 		agent = GetComponent<NavMeshAgent>();
+		speech = GetComponentInChildren<TextObject>();
 	}
 	
 	// Update is called once per frame
@@ -70,6 +71,7 @@ public class PoliceAI : Character {
 		alerted = true;
 		DrawWeapon();
 		LookAt(player.transform);
+		speech.Say("HEY WHAT THE FUCK", showFlash:true);
 	}
 
 	private void AggroBehavior() {

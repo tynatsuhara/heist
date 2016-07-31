@@ -2,6 +2,8 @@
 using System.Collections;
 
 public abstract class Character : PossibleObjective, Damageable {
+
+	public TextObject speech;
 	
 	protected Rigidbody rb;
 	public WalkCycle walk;
