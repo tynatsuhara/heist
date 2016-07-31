@@ -11,6 +11,8 @@ public abstract class Character : PossibleObjective, Damageable {
 	public float health;
 	public Inventory inventory;
 
+	public PicaVoxel.Volume head;
+	public PicaVoxel.Volume body;
 	public PicaVoxel.Volume arms;
 
 	public float moveSpeed;
@@ -80,6 +82,9 @@ public abstract class Character : PossibleObjective, Damageable {
 			damage *= 2f;
 		Invoke("Alert", .7f);
 
+		if (Random.Range(0, 2) == 1)
+			Bleed(Random.Range(0, 10), location, angle);
+
 		bool returnVal = !isAlive;  // save it because it could change right after
 
 		health -= damage;
@@ -87,6 +92,7 @@ public abstract class Character : PossibleObjective, Damageable {
 		if (health <= 0) {
 			Die(angle);
 		}
+
 		rb.AddForce(400 * angle.normalized, ForceMode.Impulse);
 
 		return returnVal;
@@ -207,5 +213,29 @@ public abstract class Character : PossibleObjective, Damageable {
 
 	public void ReleaseBody() {
 		draggedBody = null;
+	}
+
+	public void Bleed(int amount, Vector3 position, Vector3 velocity) {
+		PicaVoxel.Volume volume = Random.Range(0, 3) == 1 ? head : body;
+		if (volume == body)
+			position.y -= .6f;
+		for (int i = 0; i < amount; i++) {
+			PicaVoxel.Voxel voxel = new PicaVoxel.Voxel();
+			byte gb = (byte)Random.Range(0, 30);
+			voxel.Color = new Color32((byte)(120 + Random.Range(0, 60)), gb, gb, 0);
+			voxel.State = PicaVoxel.VoxelState.Active;
+			Vector3 spawnPos = position + Random.insideUnitSphere * .2f;
+			PicaVoxel.PicaVoxelPoint pos = volume.GetVoxelArrayPosition(spawnPos);
+			PicaVoxel.VoxelParticleSystem.Instance.SpawnSingle(spawnPos, 
+				voxel, .1f, 4 * velocity + 3 * Random.insideUnitSphere);
+			PicaVoxel.Voxel? hit = volume.GetVoxelAtArrayPosition(pos.X, pos.Y, pos.Z);
+			if (hit != null) {
+				PicaVoxel.Voxel nonnullHit = (PicaVoxel.Voxel)hit;
+				voxel.Value = nonnullHit.Value;
+
+				if (nonnullHit.Active)
+					volume.SetVoxelAtArrayPosition(pos, voxel);
+			}
+		}
 	}
 }
