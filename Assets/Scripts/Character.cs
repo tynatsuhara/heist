@@ -78,6 +78,7 @@ public abstract class Character : PossibleObjective, Damageable {
 	public bool Damage(Vector3 location, Vector3 angle, float damage) {
 		if (!weaponDrawn)
 			damage *= 2f;
+		Invoke("Alert", .7f);
 
 		bool returnVal = !isAlive;  // save it because it could change right after
 

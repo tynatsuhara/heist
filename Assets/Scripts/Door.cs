@@ -46,6 +46,8 @@ public class Door : MonoBehaviour, Interactable, Powerable {
 	public void Uninteract(Character character) {}
 
 	public void Power() {
+		if (locked)
+			text.Say("unlocked", showFlash:true);
 		locked = false;
 	}
 

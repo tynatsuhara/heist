@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PoliceAI : Character {
+public class Enemy : Character {
 
 	private GameObject player;
 	private Character playerScript;
@@ -48,9 +48,17 @@ public class PoliceAI : Character {
 
 		if (!invoked && CanSeeCharacter(player) && playerScript.IsEquipped()) {
 			float reactionTime = (Random.Range(.2f, 1f));
-			Invoke("Alert", reactionTime);
+			Invoke("GlimpsedPlayer", reactionTime);
 			invoked = true;
 		}
+	}
+
+	private void GlimpsedPlayer() {
+		if (!CanSeeCharacter(player) || !playerScript.IsEquipped()) {
+			invoked = false;
+			return;
+		}
+		Alert();
 	}
 
 
@@ -60,14 +68,9 @@ public class PoliceAI : Character {
 	//    alerted without knowing location   <- could accomplish with global lastKnownLocation?
 	//    alerted with knowing location
 	public override void Alert() {
-		if (!isAlive)
+		if (alerted || !isAlive)
 			return;
-
-		if (!CanSeeCharacter(player) || !playerScript.IsEquipped()) {
-			invoked = false;
-			return;
-		}
-
+		Debug.Log("alerted");
 		alerted = true;
 		DrawWeapon();
 		LookAt(player.transform);

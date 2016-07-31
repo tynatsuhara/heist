@@ -6,6 +6,7 @@ public class Pistol : Gun {
 	public float knockback;
 	public float shootSpeed;
 	private bool canShoot = true;
+	public bool silenced;
 
 	public override void Shoot() {
 		if (!canShoot)
@@ -25,6 +26,9 @@ public class Pistol : Gun {
 			vox, .05f, (transform.up - transform.right) * 2.5f + Random.insideUnitSphere * .5f);
 				
 		ScreenShake(.3f, .3f);
+
+		if (!silenced)
+			GameManager.instance.AlertInRange(transform.position, 15f);
 	}
 
 	private void ResetShoot() {
