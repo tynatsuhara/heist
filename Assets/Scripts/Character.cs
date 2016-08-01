@@ -84,8 +84,7 @@ public abstract class Character : PossibleObjective, Damageable {
 
 		Bleed(Random.Range(0, 10), location, angle);
 
-		if (!isAlive)
-			return true;
+		bool res = isAlive;  // save it beforehand
 
 		health -= damage;
 		exploder.transform.position = location + angle * Random.Range(-.1f, .15f) + new Vector3(0, Random.Range(-.7f, .3f), 0);
@@ -93,9 +92,9 @@ public abstract class Character : PossibleObjective, Damageable {
 			Die(angle);
 		}
 
-		rb.AddForce(400 * angle.normalized, ForceMode.Impulse);
+		rb.AddForce(300 * angle.normalized, ForceMode.Impulse);
 
-		return false;
+		return res;
 	}
 
 	public void Die() {		
@@ -109,12 +108,44 @@ public abstract class Character : PossibleObjective, Damageable {
 
 		walk.StopWalk();
 		rb.constraints = RigidbodyConstraints.None;
-		rb.AddForce(400 * angle.normalized, ForceMode.Impulse);
 		HideWeapon();
 		exploder.Explode(angle * 3);
 
 		if (isObjective && !isCompleted)
 			MarkCompleted();
+
+		int bloodSpurtAmount = Random.Range(3, 15);
+		for (int i = 0; i < bloodSpurtAmount; i++) {
+			Invoke("SpurtBlood", Random.Range(.3f, 1.5f) * i);
+		}
+	}
+
+	private void SpurtBlood() {
+		Bleed(Random.Range(5, 16), transform.position + Vector3.up * .3f, Vector3.up);
+	}
+
+	public void Bleed(int amount, Vector3 position, Vector3 velocity) {
+		PicaVoxel.Volume volume = Random.Range(0, 3) == 1 ? head : body;
+		if (volume == body)
+			position.y -= .5f;
+		for (int i = 0; i < amount; i++) {
+			PicaVoxel.Voxel voxel = new PicaVoxel.Voxel();
+			byte gb = (byte)Random.Range(0, 30);
+			voxel.Color = new Color32((byte)(120 + Random.Range(0, 60)), gb, gb, 0);
+			voxel.State = PicaVoxel.VoxelState.Active;
+			Vector3 spawnPos = position + Random.insideUnitSphere * .2f;
+			PicaVoxel.PicaVoxelPoint pos = volume.GetVoxelArrayPosition(spawnPos);
+			PicaVoxel.VoxelParticleSystem.Instance.SpawnSingle(spawnPos, 
+				voxel, .1f, 4 * velocity + 3 * Random.insideUnitSphere + Vector3.up * 0f);
+			PicaVoxel.Voxel? hit = volume.GetVoxelAtArrayPosition(pos.X, pos.Y, pos.Z);
+			if (hit != null) {
+				PicaVoxel.Voxel nonnullHit = (PicaVoxel.Voxel)hit;
+				voxel.Value = nonnullHit.Value;
+
+				if (nonnullHit.Active)
+					volume.SetVoxelAtArrayPosition(pos, voxel);
+			}
+		}
 	}
 
 	public void DrawWeapon() {
@@ -213,29 +244,5 @@ public abstract class Character : PossibleObjective, Damageable {
 
 	public void ReleaseBody() {
 		draggedBody = null;
-	}
-
-	public void Bleed(int amount, Vector3 position, Vector3 velocity) {
-		PicaVoxel.Volume volume = Random.Range(0, 3) == 1 ? head : body;
-		if (volume == body)
-			position.y -= .5f;
-		for (int i = 0; i < amount; i++) {
-			PicaVoxel.Voxel voxel = new PicaVoxel.Voxel();
-			byte gb = (byte)Random.Range(0, 30);
-			voxel.Color = new Color32((byte)(120 + Random.Range(0, 60)), gb, gb, 0);
-			voxel.State = PicaVoxel.VoxelState.Active;
-			Vector3 spawnPos = position + Random.insideUnitSphere * .2f;
-			PicaVoxel.PicaVoxelPoint pos = volume.GetVoxelArrayPosition(spawnPos);
-			PicaVoxel.VoxelParticleSystem.Instance.SpawnSingle(spawnPos, 
-				voxel, .1f, 4 * velocity + 3 * Random.insideUnitSphere + Vector3.up * 0f);
-			PicaVoxel.Voxel? hit = volume.GetVoxelAtArrayPosition(pos.X, pos.Y, pos.Z);
-			if (hit != null) {
-				PicaVoxel.Voxel nonnullHit = (PicaVoxel.Voxel)hit;
-				voxel.Value = nonnullHit.Value;
-
-				if (nonnullHit.Active)
-					volume.SetVoxelAtArrayPosition(pos, voxel);
-			}
-		}
 	}
 }

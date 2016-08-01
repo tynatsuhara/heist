@@ -26,7 +26,7 @@ public class CharacterCustomization : MonoBehaviour {
 	// outfit format: [body, head, legs, arms]
 	private string[] exampleOutfit = {
 		"3 0-13 70-73; 0 14-69; 1 58-59 44-45 30-31 16-17",
-		"8 37 40",
+		"8 37 40; 7 26-33 44-51 60 62-69 71",
 		"3 1; 5 0",
 		"0 1-3"
 	};
@@ -64,7 +64,7 @@ public class CharacterCustomization : MonoBehaviour {
 							if (palette != null && palette.ContainsKey(vox.Value)) {
 								Color32 c = colors[palette[vox.Value]];
 								// DISCOLORATION FACTOR (maybe disable this randomness for later optimization)
-								int r = 10;
+								int r = 7;
 								vox.Color = new Color32(JiggleByte(c.r, r), JiggleByte(c.g, r), JiggleByte(c.b, r), (byte)0);
 							} else if (vox.Value == 255) {
 								// guts
