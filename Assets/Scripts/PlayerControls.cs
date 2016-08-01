@@ -80,6 +80,12 @@ public class PlayerControls : Character {
 		}
 	}
 
+	public override void Die(Vector3 angle) {
+		Debug.Log("die");
+		base.Die(angle);
+		GameManager.instance.GameOver(false);
+	}
+
 	void LookAtMouse() {
 		// Generate a plane that intersects the transform's position with an upwards normal.
 		Plane playerPlane = new Plane(Vector3.up, transform.position);
@@ -92,4 +98,5 @@ public class PlayerControls : Character {
 	}
 
 	public override void Alert() {}
+	public void RemoveBody() {}
 }

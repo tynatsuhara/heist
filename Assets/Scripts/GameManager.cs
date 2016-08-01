@@ -58,7 +58,15 @@ public class GameManager : MonoBehaviour {
 			return;
 
 		alarmsRaised = true;
-		InvokeRepeating("SpawnCop", 0f, 3f);
+		InvokeRepeating("SpawnCop", 1f, 10f);
+		InvokeRepeating("SpawnCop", 1f, 10f);
+		InvokeRepeating("SpawnCop", 1f, 10f);
+		InvokeRepeating("SpawnCop", 1f, 10f);
+	}
+
+	public void GameOver(bool success) {
+		CancelInvoke("SpawnCop");
+		Debug.Log("game over");
 	}
 
 	public void SpawnCop() {

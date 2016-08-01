@@ -11,6 +11,7 @@ public abstract class Character : PossibleObjective, Damageable {
 	public float health;
 	public float armor;
 	public Inventory inventory;
+	public Inventory weaponInv;
 
 	public PicaVoxel.Volume head;
 	public PicaVoxel.Volume body;
@@ -111,7 +112,8 @@ public abstract class Character : PossibleObjective, Damageable {
 		Die(Vector3.one);
 	}
 
-	public void Die(Vector3 angle) {
+	public virtual void Die(Vector3 angle) {
+		Debug.Log("die in char");
 		NavMeshAgent agent = GetComponent<NavMeshAgent>();
 		if (agent != null)
 			agent.enabled = false;
@@ -129,22 +131,30 @@ public abstract class Character : PossibleObjective, Damageable {
 			Invoke("SpurtBlood", Random.Range(.3f, 1.5f) * i);
 		}
 
-		speech.SayRandom(new string[] {
-			"aaahhhh",
-			"tell my wife i loved her",
-			"i'm coming for you, harambe",
-			"he got me",
-			"just a flesh wound",
-			"my spline!",
-			"blarglefargle",
-			"you can't kill me",
-			"avenge me",
-			"aack",
-			"i knew this would happen",
-			"i can see the light",
-			"my life is flashing before my eyes",
-			"why do the good die young?"
-			}, showFlash: true);
+		if (Random.Range(0, 2) == 0) {
+			speech.SayRandom(new string[] {
+					"aaahhhh",
+					"tell my wife i loved her",
+					"i'm coming for you, harambe",
+					"he got me",
+					"just a flesh wound",
+					"my spline!",
+					"blarglefargle",
+					"you can't kill me",
+					"avenge me",
+					"aack",
+					"i knew this would happen",
+					"i can see the light",
+					"my life is flashing before my eyes",
+					"why do the good die young?"
+				}, showFlash: true);
+		}
+
+//		Invoke("RemoveBody", 60f);
+	}
+
+	public void RemoveBody() {
+		Destroy(gameObject);
 	}
 
 	private void SpurtBlood() {

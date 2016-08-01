@@ -35,9 +35,9 @@ public class BasicDrop : PossibleObjective {
 		if (c == null)
 			return;
 
-		if (c == null || 
-			(onlyForPlayer && c.tag != "Player") ||
-			(mustBeEquipped && !c.IsEquipped()))
+		if (c == null 
+			|| (onlyForPlayer && c.tag != "Player")
+			|| (mustBeEquipped && !c.IsEquipped()))
 			return;
 
 		c.inventory.Add(item, amount);
