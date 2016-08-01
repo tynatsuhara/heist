@@ -15,8 +15,13 @@ public class GameManager : MonoBehaviour {
 	private List<Character> characters;
 	private PlayerControls player;
 
-	void Start () {
+	public bool alarmsRaised = false;
+
+	void Awake() {
 		instance = this;
+	}
+
+	void Start () {
 
 		// 1. generate level
 
@@ -44,6 +49,21 @@ public class GameManager : MonoBehaviour {
 				c.Alert();
 			}
 		}
+	}
+
+	// Call this to indicate it is no longer a stealth-possible mission,
+	// ALARMS HAVE BEEN RAISED -- START SPAWNING ENEMIES
+	public void WereGoingLoudBoys() {
+		if (alarmsRaised)
+			return;
+
+		alarmsRaised = true;
+		InvokeRepeating("SpawnCop", 0f, 3f);
+	}
+
+	public void SpawnCop() {
+		GameObject enemy = (GameObject) Instantiate(enemyPrefabs[0], 
+			new Vector3(-5f, 1, -8) + 5f * Random.insideUnitSphere, Quaternion.identity);
 	}
 
 	public void MarkObjectiveComplete(PossibleObjective po) {

@@ -18,8 +18,7 @@ public class Enemy : Character {
 		"0 1-3"
 	};
 
-	// Use this for initialization
-	void Start () {
+	void Awake () {
 		rb = GetComponent<Rigidbody>();
 		gunScript = gun.GetComponent<Gun>();
 
@@ -28,6 +27,12 @@ public class Enemy : Character {
 		agent = GetComponent<NavMeshAgent>();
 		speech = GetComponentInChildren<TextObject>();
 		GetComponent<CharacterCustomization>().ColorCharacter(outfit);
+	}
+
+	void Start() {
+		if (GameManager.instance.alarmsRaised) {
+			Alert();
+		}
 	}
 	
 	// Update is called once per frame
@@ -66,6 +71,7 @@ public class Enemy : Character {
 			invoked = false;
 			return;
 		}
+		speech.Say("HEY WHAT THE FUCK", showFlash:true);
 		Alert();
 	}
 
@@ -78,11 +84,10 @@ public class Enemy : Character {
 	public override void Alert() {
 		if (alerted || !isAlive)
 			return;
-		Debug.Log("alerted");
 		alerted = true;
 		DrawWeapon();
 		LookAt(player.transform);
-		speech.Say("HEY WHAT THE FUCK", showFlash:true);
+		GameManager.instance.WereGoingLoudBoys();
 	}
 
 	private void AggroBehavior() {

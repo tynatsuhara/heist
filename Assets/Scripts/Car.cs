@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class Car : MonoBehaviour, Damageable, Interactable {
 
@@ -9,6 +10,7 @@ public class Car : MonoBehaviour, Damageable, Interactable {
 	public Character[] characters;
 	private List<Character> charactersByDoors;
 	public PicaVoxel.Exploder exploder;
+	private Collider[] doorSpots;	
 
 	private int spotsFilled;
 	public bool isEmpty {
@@ -18,6 +20,7 @@ public class Car : MonoBehaviour, Damageable, Interactable {
 	void Start() {
 		characters = new Character[spots];
 		charactersByDoors = new List<Character>();
+		doorSpots = Object.FindObjectsOfType<Collider>().Where((x) => x.isTrigger).ToArray();
 	}
 
 	public bool GetIn(Character c) {
@@ -39,8 +42,6 @@ public class Car : MonoBehaviour, Damageable, Interactable {
 		characters[firstNullSpot] = c;
 		spotsFilled++;
 		return true;
-
-		// do stuff with the character, probably. make them invisible?
 	}
 
 	public bool GetOut(Character c) {
@@ -50,6 +51,9 @@ public class Car : MonoBehaviour, Damageable, Interactable {
 				characters[i] = null;
 
 				// do stuff with the character, make them appear at the door
+				int whichDoor = i % doorSpots.Length;
+				c.transform.position = doorSpots[whichDoor].transform.position;
+				c.gameObject.SetActive(true);
 
 				return true;
 			}

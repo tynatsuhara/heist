@@ -9,6 +9,7 @@ public abstract class Character : PossibleObjective, Damageable {
 	public WalkCycle walk;
 
 	public float health;
+	public float armor;
 	public Inventory inventory;
 
 	public PicaVoxel.Volume head;
@@ -82,19 +83,28 @@ public abstract class Character : PossibleObjective, Damageable {
 			damage *= 2f;
 		Invoke("Alert", .7f);
 
+		if (armor > 0) {
+			armor -= damage;
+			if (armor >= 0) {
+				rb.AddForce(300 * angle.normalized, ForceMode.Impulse);
+				return false;
+			}
+			damage = -armor;  // for applying leftover damage
+		}
+
 		Bleed(Random.Range(0, 10), location, angle);
 
-		bool res = isAlive;  // save it beforehand
+		bool wasAlive = isAlive;  // save it beforehand
 
 		health -= damage;
 		exploder.transform.position = location + angle * Random.Range(-.1f, .15f) + new Vector3(0, Random.Range(-.7f, .3f), 0);
-		if (health <= 0) {
+		if (health <= 0 && wasAlive) {
 			Die(angle);
 		}
 
 		rb.AddForce(300 * angle.normalized, ForceMode.Impulse);
 
-		return res;
+		return wasAlive;
 	}
 
 	public void Die() {		
@@ -118,10 +128,27 @@ public abstract class Character : PossibleObjective, Damageable {
 		for (int i = 0; i < bloodSpurtAmount; i++) {
 			Invoke("SpurtBlood", Random.Range(.3f, 1.5f) * i);
 		}
+
+		speech.SayRandom(new string[] {
+			"aaahhhh",
+			"tell my wife i loved her",
+			"i'm coming for you, harambe",
+			"he got me",
+			"just a flesh wound",
+			"my spline!",
+			"blarglefargle",
+			"you can't kill me",
+			"avenge me",
+			"aack",
+			"i knew this would happen",
+			"i can see the light",
+			"my life is flashing before my eyes",
+			"why do the good die young?"
+			}, showFlash: true);
 	}
 
 	private void SpurtBlood() {
-		Bleed(Random.Range(5, 16), transform.position + Vector3.up * .3f, Vector3.up);
+		Bleed(Random.Range(5, 10), transform.position + Vector3.up * .3f, Vector3.up);
 	}
 
 	public void Bleed(int amount, Vector3 position, Vector3 velocity) {
