@@ -82,14 +82,13 @@ public abstract class Character : PossibleObjective, Damageable {
 			damage *= 2f;
 		Invoke("Alert", .7f);
 
-		if (Random.Range(0, 2) == 1)
-			Bleed(Random.Range(0, 10), location, angle);
+		Bleed(Random.Range(0, 10), location, angle);
 
 		if (!isAlive)
 			return true;
 
 		health -= damage;
-		exploder.transform.position = location + angle * Random.Range(-.1f, .15f) + new Vector3(0, Random.Range(-.1f, .1f), 0);
+		exploder.transform.position = location + angle * Random.Range(-.1f, .15f) + new Vector3(0, Random.Range(-.7f, .3f), 0);
 		if (health <= 0) {
 			Die(angle);
 		}
@@ -219,7 +218,7 @@ public abstract class Character : PossibleObjective, Damageable {
 	public void Bleed(int amount, Vector3 position, Vector3 velocity) {
 		PicaVoxel.Volume volume = Random.Range(0, 3) == 1 ? head : body;
 		if (volume == body)
-			position.y -= .6f;
+			position.y -= .5f;
 		for (int i = 0; i < amount; i++) {
 			PicaVoxel.Voxel voxel = new PicaVoxel.Voxel();
 			byte gb = (byte)Random.Range(0, 30);
@@ -228,7 +227,7 @@ public abstract class Character : PossibleObjective, Damageable {
 			Vector3 spawnPos = position + Random.insideUnitSphere * .2f;
 			PicaVoxel.PicaVoxelPoint pos = volume.GetVoxelArrayPosition(spawnPos);
 			PicaVoxel.VoxelParticleSystem.Instance.SpawnSingle(spawnPos, 
-				voxel, .1f, 4 * velocity + 3 * Random.insideUnitSphere);
+				voxel, .1f, 4 * velocity + 3 * Random.insideUnitSphere + Vector3.up * 0f);
 			PicaVoxel.Voxel? hit = volume.GetVoxelAtArrayPosition(pos.X, pos.Y, pos.Z);
 			if (hit != null) {
 				PicaVoxel.Voxel nonnullHit = (PicaVoxel.Voxel)hit;
