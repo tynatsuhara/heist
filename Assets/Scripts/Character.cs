@@ -3,6 +3,14 @@ using System.Collections;
 
 public abstract class Character : PossibleObjective, Damageable {
 
+	// Ranked in order of ascending priority
+	public enum Reaction : int {
+		MILDLY_SUSPICIOUS,
+		SUSPICIOUS,
+		AGGRO
+	};
+	private Vector3 suspicionPos;
+
 	public TextObject speech;
 	
 	protected Rigidbody rb;
@@ -42,7 +50,7 @@ public abstract class Character : PossibleObjective, Damageable {
 		get { return draggedBody != null; }
 	}
 
-	public abstract void Alert();
+	public abstract void Alert(Character.Reaction importance, Vector3 position);
 
 	public void KnockBack(float force) {
 		rb.AddForce(force * -transform.forward, ForceMode.Impulse);
@@ -82,18 +90,22 @@ public abstract class Character : PossibleObjective, Damageable {
 	public bool Damage(Vector3 location, Vector3 angle, float damage) {
 		if (!weaponDrawn)
 			damage *= 2f;
-		Invoke("Alert", .7f);
+
+		if (isAlive && !this.tag.Equals("Player"))
+			Invoke("Alert", .7f);
 
 		if (armor > 0) {
 			armor -= damage;
 			if (armor >= 0) {
-				rb.AddForce(300 * angle.normalized, ForceMode.Impulse);
+				if (tag != "Player")
+					rb.AddForce(300 * angle.normalized, ForceMode.Impulse);
 				return false;
 			}
 			damage = -armor;  // for applying leftover damage
 		}
 
-		Bleed(Random.Range(0, 10), location, angle);
+		if (isAlive)
+			Bleed(Random.Range(0, 10), location, angle);
 
 		bool wasAlive = isAlive;  // save it beforehand
 
@@ -103,9 +115,10 @@ public abstract class Character : PossibleObjective, Damageable {
 			Die(angle);
 		}
 
-		rb.AddForce(300 * angle.normalized, ForceMode.Impulse);
+		if (tag != "Player" || (wasAlive && !isAlive))
+			rb.AddForce(300 * angle.normalized, ForceMode.Impulse);
 
-		return wasAlive;
+		return !wasAlive;
 	}
 
 	public void Die() {		
@@ -113,10 +126,14 @@ public abstract class Character : PossibleObjective, Damageable {
 	}
 
 	public virtual void Die(Vector3 angle) {
-		Debug.Log("die in char");
+		GameManager.instance.MarkDead(this);
+
 		NavMeshAgent agent = GetComponent<NavMeshAgent>();
 		if (agent != null)
 			agent.enabled = false;
+		NavMeshObstacle obstacle = GetComponent<NavMeshObstacle>();
+		if (obstacle != null)
+			obstacle.enabled = true;
 
 		walk.StopWalk();
 		rb.constraints = RigidbodyConstraints.None;
@@ -146,7 +163,12 @@ public abstract class Character : PossibleObjective, Damageable {
 					"i knew this would happen",
 					"i can see the light",
 					"my life is flashing before my eyes",
-					"why do the good die young?"
+					"why do the good die young?",
+					"I hope there are memes in heaven",
+					"I'll be back",
+					"shiiiieeeeeeeeeet",
+					"take me, xenu",
+					"goodbye cruel world"
 				}, showFlash: true);
 		}
 
@@ -208,6 +230,12 @@ public abstract class Character : PossibleObjective, Damageable {
 		} 
 	}
 
+	public void Reload() {
+		if (weaponDrawn_ && gunScript != null && !isDragging) {
+			gunScript.Reload();
+		} 
+	}
+
 	protected Interactable currentInteractScript;
 	public void Interact() {
 		if (currentInteractScript != null) {
@@ -235,7 +263,7 @@ public abstract class Character : PossibleObjective, Damageable {
 		return weaponDrawn;
 	}
 
-	public bool CanSeeCharacter(GameObject target) {
+	public bool CanSee(GameObject target) {
 		float viewDist = 20f;
 
 		Vector3 diff = transform.position - target.transform.position;

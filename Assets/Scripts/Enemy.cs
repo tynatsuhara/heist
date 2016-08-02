@@ -31,7 +31,7 @@ public class Enemy : Character {
 
 	void Start() {
 		if (GameManager.instance.alarmsRaised) {
-			Alert();
+			Alert(Reaction.AGGRO, transform.position + transform.forward);
 		}
 	}
 	
@@ -57,43 +57,74 @@ public class Enemy : Character {
 	}
 
 	private void PassiveBehavior() {
-		// follow path if has one
-
-		if (!invoked && CanSeeCharacter(player) && playerScript.IsEquipped()) {
+		// TODO: follow path if has one
+		
+		if (!invoked && CanSeeEvidence()) {
 			float reactionTime = (Random.Range(.2f, 1f));
 			Invoke("GlimpsedPlayer", reactionTime);
 			invoked = true;
 		}
 	}
 
+
+	// TODO: can they see the player, bodies, etc?
+	private bool CanSeeEvidence() {
+		bool visiblePlayer = (CanSee(player) && playerScript.IsEquipped());
+		if (visiblePlayer)
+			return true;
+		
+		Character[] dead = GameManager.instance.DeadCharacters();
+		foreach (Character c in dead) {
+			if (CanSee(c.gameObject)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+
 	private void GlimpsedPlayer() {
-		if (!CanSeeCharacter(player) || !playerScript.IsEquipped()) {
+		if (!CanSee(player) || !playerScript.IsEquipped()) {
 			invoked = false;
 			return;
 		}
-		speech.Say("HEY WHAT THE FUCK", showFlash:true);
-		Alert();
+		speech.Say("HEY WHAT THE FUCK", showFlash:true, color:"red");
+		speech.SayRandom(new string[] {
+				"HEY WHAT THE FUCK",
+				"HANDS UP",
+				"YOU'RE GOING DOWN",
+				"TIME TO MEET HARAMBE",
+				"BIG MISTAKE",
+				"OH IT'S LIT"
+			}, showFlash: true, color: "red");
+		Alert(Reaction.AGGRO, player.transform.position);
 	}
 
+	public void Alert() {
+		Alert(Reaction.AGGRO, player.transform.position);
+	}
 
 	// States to be in:
 	//    passive
 	//    suspicious
 	//    alerted without knowing location   <- could accomplish with global lastKnownLocation?
 	//    alerted with knowing location
-	public override void Alert() {
+	public override void Alert(Character.Reaction importance, Vector3 position) {
 		if (alerted || !isAlive)
 			return;
-		alerted = true;
 		DrawWeapon();
 		LookAt(player.transform);
-		GameManager.instance.WereGoingLoudBoys();
+		if (importance == Reaction.AGGRO) {
+			alerted = true;
+			GameManager.instance.WereGoingLoudBoys();
+		}
 	}
 
 	private void AggroBehavior() {
 		bool inRange = (player.transform.position - transform.position).magnitude < gunScript.range;
 
-		if (CanSeeCharacter(player)) {
+		if (CanSee(player)) {
 			if (inRange) {
 				agent.destination = transform.position;
 			} else {

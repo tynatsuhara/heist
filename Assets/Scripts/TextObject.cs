@@ -11,7 +11,8 @@ public class TextObject : MonoBehaviour {
 	}
 
 	// Dispaly a message in the text box
-	public void Say(string message, bool showFlash = false, float duration = 2f) {
+	public void Say(string message, bool showFlash = false, float duration = 2f, string color = "white") {
+		SetColor(color);
 		CancelInvoke();
 		text.text = message.ToUpper();
 		text.enabled = true;
@@ -26,14 +27,14 @@ public class TextObject : MonoBehaviour {
 	}
 
 	// Display a series of messages in the text box
-	public void Say(string[] messages, bool showFlash = true, float interval = 2f) {
+	public void Say(string[] messages, bool showFlash = true, float interval = 2f, string color = "white") {
 		Debug.Log("TODO: implement Say with array param");
 	}
 
 	// Say a random message from the array
-	public void SayRandom(string[] messages, bool showFlash = true, float duration = 2f) {
+	public void SayRandom(string[] messages, bool showFlash = true, float duration = 2f, string color = "white") {
 		int index = Random.Range(0, messages.Length);
-		Say(messages[index], showFlash, duration);
+		Say(messages[index], showFlash, duration, color);
 	}
 
 	// Remove any displayed text
@@ -43,5 +44,17 @@ public class TextObject : MonoBehaviour {
 
 	private void ToggleEnabled() {
 		text.enabled = !text.enabled;
+	}
+
+	private void SetColor(string color) {
+		if (color == "red") {
+			text.material = GameUI.instance.textRed;
+		} else if (color == "green") {
+			text.material = GameUI.instance.textGreen;
+		} else if (color == "blue") {
+			text.material = GameUI.instance.textBlue;
+		} else {
+			text.material = GameUI.instance.textWhite;
+		}
 	}
 }

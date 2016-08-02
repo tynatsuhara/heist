@@ -25,7 +25,7 @@ public class PlayerControls : Character {
 		if (!isAlive)
 			return;
 
-		if (Input.GetKeyDown(KeyCode.Space)) {
+		if (Input.GetKeyDown(KeyCode.F)) {
 			DrawWeapon();
 		}
 
@@ -35,14 +35,18 @@ public class PlayerControls : Character {
 			InteractCancel();
 		}
 
-		if (Input.GetKeyDown(KeyCode.E)) {
+		if (Input.GetKeyDown(KeyCode.Space)) {
 			DragBody();
-		} else if (Input.GetKeyUp(KeyCode.E)) {
+		} else if (Input.GetKeyUp(KeyCode.Space)) {
 			ReleaseBody();
 		}
 
 		if (Input.GetMouseButton(0)) {
 			Shoot();
+		}
+
+		if (Input.GetKeyDown(KeyCode.R)) {
+			Reload();
 		}
 	}
  
@@ -81,7 +85,6 @@ public class PlayerControls : Character {
 	}
 
 	public override void Die(Vector3 angle) {
-		Debug.Log("die");
 		base.Die(angle);
 		GameManager.instance.GameOver(false);
 	}
@@ -97,6 +100,6 @@ public class PlayerControls : Character {
 		}
 	}
 
-	public override void Alert() {}
+	public override void Alert(Character.Reaction importance, Vector3 position) {}
 	public void RemoveBody() {}
 }

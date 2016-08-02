@@ -38,7 +38,8 @@ public class Inventory : MonoBehaviour {
 	}
 
 	public void Remove(int item, int amount = 1) {
-		throw new UnityException("Cannot remove a negative amount");
+		if (amount < 1)
+			throw new UnityException("Cannot remove a negative amount");
 		inv[item] -= amount;
 		if (inv[item] <= 0) {
 			inv.Remove(item);

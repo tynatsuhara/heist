@@ -17,6 +17,7 @@ public abstract class Gun : MonoBehaviour {
 
 	abstract public void Shoot();
 	abstract public void Release();
+	abstract public void Reload();
 
 	public void RaycastShoot(Vector3 source, Vector3 direction) {
 		RaycastHit[] hits = Physics.RaycastAll(source, direction, range)
