@@ -70,6 +70,7 @@ public class GameManager : MonoBehaviour {
 	public void GameOver(bool success) {
 		CancelInvoke("SpawnCop");
 		Debug.Log("game over! you " + (success ? "win!" : "lose!"));
+		this.enabled = false;
 	}
 
 	public void SpawnCop() {
