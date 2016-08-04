@@ -11,7 +11,7 @@ public class TextObject : MonoBehaviour {
 	}
 
 	// Dispaly a message in the text box
-	public void Say(string message, bool showFlash = false, float duration = 2f, string color = "white") {
+	public void Say(string message, bool showFlash = false, float duration = 2f, string color = "white", bool permanent = false) {
 		SetColor(color);
 		CancelInvoke();
 		text.text = message.ToUpper();
@@ -23,7 +23,9 @@ public class TextObject : MonoBehaviour {
 				Invoke("ToggleEnabled", flashSpeed * i);
 			}
 		}
-		Invoke("Clear", duration + (showFlash ? flashTimes * flashSpeed : 0));
+
+		if (!permanent)
+			Invoke("Clear", duration + (showFlash ? flashTimes * flashSpeed : 0));
 	}
 
 	// Display a series of messages in the text box

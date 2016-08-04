@@ -149,27 +149,7 @@ public abstract class Character : PossibleObjective, Damageable {
 		}
 
 		if (Random.Range(0, 2) == 0) {
-			speech.SayRandom(new string[] {
-					"aaahhhh",
-					"tell my wife i loved her",
-					"i'm coming for you, harambe",
-					"he got me",
-					"just a flesh wound",
-					"my spline!",
-					"blarglefargle",
-					"you can't kill me",
-					"avenge me",
-					"aack",
-					"i knew this would happen",
-					"i can see the light",
-					"my life is flashing before my eyes",
-					"why do the good die young?",
-					"I hope there are memes in heaven",
-					"I'll be back",
-					"shiiiieeeeeeeeeet",
-					"take me, xenu",
-					"goodbye cruel world"
-				}, showFlash: true);
+			speech.SayRandom(Speech.DEATH_QUOTES, showFlash: true);
 		}
 
 //		Invoke("RemoveBody", 60f);

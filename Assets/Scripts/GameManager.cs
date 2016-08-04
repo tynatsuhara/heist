@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour {
 	private List<PossibleObjective> objectives;
 	private List<Character> characters;
 	private List<Character> deadCharacters;
-	private PlayerControls player;
+	public PlayerControls player;
 
 	public bool alarmsRaised = false;
 
@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour {
 
 		// WIN!
 		if (!getaway.isEmpty) {
-			Debug.Log("U WIN");
+			GameOver(true);
 		}
 	}
 
@@ -64,15 +64,12 @@ public class GameManager : MonoBehaviour {
 			return;
 
 		alarmsRaised = true;
-		InvokeRepeating("SpawnCop", 1f, 10f);
-		InvokeRepeating("SpawnCop", 1f, 10f);
-		InvokeRepeating("SpawnCop", 1f, 10f);
-		InvokeRepeating("SpawnCop", 1f, 10f);
+		InvokeRepeating("SpawnCop", 1f, 5f);
 	}
 
 	public void GameOver(bool success) {
 		CancelInvoke("SpawnCop");
-		Debug.Log("game over");
+		Debug.Log("game over! you " + (success ? "win!" : "lose!"));
 	}
 
 	public void SpawnCop() {

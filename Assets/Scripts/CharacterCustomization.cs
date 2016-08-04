@@ -22,6 +22,8 @@ public class CharacterCustomization : MonoBehaviour {
 	public PicaVoxel.Volume arms;
 	public PicaVoxel.Volume gunz;
 
+	public Color32[] hairColors;
+	public Color32[] skinColors;
 
 	// outfit format: [body, head, legs, arms]
 	private string[] exampleOutfit = {
@@ -31,8 +33,14 @@ public class CharacterCustomization : MonoBehaviour {
 		"0 1-3"
 	};
 
+	public void ColorCharacter(string[] outfit, bool randomize = false) {
+		if (randomize && hairColors != null && hairColors.Length > 0) {
+			hairColor = hairColors[Random.Range(0, hairColors.Length)];
+		}
+		if (randomize && skinColors != null && skinColors.Length > 0) {
+			skinColor = skinColors[Random.Range(0, skinColors.Length)];
+		}
 
-	public void ColorCharacter(string[] outfit) {
 		var palettes = Parse(outfit);
 
 		Color32[] colors = {
@@ -64,7 +72,7 @@ public class CharacterCustomization : MonoBehaviour {
 							if (palette != null && palette.ContainsKey(vox.Value)) {
 								Color32 c = colors[palette[vox.Value]];
 								// DISCOLORATION FACTOR (maybe disable this randomness for later optimization)
-								int r = 7;
+								int r = 8;
 								vox.Color = new Color32(JiggleByte(c.r, r), JiggleByte(c.g, r), JiggleByte(c.b, r), (byte)0);
 							} else if (vox.Value == 255) {
 								// guts

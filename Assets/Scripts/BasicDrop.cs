@@ -7,6 +7,7 @@ public class BasicDrop : PossibleObjective {
 	private int itemID;
 
 	public int amount = 1;
+	public string label = "mysterious item";
 	public bool onlyForPlayer = true;
 	public bool mustBeEquipped = true;
 
@@ -40,7 +41,7 @@ public class BasicDrop : PossibleObjective {
 			|| (mustBeEquipped && !c.IsEquipped()))
 			return;
 
-		c.inventory.Add(item, amount);
+		c.inventory.Add(item, amount, label);
 
 		if (isObjective && !isCompleted)
 			MarkCompleted();

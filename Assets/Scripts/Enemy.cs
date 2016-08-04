@@ -11,14 +11,16 @@ public class Enemy : Character {
 	public float walkingAnimationThreshold;
 	private bool invoked;
 
-	private string[] outfit = {
-		"3 0-13 70-73; 0 14-69; 1 58-59 44-45 30-31 16-17",
+	private string[] copUniform = {
+		"0 0-73; 1 57 60 44 45 31; 2 46; 6 58 59; 4 14-27; 3 17",
 		"8 37 40; 7 26-33 44-51 60 62-69 71 78-89 96-119 91-94",
-		"3 1; 5 0",
-		"0 1-3"
+		"0 1; 5 0",
+		"done in Awake()"
 	};
 
 	void Awake () {
+		copUniform[3] = "0 " + Random.Range(1, 3) + "-3";  // sleeve length
+
 		rb = GetComponent<Rigidbody>();
 		gunScript = gun.GetComponent<Gun>();
 
@@ -26,7 +28,7 @@ public class Enemy : Character {
 		playerScript = player.GetComponent<Character>();
 		agent = GetComponent<NavMeshAgent>();
 		speech = GetComponentInChildren<TextObject>();
-		GetComponent<CharacterCustomization>().ColorCharacter(outfit);
+		GetComponent<CharacterCustomization>().ColorCharacter(copUniform, true);
 	}
 
 	void Start() {
@@ -85,19 +87,11 @@ public class Enemy : Character {
 
 
 	private void GlimpsedPlayer() {
-		if (!CanSee(player) || !playerScript.IsEquipped()) {
+		if (!CanSee(player) || !playerScript.IsEquipped() || !isAlive) {
 			invoked = false;
 			return;
 		}
-		speech.Say("HEY WHAT THE FUCK", showFlash:true, color:"red");
-		speech.SayRandom(new string[] {
-				"HEY WHAT THE FUCK",
-				"HANDS UP",
-				"YOU'RE GOING DOWN",
-				"TIME TO MEET HARAMBE",
-				"BIG MISTAKE",
-				"OH IT'S LIT"
-			}, showFlash: true, color: "red");
+		speech.SayRandom(Speech.ENEMY_SPOTTED_PLAYER, showFlash: true, color: "red");
 		Alert(Reaction.AGGRO, player.transform.position);
 	}
 
