@@ -267,7 +267,7 @@ public abstract class Character : PossibleObjective, Damageable {
 			return;
 		
 		Vector3 dir = transform.forward * 2f;
-		dir.y = -2;
+		dir.y = -3;
 		
 		RaycastHit hit;
 		if (!Physics.Raycast(transform.position, dir, out hit))

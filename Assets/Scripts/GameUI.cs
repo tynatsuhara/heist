@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class GameUI : MonoBehaviour {
 
@@ -11,12 +12,18 @@ public class GameUI : MonoBehaviour {
 	public Material textBlue;
 
 	public TextObject invText;
+	public Transform cursor;
 
 	private List<Dictionary<string, int>> displayedInventories;
 
 	void Awake () {
 		instance = this;
 		displayedInventories = new List<Dictionary<string, int>>();
+	}
+
+	void Update() {
+		cursor.transform.position = Input.mousePosition;
+		Cursor.visible = false;
 	}
 
 	public void UpdateInventory(Dictionary<string, int> dict) {
@@ -38,5 +45,15 @@ public class GameUI : MonoBehaviour {
 		}
 
 		invText.Say(result, permanent: true);
+	}
+
+	public void HitMarker() {
+		CancelInvoke("UnHitMarker");
+		cursor.GetComponent<RawImage>().material = textRed;
+		Invoke("UnHitMarker", .25f);
+	}
+
+	private void UnHitMarker() {
+		cursor.GetComponent<RawImage>().material = textWhite;
 	}
 }

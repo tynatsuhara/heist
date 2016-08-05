@@ -10,6 +10,8 @@ public class Pistol : Gun {
 	public int clipSize = 15;
 	private int bulletsFired = 0;
 	public float reloadSpeed = 1f;
+	public float shakePower = .3f;
+	public float shakeLength = .3f;
 
 	public override void Shoot() {
 		if (!canShoot)
@@ -22,6 +24,9 @@ public class Pistol : Gun {
 		canShoot = false;
 		bulletsFired++;
 		Invoke("ResetShoot", shootSpeed + (bulletsFired == clipSize ? reloadSpeed : 0));
+		if (bulletsFired == clipSize) {
+			transform.Translate(Vector3.down * .1f);
+		}
 
 		byte[] bytes = new byte[6];
 		bytes[0] = (byte)PicaVoxel.VoxelState.Active;
@@ -29,7 +34,7 @@ public class Pistol : Gun {
 		PicaVoxel.VoxelParticleSystem.Instance.SpawnSingle(transform.root.position + transform.root.forward * .45f,
 			vox, .05f, (transform.up - transform.right) * 2.5f + Random.insideUnitSphere * .5f);
 		
-		ScreenShake(.3f, .3f);
+		PlayerEffects(shakePower, shakeLength);
 
 		if (!silenced)
 			GameManager.instance.AlertInRange(Character.Reaction.AGGRO, 
@@ -37,20 +42,22 @@ public class Pistol : Gun {
 	}
 
 	public override void Reload() {
-		if (bulletsFired == clipSize)
+		if (bulletsFired == clipSize || bulletsFired == 0)
 			return;
 		
 		CancelInvoke("ResetShoot");
 		bulletsFired = clipSize;
 		canShoot = false;
+		transform.Translate(Vector3.down * .1f);
 		Invoke("ResetShoot", shootSpeed + reloadSpeed);
 
 	}
 
 	private void ResetShoot() {
 		canShoot = true;
-		if (bulletsFired % clipSize == 0) {
+		if (bulletsFired % clipSize == 0) {  // just finished reloading
 			bulletsFired = 0;
+			transform.Translate(Vector3.up * .1f);
 		}
 	}
 
