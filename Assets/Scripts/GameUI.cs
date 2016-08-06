@@ -12,6 +12,7 @@ public class GameUI : MonoBehaviour {
 	public Material textBlue;
 
 	public TextObject invText;
+	public TextObject ammoText;
 	public Transform cursor;
 
 	private List<Dictionary<string, int>> displayedInventories;
@@ -47,10 +48,14 @@ public class GameUI : MonoBehaviour {
 		invText.Say(result, permanent: true);
 	}
 
+	public void UpdateAmmo(int ammo, int clipSize) {
+		ammoText.Say(ammo + " / " + clipSize, permanent: true);
+	}
+
 	public void HitMarker() {
 		CancelInvoke("UnHitMarker");
 		cursor.GetComponent<RawImage>().material = textRed;
-		Invoke("UnHitMarker", .25f);
+		Invoke("UnHitMarker", .15f);
 	}
 
 	private void UnHitMarker() {

@@ -13,6 +13,12 @@ public class Pistol : Gun {
 	public float shakePower = .3f;
 	public float shakeLength = .3f;
 
+	void Start() {
+		if (isPlayer) {
+			GameUI.instance.UpdateAmmo(clipSize - bulletsFired, clipSize);
+		}
+	}
+
 	public override void Shoot() {
 		if (!canShoot)
 			return;
@@ -36,9 +42,14 @@ public class Pistol : Gun {
 		
 		PlayerEffects(shakePower, shakeLength);
 
-		if (!silenced)
+		if (!silenced) {
 			GameManager.instance.AlertInRange(Character.Reaction.AGGRO, 
 				transform.position, 15f, visual: (silenced ? transform.root.gameObject : null));
+		}
+
+		if (isPlayer) {
+			GameUI.instance.UpdateAmmo(clipSize - bulletsFired, clipSize);
+		}
 	}
 
 	public override void Reload() {

@@ -9,7 +9,7 @@ public abstract class Gun : MonoBehaviour {
 	public float damage;
 	public float range;
 
-	private bool isPlayer;
+	public bool isPlayer;
 
 	void Awake() {
 		owner = transform.root.GetComponent<Character>();

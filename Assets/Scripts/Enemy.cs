@@ -99,11 +99,8 @@ public class Enemy : Character {
 		Alert(Reaction.AGGRO, player.transform.position);
 	}
 
-	// States to be in:
-	//    passive
-	//    suspicious
-	//    alerted without knowing location   <- could accomplish with global lastKnownLocation?
-	//    alerted with knowing location
+
+	// TODO: being alerted without knowing location   <- could accomplish with global lastKnownLocation?
 	public override void Alert(Character.Reaction importance, Vector3 position) {
 		if (alerted || !isAlive)
 			return;
