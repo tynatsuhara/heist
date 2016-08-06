@@ -21,11 +21,12 @@ public abstract class Gun : MonoBehaviour {
 	abstract public void Shoot();
 	abstract public void Release();
 	abstract public void Reload();
+	abstract public void UpdateUI();
 
 	public void RaycastShoot(Vector3 source, Vector3 direction) {
 		RaycastHit[] hits = Physics.RaycastAll(source, direction, range)
 			.OrderBy(h => h.distance)
-			.Where(h => h.transform.root.name != "Player")
+			.Where(h => h.transform.root != transform.root)
 			.ToArray();
 		bool keepGoing = true;
 		bool hitEnemy = false;

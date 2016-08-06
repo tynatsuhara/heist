@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour {
 		// 3. get objectives
 		objectives = Object.FindObjectsOfType<PossibleObjective>().Where(x => x.isObjective && !x.isCompleted).ToList();
 		objectivesComplete = CheckObjectivesComplete();
+		GameUI.instance.UpdateObjectives(objectives.ToArray());
 	}
 	
 	void Update () {
@@ -81,6 +82,7 @@ public class GameManager : MonoBehaviour {
 	public void MarkObjectiveComplete(PossibleObjective po) {
 		po.isCompleted = true;
 		objectivesComplete = CheckObjectivesComplete();
+		GameUI.instance.UpdateObjectives(objectives.ToArray());
 	}
 
 	bool CheckObjectivesComplete() {

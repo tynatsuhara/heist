@@ -29,12 +29,12 @@ public class TextObject : MonoBehaviour {
 	}
 
 	// Display a series of messages in the text box
-	public void Say(string[] messages, bool showFlash = true, float interval = 2f, string color = "white") {
+	public void Say(string[] messages, bool showFlash = false, float interval = 2f, string color = "white") {
 		Debug.Log("TODO: implement Say with array param");
 	}
 
 	// Say a random message from the array
-	public void SayRandom(string[] messages, bool showFlash = true, float duration = 2f, string color = "white") {
+	public void SayRandom(string[] messages, bool showFlash = false, float duration = 2f, string color = "white") {
 		int index = Random.Range(0, messages.Length);
 		Say(messages[index], showFlash, duration, color);
 	}
@@ -55,6 +55,10 @@ public class TextObject : MonoBehaviour {
 			text.material = GameUI.instance.textGreen;
 		} else if (color == "blue") {
 			text.material = GameUI.instance.textBlue;
+		} else if (color == "orange") {
+			text.material = GameUI.instance.textOrange;
+		} else if (color == "yellow") {
+			text.material = GameUI.instance.textYellow;
 		} else {
 			text.material = GameUI.instance.textWhite;
 		}

@@ -13,12 +13,6 @@ public class Pistol : Gun {
 	public float shakePower = .3f;
 	public float shakeLength = .3f;
 
-	void Start() {
-		if (isPlayer) {
-			GameUI.instance.UpdateAmmo(clipSize - bulletsFired, clipSize);
-		}
-	}
-
 	public override void Shoot() {
 		if (!canShoot)
 			return;
@@ -48,7 +42,7 @@ public class Pistol : Gun {
 		}
 
 		if (isPlayer) {
-			GameUI.instance.UpdateAmmo(clipSize - bulletsFired, clipSize);
+			UpdateUI();
 		}
 	}
 
@@ -61,7 +55,6 @@ public class Pistol : Gun {
 		canShoot = false;
 		transform.Translate(Vector3.down * .1f);
 		Invoke("ResetShoot", shootSpeed + reloadSpeed);
-
 	}
 
 	private void ResetShoot() {
@@ -69,7 +62,14 @@ public class Pistol : Gun {
 		if (bulletsFired % clipSize == 0) {  // just finished reloading
 			bulletsFired = 0;
 			transform.Translate(Vector3.up * .1f);
+			if (isPlayer) {
+				UpdateUI();
+			}
 		}
+	}
+
+	public override void UpdateUI() {
+		GameUI.instance.UpdateAmmo(clipSize - bulletsFired, clipSize);
 	}
 
 	public override void Release() {}

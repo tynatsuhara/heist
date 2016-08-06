@@ -10,9 +10,13 @@ public class GameUI : MonoBehaviour {
 	public Material textRed;
 	public Material textGreen;
 	public Material textBlue;
+	public Material textYellow;
+	public Material textOrange;
 
 	public TextObject invText;
 	public TextObject ammoText;
+	public TextObject objectivesText;
+	public TextObject healthText;
 	public Transform cursor;
 
 	private List<Dictionary<string, int>> displayedInventories;
@@ -49,7 +53,11 @@ public class GameUI : MonoBehaviour {
 	}
 
 	public void UpdateAmmo(int ammo, int clipSize) {
-		ammoText.Say(ammo + " / " + clipSize, permanent: true);
+		ammoText.Say("" + ammo, permanent: true);
+	}
+
+	public void UpdateHealth(float health, float healthMax, float armor, float armorMax) {
+		healthText.Say(armor + " (" + health + ")", permanent: true);
 	}
 
 	public void HitMarker() {
@@ -60,5 +68,15 @@ public class GameUI : MonoBehaviour {
 
 	private void UnHitMarker() {
 		cursor.GetComponent<RawImage>().material = textWhite;
+	}
+
+	public void UpdateObjectives(PossibleObjective[] array) {
+		string res = "";
+		foreach (PossibleObjective po in array) {
+			if (po.isObjective && !po.isCompleted && !po.isLocked) {
+				res += po.message + "\n";
+			}
+		}
+		objectivesText.Say(res, permanent: true);
 	}
 }

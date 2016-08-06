@@ -16,8 +16,11 @@ public abstract class Character : PossibleObjective, Damageable {
 	protected Rigidbody rb;
 	public WalkCycle walk;
 
+	public float healthMax;
 	public float health;
+	public float armorMax;
 	public float armor;
+
 	public Inventory inventory;
 	public Inventory weaponInv;
 
@@ -87,18 +90,24 @@ public abstract class Character : PossibleObjective, Damageable {
 		}
 	}
 		
-	public bool Damage(Vector3 location, Vector3 angle, float damage) {
+	public virtual bool Damage(Vector3 location, Vector3 angle, float damage) {
+		bool isPlayer = tag.Equals("Player");
+
 		if (!weaponDrawn)
 			damage *= 2f;
 
-		if (isAlive && !this.tag.Equals("Player"))
+		if (isAlive && !isPlayer)
 			Invoke("Alert", .7f);
 
 		if (armor > 0) {
 			armor -= damage;
 			if (armor >= 0) {
-				if (tag != "Player")
+				if (!isPlayer)
 					rb.AddForce(300 * angle.normalized, ForceMode.Impulse);
+				
+				if (isPlayer)
+					GameUI.instance.UpdateHealth(health, healthMax, armor, armorMax);
+
 				return false;
 			}
 			damage = -armor;  // for applying leftover damage
@@ -115,8 +124,11 @@ public abstract class Character : PossibleObjective, Damageable {
 			Die(angle);
 		}
 
-		if (tag != "Player" || (wasAlive && !isAlive))
+		if (!isPlayer || (wasAlive && !isAlive))
 			rb.AddForce(300 * angle.normalized, ForceMode.Impulse);
+
+		if (isPlayer)
+			GameUI.instance.UpdateHealth(health, healthMax, armor, armorMax);
 
 		return !wasAlive;
 	}

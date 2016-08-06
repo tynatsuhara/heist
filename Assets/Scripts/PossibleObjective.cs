@@ -7,6 +7,7 @@ public abstract class PossibleObjective : MonoBehaviour {
 	public bool isRequired;
 	public bool isCompleted;
 	public bool isLocked;
+	public string message = "mysterious objective";
 
 	public PossibleObjective[] nextObjectives;
 
