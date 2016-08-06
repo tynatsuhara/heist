@@ -30,6 +30,9 @@ public class VaultDoor : PossibleObjective, Interactable, Powerable {
 	}
 	
 	public void Open() {
+		if (opening)
+			return;
+		
 		if (isObjective)
 			MarkCompleted();
 		
@@ -55,7 +58,7 @@ public class VaultDoor : PossibleObjective, Interactable, Powerable {
 	public void Uninteract(Character character) {}
 
 	public void Power() {
-		Open();
+		Invoke("Open", 2f);
 	}
 	public void Unpower() {}
 }
