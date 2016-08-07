@@ -57,7 +57,11 @@ public class GameUI : MonoBehaviour {
 	}
 
 	public void UpdateHealth(float health, float healthMax, float armor, float armorMax) {
-		healthText.Say(armor + " (" + health + ")", permanent: true);
+		if (armor <= 0) {
+			healthText.Say("" + health, permanent: true);
+		} else {
+			healthText.Say(armor + " (" + health + ")", permanent: true);
+		}
 	}
 
 	public void HitMarker() {

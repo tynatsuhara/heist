@@ -120,12 +120,18 @@ public abstract class Character : PossibleObjective, Damageable {
 
 		health -= damage;
 		exploder.transform.position = location + angle * Random.Range(-.1f, .15f) + new Vector3(0, Random.Range(-.7f, .3f), 0);
-		if (health <= 0 && wasAlive) {
+		if (!isAlive && wasAlive) {
 			Die(angle);
 		}
 
-		if (!isPlayer || (wasAlive && !isAlive))
-			rb.AddForce(300 * angle.normalized, ForceMode.Impulse);
+		// regular knockback
+		if (!isPlayer || !isAlive) {
+			int forceVal = Random.Range(100, 350);
+			if (wasAlive && !isAlive) {
+				forceVal *= 2;
+			}
+			rb.AddForceAtPosition(forceVal * angle.normalized, location, ForceMode.Impulse);
+		}
 
 		if (isPlayer)
 			GameUI.instance.UpdateHealth(health, healthMax, armor, armorMax);
