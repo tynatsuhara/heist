@@ -26,6 +26,7 @@ public class Pistol : Gun {
 		Invoke("ResetShoot", shootSpeed + (bulletsFired == clipSize ? reloadSpeed : 0));
 		if (bulletsFired == clipSize) {
 			transform.Translate(Vector3.down * .1f);
+			transform.Translate(Vector3.forward * .1f);
 		}
 
 		byte[] bytes = new byte[6];
@@ -54,6 +55,7 @@ public class Pistol : Gun {
 		bulletsFired = clipSize;
 		canShoot = false;
 		transform.Translate(Vector3.down * .1f);
+		transform.Translate(Vector3.forward * .1f);
 		Invoke("ResetShoot", shootSpeed + reloadSpeed);
 	}
 
@@ -62,6 +64,7 @@ public class Pistol : Gun {
 		if (bulletsFired % clipSize == 0) {  // just finished reloading
 			bulletsFired = 0;
 			transform.Translate(Vector3.up * .1f);
+			transform.Translate(Vector3.back * .1f);
 			if (isPlayer) {
 				UpdateUI();
 			}

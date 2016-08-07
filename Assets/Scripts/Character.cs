@@ -126,11 +126,13 @@ public abstract class Character : PossibleObjective, Damageable {
 
 		// regular knockback
 		if (!isPlayer || !isAlive) {
-			int forceVal = Random.Range(100, 350);
+			float forceVal = Random.Range(100, 350);
 			if (wasAlive && !isAlive) {
-				forceVal *= 2;
+				forceVal *= 1.5f;
+			} else if (!isAlive) {
+				forceVal *= .5f;
 			}
-			rb.AddForceAtPosition(forceVal * angle.normalized, location, ForceMode.Impulse);
+			rb.AddForceAtPosition(forceVal * angle.normalized, exploder.transform.position, ForceMode.Impulse);
 		}
 
 		if (isPlayer)

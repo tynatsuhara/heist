@@ -3,12 +3,14 @@ using System.Collections;
 
 public class Door : MonoBehaviour, Interactable, Powerable {
 
+	public Door mirror;
 	public bool locked;
 	public Inventory.Item key;
 	private int key_;
 	private bool open;
 	public GameObject[] doorStates;
 	private TextObject text;
+	private int state;
 
 	public void Start() {
 		text = GetComponentInChildren<TextObject>();
@@ -38,9 +40,22 @@ public class Door : MonoBehaviour, Interactable, Powerable {
 	}
 
 	private void SetState(int state) {
+		this.state = state;
 		for (int i = 0; i < doorStates.Length; i++) {
 			doorStates[i].SetActive(i == state);
 		}
+	}
+
+	private void Mirror(Door other) {
+		SetState(other.state);
+		this.locked = other.locked;
+		this.key = other.key;
+		this.key_ = other.key_;
+		this.open = other.open;
+	}
+
+	public void Mirror() {
+		mirror.Mirror(this);
 	}
 
 	public void Uninteract(Character character) {}
