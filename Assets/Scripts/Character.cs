@@ -303,7 +303,7 @@ public abstract class Character : PossibleObjective, Damageable {
 		if (draggedBody != null) {
 			Vector3 dragPos = transform.position + transform.forward.normalized * 1.2f;
 			dragPos.y = draggedBody.transform.position.y;
-			draggedBody.transform.position = Vector3.Lerp(draggedBody.transform.position, dragPos, .3f);
+			draggedBody.GetComponent<Rigidbody>().MovePosition(Vector3.Lerp(draggedBody.transform.position, dragPos, .3f));
 		}
 	}
 

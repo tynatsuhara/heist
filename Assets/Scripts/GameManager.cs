@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour {
 	void Start () {
 
 		// 1. generate level
-		GetComponent<LevelBuilder>().Build();
+		GetComponent<LevelBuilder>().Build(5, 7);
 
 		// 2. spawn characters?
 		characters = Object.FindObjectsOfType<Character>().Where(x => !(x is PlayerControls)).ToList();
@@ -77,7 +77,7 @@ public class GameManager : MonoBehaviour {
 
 	public void SpawnCop() {
 		GameObject enemy = (GameObject) Instantiate(enemyPrefabs[0], 
-			new Vector3(-5f, 1, -8) + 5f * Random.insideUnitSphere, Quaternion.identity);
+			new Vector3(6f, 1f, 6f) + 5f * Random.insideUnitSphere, Quaternion.identity);
 	}
 
 	public void MarkObjectiveComplete(PossibleObjective po) {
