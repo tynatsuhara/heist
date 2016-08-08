@@ -75,7 +75,8 @@ public class PlayerControls : Character {
 			x * Mathf.Sin((cameraRotation + 90) * Mathf.Deg2Rad));
 		pos.z += speed * (z * Mathf.Cos(cameraRotation * Mathf.Deg2Rad) + 
 			x * Mathf.Cos((cameraRotation + 90) * Mathf.Deg2Rad));
-		transform.position = pos;
+//		transform.position = pos;
+		rb.MovePosition(pos);
 
 		if ((x != 0 || z != 0) && !walk.isWalking) {
 			walk.StartWalk();
