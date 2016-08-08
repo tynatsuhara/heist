@@ -11,7 +11,7 @@ public class LevelBuilder : MonoBehaviour {
 		for (int i = 0; i < width; i++) {
 			Quaternion spawnRotation = Quaternion.identity;
 			spawnRotation.eulerAngles = spawnRotation.eulerAngles + new Vector3(0, 90, 0);
-			Instantiate(wallPrefab, new Vector3(i * 2, -.1f, 0), spawnRotation);
+			Instantiate(wallPrefab, new Vector3(i * 2 + 1, 1.1f, -.15f), spawnRotation);
 		}
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {

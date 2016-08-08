@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour {
 	void Start () {
 
 		// 1. generate level
-		GetComponent<LevelBuilder>().Build(5, 7);
+		GetComponent<LevelBuilder>().Build(12, 10);
 
 		// 2. spawn characters?
 		characters = Object.FindObjectsOfType<Character>().Where(x => !(x is PlayerControls)).ToList();
