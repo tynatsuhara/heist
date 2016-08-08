@@ -126,7 +126,7 @@ public abstract class Character : PossibleObjective, Damageable {
 
 		// regular knockback
 		if (!isPlayer || !isAlive) {
-			float forceVal = Random.Range(150, 350);
+			float forceVal = Random.Range(400, 500);
 			if (wasAlive && !isAlive) {
 				forceVal *= 1.5f;
 			} else if (!isAlive) {
