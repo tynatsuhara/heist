@@ -7,7 +7,7 @@ public class GunDrop : BasicDrop {
 		if (item == Inventory.Item.NONE)
 			return;
 
-		Character c = other.transform.root.GetComponent<Character>();
+		Character c = other.GetComponentInParent<Character>();
 		if (c == null)
 			return;
 

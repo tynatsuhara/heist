@@ -12,6 +12,10 @@ public class Door : MonoBehaviour, Interactable, Powerable {
 	private TextObject text;
 	private int state;
 
+	public Teleporter openRightTeleporter;
+	public Teleporter openLeftTeleporter;
+
+
 	public void Start() {
 		text = GetComponentInChildren<TextObject>();
 	}
@@ -48,6 +52,10 @@ public class Door : MonoBehaviour, Interactable, Powerable {
 
 	private void Mirror(Door other) {
 		SetState(other.state);
+		openRightTeleporter.translation = -openRightTeleporter.transform.position + other.openRightTeleporter.transform.position;
+		other.openRightTeleporter.translation = openRightTeleporter.translation * -1f;
+		openLeftTeleporter.translation = -openLeftTeleporter.transform.position + other.openLeftTeleporter.transform.position;
+		other.openLeftTeleporter.translation = openLeftTeleporter.translation * -1f;
 		this.locked = other.locked;
 		this.key = other.key;
 		this.key_ = other.key_;

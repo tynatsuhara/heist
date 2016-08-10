@@ -245,7 +245,7 @@ public abstract class Character : PossibleObjective, Damageable {
 
 		RaycastHit hit;
 		if (Physics.Raycast(transform.position, transform.forward, out hit, 1.8f)) {
-			currentInteractScript = hit.collider.transform.root.GetComponent<Interactable>();
+			currentInteractScript = hit.collider.GetComponentInParent<Interactable>();
 			if (currentInteractScript != null) {
 				currentInteractScript.Interact(this);
 			}

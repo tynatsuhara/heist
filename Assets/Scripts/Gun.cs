@@ -25,8 +25,8 @@ public abstract class Gun : MonoBehaviour {
 
 	public void RaycastShoot(Vector3 source, Vector3 direction) {
 		RaycastHit[] hits = Physics.RaycastAll(source, direction, range)
-			.OrderBy(h => h.distance)
 			.Where(h => h.transform.root != transform.root)
+			.OrderBy(h => h.distance)
 			.ToArray();
 		bool keepGoing = true;
 		bool hitEnemy = false;
@@ -35,7 +35,7 @@ public abstract class Gun : MonoBehaviour {
 			if (damageScript == null)
 				break;
 			if (!hitEnemy) {
-				Character c = hits[i].transform.root.GetComponent<Character>();
+				Character c = hits[i].transform.GetComponentInParent<Character>();
 				hitEnemy = c != null && c.isAlive;
 			}
 			keepGoing = damageScript.Damage(hits[i].point, direction.normalized, damage);

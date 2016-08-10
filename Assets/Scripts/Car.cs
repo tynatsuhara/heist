@@ -86,13 +86,13 @@ public class Car : MonoBehaviour, Damageable, Interactable {
 	public void Uninteract(Character character) {}
 
 	void OnTriggerEnter(Collider other) {
-		Character c = other.transform.root.GetComponent<Character>();
+		Character c = other.GetComponentInParent<Character>();
 		if (c != null)
 			charactersByDoors.Add(c);
 	}
 
 	void OnTriggerExit(Collider other) {
-		Character c = other.transform.root.GetComponent<Character>();
+		Character c = other.GetComponentInParent<Character>();
 		if (c != null)
 			charactersByDoors.Remove(c);
 	}

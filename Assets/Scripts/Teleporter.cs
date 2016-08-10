@@ -12,9 +12,7 @@ public class Teleporter : MonoBehaviour {
 
 		hasTeleported = true;
 
-		Vector3 pos = other.transform.root.position;
-		pos += translation;
-		other.transform.root.position = pos;
+		other.transform.root.position += translation;
 
 		Door d = GetComponentInParent<Door>();
 		if (d != null) {
