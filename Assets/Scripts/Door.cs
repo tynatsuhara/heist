@@ -50,12 +50,13 @@ public class Door : MonoBehaviour, Interactable, Powerable {
 		}
 	}
 
-	private void Mirror(Door other) {
+	public void Mirror(Door other) {
+		mirror = other;
 		SetState(other.state);
-		openRightTeleporter.translation = -openRightTeleporter.transform.position + other.openRightTeleporter.transform.position;
-		other.openRightTeleporter.translation = openRightTeleporter.translation * -1f;
-		openLeftTeleporter.translation = -openLeftTeleporter.transform.position + other.openLeftTeleporter.transform.position;
-		other.openLeftTeleporter.translation = openLeftTeleporter.translation * -1f;
+		openRightTeleporter.translation = -transform.position + other.transform.position;
+		other.openLeftTeleporter.translation = openRightTeleporter.translation * -1f;
+		openLeftTeleporter.translation = -transform.position + other.transform.position;
+		other.openRightTeleporter.translation = openLeftTeleporter.translation * -1f;
 		this.locked = other.locked;
 		this.key = other.key;
 		this.key_ = other.key_;
