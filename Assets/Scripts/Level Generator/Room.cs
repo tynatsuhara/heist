@@ -6,6 +6,8 @@ public abstract class Room : MonoBehaviour {
 	public int spawnPriority;  // 0 is the best priority, 1 is worse, etc
 
 	public int id;
+	public int xPos;  // x pos in imaginary grid of rooms
+	public int yPos;  // y pos in imaginary grid of rooms
 	public int widthMin;
 	public int widthMax;
 	public int width;

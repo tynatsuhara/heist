@@ -77,38 +77,53 @@ public class LevelBuilder : MonoBehaviour {
 						continue;
 					lookedAtRooms.Add(attachTo);
 
+
 					// try each direction in a random order
 					List<int> dirs = new int[]{ 0, 1, 2, 3 }.ToList();
+
+					bool canPutRoomAbove = FindRoomAt(spawnedRooms, attachTo.xPos, attachTo.yPos + 1) == null;
+					bool canPutRoomBelow = FindRoomAt(spawnedRooms, attachTo.xPos, attachTo.yPos - 1) == null;
+					bool canPutRoomLeft = FindRoomAt(spawnedRooms, attachTo.xPos - 1, attachTo.yPos) == null;
+					bool canPutRoomRight = FindRoomAt(spawnedRooms, attachTo.xPos + 1, attachTo.yPos) == null;
+
 					while (dirs.Count > 0 && !attachedRoom) {
 						int removeIndex = Random.Range(0, dirs.Count);
 						int dir = dirs[removeIndex];
 						dirs.RemoveAt(removeIndex);
 
-						if (dir == 0 && attachTo.CanAddTopDoor() && r.CanAddBottomDoor()) {
+						if (canPutRoomAbove && dir == 0 && attachTo.CanAddTopDoor() && r.CanAddBottomDoor()) {
 							attachedRoom = true;
 							Door d1 = attachTo.AddTopDoor();
 							Door d2 = r.AddBottomDoor();
+							r.xPos = attachTo.xPos;
+							r.yPos = attachTo.yPos + 1;
 							d1.Mirror(d2);
 						}
 
-						if (dir == 1 && attachTo.CanAddBottomDoor() && r.CanAddTopDoor()) {
+						if (canPutRoomBelow && dir == 1 && attachTo.CanAddBottomDoor() && r.CanAddTopDoor()) {
 							attachedRoom = true;
 							Door d1 = attachTo.AddBottomDoor();
 							Door d2 = r.AddTopDoor();
+							r.xPos = attachTo.xPos;
+							r.yPos = attachTo.yPos - 1;
 							d1.Mirror(d2);
 						}
 
-						if (dir == 2 && attachTo.CanAddLeftDoor() && r.CanAddRightDoor()) {
+						if (canPutRoomLeft && dir == 2 && attachTo.CanAddLeftDoor() && r.CanAddRightDoor()) {
 							attachedRoom = true;
 							Door d1 = attachTo.AddLeftDoor();
 							Door d2 = r.AddRightDoor();
+							r.xPos = attachTo.xPos - 1;
+							r.yPos = attachTo.yPos;
 							d1.Mirror(d2);
 						}
 
-						if (dir == 3 && attachTo.CanAddRightDoor() && r.CanAddLeftDoor()) {
+						if (canPutRoomRight && dir == 3 && attachTo.CanAddRightDoor() && r.CanAddLeftDoor()) {
 							attachedRoom = true;
 							Door d1 = attachTo.AddRightDoor();
 							Door d2 = r.AddLeftDoor();
+							r.xPos = attachTo.xPos + 1;
+							r.yPos = attachTo.yPos;
 							d1.Mirror(d2);
 						}
 					}
@@ -121,5 +136,17 @@ public class LevelBuilder : MonoBehaviour {
 		}
 			
 		rooms.ForEach(x => x.Build());
+	}
+
+	/**
+	 * Finds a room in the room grid at the given coords.
+	 * Returns null if no room is found
+	 */
+	private Room FindRoomAt(List<Room> rooms, int x, int y) {
+		foreach (Room r in rooms) {
+			if (r.xPos == x && r.yPos == y)
+				return r;
+		}
+		return null;
 	}
 }
