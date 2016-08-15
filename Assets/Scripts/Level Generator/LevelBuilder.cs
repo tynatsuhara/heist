@@ -134,6 +134,27 @@ public class LevelBuilder : MonoBehaviour {
 			// Remove these rooms
 			roomsToSpawn = roomsToSpawn.Where(x => x.spawnPriority > priority).ToList();
 		}
+
+		// Link adjacent rooms
+		foreach (Room r in rooms) {
+			Room above = FindRoomAt(rooms, r.xPos, r.yPos + 1);
+			if (above != null && above != r) {
+				if (above.CanAddBottomDoor() && r.CanAddTopDoor()) {
+					Door d1 = above.AddBottomDoor();
+					Door d2 = r.AddTopDoor();
+					d1.Mirror(d2);
+				}
+			}
+
+			Room right = FindRoomAt(rooms, r.xPos + 1, r.yPos);
+			if (right != null && above != r) {
+				if (right.CanAddLeftDoor() && r.CanAddRightDoor()) {
+					Door d1 = right.AddLeftDoor();
+					Door d2 = r.AddRightDoor();
+					d1.Mirror(d2);
+				}
+			}
+		}
 			
 		rooms.ForEach(x => x.Build());
 	}

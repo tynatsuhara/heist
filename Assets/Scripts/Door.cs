@@ -52,6 +52,7 @@ public class Door : MonoBehaviour, Interactable, Powerable {
 
 	public void Mirror(Door other) {
 		mirror = other;
+		other.mirror = this;
 		SetState(other.state);
 		openRightTeleporter.translation = -transform.position + other.transform.position;
 		other.openLeftTeleporter.translation = openRightTeleporter.translation * -1f;
