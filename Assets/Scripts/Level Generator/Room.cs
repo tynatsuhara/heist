@@ -34,6 +34,10 @@ public abstract class Room : MonoBehaviour {
 	public abstract Door AddLeftDoor();
 
 	void Awake() {
+		ChooseSize();
+	}
+
+	public void ChooseSize() {
 		width = Random.Range(widthMin, widthMax + 1);
 		height = Random.Range(heightMin, heightMax + 1);
 	}

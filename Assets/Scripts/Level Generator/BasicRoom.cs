@@ -2,6 +2,7 @@
 using System.Collections;
 
 public class BasicRoom : Room {
+	
 	public override bool CanAddBottomDoor() {
 		return bottomDoorIndex == -1;
 	}
