@@ -3,7 +3,6 @@ using System.Collections;
 
 public class Door : MonoBehaviour, Interactable, Powerable {
 
-	public Door mirror;
 	public bool locked;
 	public Inventory.Item key;
 	private int key_;
@@ -48,24 +47,6 @@ public class Door : MonoBehaviour, Interactable, Powerable {
 		for (int i = 0; i < doorStates.Length; i++) {
 			doorStates[i].SetActive(i == state);
 		}
-	}
-
-	public void Mirror(Door other) {
-		mirror = other;
-		other.mirror = this;
-		SetState(other.state);
-		openRightTeleporter.translation = -transform.position + other.transform.position;
-		other.openLeftTeleporter.translation = openRightTeleporter.translation * -1f;
-		openLeftTeleporter.translation = -transform.position + other.transform.position;
-		other.openRightTeleporter.translation = openLeftTeleporter.translation * -1f;
-		this.locked = other.locked;
-		this.key = other.key;
-		this.key_ = other.key_;
-		this.open = other.open;
-	}
-
-	public void Mirror() {
-		mirror.Mirror(this);
 	}
 
 	public void Uninteract(Character character) {}

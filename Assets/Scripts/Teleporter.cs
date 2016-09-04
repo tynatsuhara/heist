@@ -14,11 +14,6 @@ public class Teleporter : MonoBehaviour {
 
 		other.transform.root.position += translation;
 
-		Door d = GetComponentInParent<Door>();
-		if (d != null) {
-			d.Mirror();
-		}
-
 		Invoke("BoolSwitch", .3f);
 	}
 
