@@ -4,6 +4,7 @@ using System.Collections;
 public class Teleporter : MonoBehaviour {
 
 	public Vector3 translation;
+	public bool relative = true;
 	private bool hasTeleported;
 
 	void OnTriggerEnter(Collider other) {
@@ -12,7 +13,11 @@ public class Teleporter : MonoBehaviour {
 
 		hasTeleported = true;
 
-		other.transform.root.position += translation;
+		if (relative) {
+			other.transform.root.position += translation;
+		} else {
+			other.transform.root.position = translation;
+		}
 
 		Invoke("BoolSwitch", .3f);
 	}
