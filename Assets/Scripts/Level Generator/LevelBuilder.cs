@@ -41,7 +41,7 @@ public class LevelBuilder : MonoBehaviour {
 		for (int i = 0; i < roomSpawnAmount.Length; i++) {
 			for (int j = 0; j < roomSpawnAmount[i]; j++) {
 				if (roomPrefabs[i] != null) {
-					// spawn the room?
+					rooms.Add(Instantiate(roomPrefabs[i]).GetComponent<Room>());
 				}
 			}
 		}
