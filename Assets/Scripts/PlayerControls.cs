@@ -69,6 +69,8 @@ public class PlayerControls : Character {
 		float speed = moveSpeed;
 		if (draggedBody != null)
 			speed *= .5f;
+		if (Cheats.instance.IsCheatEnabled("konami"))
+			speed *= 2f;
 
 		Vector3 pos = transform.position;
 		pos.x += speed * (z * Mathf.Sin(cameraRotation * Mathf.Deg2Rad) + 
