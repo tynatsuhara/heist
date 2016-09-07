@@ -36,7 +36,7 @@ public class RoomGrid {
 		}
 		Room returnVal = null;
 		if (map[x].ContainsKey(y)) {
-			returnVal = map[x];
+			returnVal = map[x][y];
 		}
 		map[x][y] = r;
 		return returnVal;
