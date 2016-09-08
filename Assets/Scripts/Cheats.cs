@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class Cheats : MonoBehaviour {
 
@@ -47,6 +48,11 @@ public class Cheats : MonoBehaviour {
 				prevKeys.Add(k);
 				CheckAll();
 			}
+		}
+
+		// no need to store hundreds of keycodes
+		if (prevKeys.Count > 100) {
+			prevKeys = prevKeys.Skip(80).ToList();
 		}
 	}
 
