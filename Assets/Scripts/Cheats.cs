@@ -65,8 +65,9 @@ public class Cheats : MonoBehaviour {
 				}
 			}
 
-			if (match) {
+			if (match && !enabledCheats[key]) {
 				enabledCheats[key] = true;
+				GameUI.instance.topCenterText.Say("Cheat Enabled: " + key.ToUpper());
 				Debug.Log(key + " cheat enabled");
 			}
 		}

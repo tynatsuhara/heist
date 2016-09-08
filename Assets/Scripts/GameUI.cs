@@ -17,6 +17,7 @@ public class GameUI : MonoBehaviour {
 	public TextObject ammoText;
 	public TextObject objectivesText;
 	public TextObject healthText;
+	public TextObject topCenterText;
 	public Transform cursor;
 
 	private List<Dictionary<string, int>> displayedInventories;
