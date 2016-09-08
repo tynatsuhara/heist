@@ -38,6 +38,10 @@ public class WalkCycle : MonoBehaviour {
 	}
 	
 	void Update () {
+		if (GameManager.paused) {
+			return;
+		}
+
 		timeElapsed += Time.deltaTime;
 		if (timeElapsed >= interval) {
 			timeElapsed %= interval;

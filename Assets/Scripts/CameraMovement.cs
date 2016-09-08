@@ -19,6 +19,8 @@ public class CameraMovement : MonoBehaviour {
 	private Quaternion rotationGoal;
 	private Vector3 diff;
 
+	private float startTime;
+
 	void Start () {
 		instance = this;
 
@@ -37,6 +39,7 @@ public class CameraMovement : MonoBehaviour {
 		// rotation
 		bool rotateButtonPress = Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.C);
 		if (rotateButtonPress) {
+			startTime = Time.realtimeSinceStartup;
 			int dir = Input.GetKeyDown(KeyCode.Z) ? -1 : 1;
 			Quaternion tempRot = transform.rotation;
 			transform.rotation = rotationGoal;
@@ -46,11 +49,14 @@ public class CameraMovement : MonoBehaviour {
 			transform.rotation = tempRot;
 			rotating = true;
 		} 
-		if (rotating)
-			transform.rotation = Quaternion.Slerp(transform.rotation, rotationGoal, rotationSpeed * Time.deltaTime);
+		if (rotating) {
+			// not linked to deltaTime, since time is frozen when paused
+			float realTimeElapsed = (Time.realtimeSinceStartup - startTime);
+			transform.rotation = Quaternion.Slerp(transform.rotation, rotationGoal, rotationSpeed * realTimeElapsed);
+		}
 
 		// shaking
-		if (timeElapsed < duration) {
+		if (timeElapsed < duration && !GameManager.paused) {
 			transform.position += Random.insideUnitSphere * power * (duration - timeElapsed);
 			timeElapsed += Time.deltaTime;
 		}

@@ -14,6 +14,10 @@ public class VaultDoor : PossibleObjective, Interactable, Powerable {
 	private bool opening;
 
 	void Update() {
+		if (GameManager.paused) {
+			return;
+		}
+
 		if (burning)
 			Burn();
 

@@ -25,7 +25,7 @@ public class PlayerControls : Character {
 	}
 
 	void GetInput() {
-		if (!isAlive)
+		if (!isAlive || GameManager.paused)
 			return;
 
 		if (Input.GetKeyDown(KeyCode.F)) {
@@ -54,7 +54,7 @@ public class PlayerControls : Character {
 	}
  
 	void FixedUpdate () {
-		if (!isAlive)
+		if (!isAlive || GameManager.paused)
 			return;
 		
     	LookAtMouse();

@@ -53,6 +53,7 @@ public class GameManager : MonoBehaviour {
 	private void CheckPause() {
 		if (Input.GetKeyDown(KeyCode.Escape)) {
 			paused = !paused;
+			Time.timeScale = paused ? 0 : 1;
 		}
 	}
 

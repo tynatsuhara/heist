@@ -39,7 +39,7 @@ public class Enemy : Character {
 	
 	// Update is called once per frame
 	void Update () {
-		if (!isAlive)
+		if (!isAlive || GameManager.paused)
 			return;
 
 		LegAnimation();
@@ -51,7 +51,7 @@ public class Enemy : Character {
 	}
 
 	void FixedUpdate () {
-		if (!isAlive)
+		if (!isAlive || GameManager.paused)
 			return;
 
 		Drag();
