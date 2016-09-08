@@ -6,6 +6,7 @@ using System.Linq;
 public class GameManager : MonoBehaviour {
 
 	public static GameManager instance;
+	public static bool paused = false;
 
 	public GameObject[] enemyPrefabs;
 	public Car getaway;
@@ -44,6 +45,14 @@ public class GameManager : MonoBehaviour {
 		// WIN!
 		if (!getaway.isEmpty) {
 			GameOver(true);
+		}
+
+		CheckPause();
+	}
+
+	private void CheckPause() {
+		if (Input.GetKeyDown(KeyCode.Escape)) {
+			paused = !paused;
 		}
 	}
 

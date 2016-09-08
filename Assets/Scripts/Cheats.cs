@@ -39,6 +39,9 @@ public class Cheats : MonoBehaviour {
 	}
 
 	void Update() {
+		if (!GameManager.paused)
+			return;
+
 		foreach (KeyCode k in trackedKeys) {
 			if (Input.GetKeyDown(k)) {
 				prevKeys.Add(k);
