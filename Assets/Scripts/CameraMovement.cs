@@ -26,6 +26,10 @@ public class CameraMovement : MonoBehaviour {
 	}
 	
 	void Update () {
+		UpdatePosition();
+	}
+
+	private void UpdatePosition() {
 		transform.localPosition = diff;
 		transform.position = player.transform.position;
 		cam.transform.LookAt(player.position);
