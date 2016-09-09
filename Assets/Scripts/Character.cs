@@ -164,10 +164,7 @@ public abstract class Character : PossibleObjective, Damageable {
 		if (isObjective && !isCompleted)
 			MarkCompleted();
 
-		int bloodSpurtAmount = Random.Range(3, 15);
-		for (int i = 0; i < bloodSpurtAmount; i++) {
-			Invoke("SpurtBlood", Random.Range(.3f, 1.5f) * i);
-		}
+		BleedEverywhere();
 
 		if (Random.Range(0, 2) == 0) {
 			speech.SayRandom(Speech.DEATH_QUOTES, showFlash: true);
@@ -178,6 +175,18 @@ public abstract class Character : PossibleObjective, Damageable {
 
 	public void RemoveBody() {
 		Destroy(gameObject);
+	}
+
+	private void BleedEverywhere() {
+		int bloodSpurtAmount = Random.Range(3, 15);
+		for (int i = 0; i < bloodSpurtAmount; i++) {
+			Invoke("SpurtBlood", Random.Range(.3f, 1.5f) * i);
+		}
+		PuddleBlood();
+	}
+
+	private void PuddleBlood() {
+		WorldBlood.instance.BleedAt(transform.position);
 	}
 
 	private void SpurtBlood() {
