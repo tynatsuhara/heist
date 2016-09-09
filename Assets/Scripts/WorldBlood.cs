@@ -10,17 +10,12 @@ public class WorldBlood : MonoBehaviour {
 	}
 	
 	public void BleedFrom(GameObject bleeder, Vector3 worldLocation, bool randomizePosition = true) {
-		// 1. save the blood location (to the nearest voxel (.1) size)
-
-
-		// 2. raycast to see if we hit a volume
-		RaycastHit hit;
-		PicaVoxel.Volume vol = BledOnVolume(worldLocation, out hit);
+		PicaVoxel.Volume vol = LevelBuilder.instance.FloorTileAt(worldLocation);
 		if (vol == null || vol.transform.root == bleeder.transform)
 			return;
-		
+		worldLocation.y = -.05f;
 		Vector3 circlePos = Random.insideUnitCircle * (randomizePosition ? .5f : 0f);
-		Vector3 pos = hit.point - new Vector3(circlePos.x, .03f, circlePos.y);
+		Vector3 pos = worldLocation - new Vector3(circlePos.x, .03f, circlePos.y);
 		PicaVoxel.Voxel? voxq = vol.GetVoxelAtWorldPosition(pos);
 		if (voxq == null)
 			return;

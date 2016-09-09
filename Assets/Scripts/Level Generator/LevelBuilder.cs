@@ -14,20 +14,25 @@ public class LevelBuilder : MonoBehaviour {
 
 	public GameObject[] roomPrefabs;
 	public int[] roomSpawnAmount;
+	private PicaVoxel.Volume[,] floorTiles;
 
 	public const int CHUNK_SIZE = 120;
 	public const int CHUNK_PADDING = 50;
+	public const int TILE_GRID_LENGTH = 10;
+	public const int TILE_SIZE = 2;  // in-game units
 
 	public void Awake() {
 		instance = this;
+		floorTiles = new PicaVoxel.Volume[TILE_GRID_LENGTH, TILE_GRID_LENGTH];
 	}
 
 	public void BuildLevel() {
 
 		// TEMP
-		for (int i = 0; i < 10; i++) {
-			for (var j = 0; j < 10; j++) {
-				GameObject tile = Instantiate(floorPrefab, new Vector3(i * 2f, -.2f, j * 2f), Quaternion.identity) as GameObject;
+		for (int i = 0; i < TILE_GRID_LENGTH; i++) {
+			for (var j = 0; j < TILE_GRID_LENGTH; j++) {
+				GameObject tile = Instantiate(floorPrefab, new Vector3(i * TILE_SIZE, -.2f, j * TILE_SIZE), Quaternion.identity) as GameObject;
+				floorTiles[i, j] = tile.GetComponent<PicaVoxel.Volume>();
 			}
 		}
 
@@ -43,6 +48,14 @@ public class LevelBuilder : MonoBehaviour {
 		 */
 
 //		rooms.ForEach(x => x.Build());
+	}
+
+	public PicaVoxel.Volume FloorTileAt(Vector3 pos) {
+		int x = (int)(pos.x / TILE_SIZE);
+		int z = (int)(pos.z /  TILE_SIZE);
+		if (x >= TILE_GRID_LENGTH || z >= TILE_GRID_LENGTH || x < 0 || z < 0)
+			return null;
+		return floorTiles[x, z];
 	}
 
 	private List<Room> spawnRoomsFromArrayCounts() {
