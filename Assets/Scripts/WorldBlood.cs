@@ -40,7 +40,6 @@ public class WorldBlood : MonoBehaviour {
 	private PicaVoxel.Volume BledOnVolume(Vector3 worldLocation, out RaycastHit hit) {
 		if (!Physics.Raycast(worldLocation, Vector3.down, out hit))
 			return null;
-		Debug.Log(hit.collider.gameObject.name);
 		return hit.collider.GetComponentInParent<PicaVoxel.Volume>();
 	}
 }
