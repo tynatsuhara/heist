@@ -183,11 +183,18 @@ public abstract class Character : PossibleObjective, Damageable {
 		for (int i = 0; i < bloodSpurtAmount; i++) {
 			Invoke("SpurtBlood", Random.Range(.3f, 1.5f) * i);
 		}
-		PuddleBlood();
+		InvokeRepeating("PuddleBlood", .5f, .2f);
+		Invoke("CancelPuddling", Random.Range(10f, 30f));
 	}
 
 	private void PuddleBlood() {
-		WorldBlood.instance.BleedAt(transform.position);
+		int times = Random.Range(1, 5);
+		for (int i = 0; i < times; i++)
+			WorldBlood.instance.BleedFrom(gameObject, transform.position);
+	}
+
+	private void CancelPuddling() {
+		CancelInvoke("PuddleBlood");
 	}
 
 	private void SpurtBlood() {
@@ -332,7 +339,6 @@ public abstract class Character : PossibleObjective, Damageable {
 	public void ReleaseBody() {
 		if (draggedBody == null)
 			return;
-		Debug.Log("released");
 		draggedBody.GetComponent<Character>().beingDragged = false;
 		draggedBody = null;
 	}
