@@ -23,7 +23,7 @@ public class CameraMovement : MonoBehaviour {
 
 	void Start () {
 		instance = this;
-
+		rotationGoal = transform.rotation;
 		diff = transform.localPosition;
 	}
 	

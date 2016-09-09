@@ -23,6 +23,15 @@ public class LevelBuilder : MonoBehaviour {
 	}
 
 	public void BuildLevel() {
+
+		// TEMP
+		for (int i = 0; i < 20; i++) {
+			for (var j = 0; j < 20; j++) {
+				GameObject tile = Instantiate(floorPrefab, new Vector3(i, -.2f, j), Quaternion.identity) as GameObject;
+			}
+		}
+
+
 		List<Room> rooms = spawnRoomsFromArrayCounts();
 
 		/*

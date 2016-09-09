@@ -5,7 +5,7 @@ public class WorldBlood : MonoBehaviour {
 
 	public static WorldBlood instance;
 
-	void Awake () {
+	void Awake() {
 		instance = this;
 	}
 	
