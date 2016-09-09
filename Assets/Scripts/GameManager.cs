@@ -70,6 +70,17 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
+	// Return all characters in the given range from the given point, ordered by increasing distance
+	public List<Character> DeadCharactersWithinDistance(Vector3 from, float range) {
+		List<Character> ret = new List<Character>();
+		foreach (Character c in deadCharacters) {
+			if ((c.transform.position - from).magnitude < range) {
+				ret.Add(c);
+			}
+		}
+		return ret.OrderBy(c => (c.transform.position - player.transform.position).magnitude).ToList();
+	}
+
 	// Call this to indicate it is no longer a stealth-possible mission,
 	// ALARMS HAVE BEEN RAISED -- START SPAWNING ENEMIES
 	public void WereGoingLoudBoys() {

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public abstract class Character : PossibleObjective, Damageable {
 
@@ -295,31 +296,43 @@ public abstract class Character : PossibleObjective, Damageable {
 	public void DragBody() {
 		if (draggedBody != null)
 			return;
-		
-		Vector3 dir = transform.forward * 2f;
-		dir.y = -3;
-		
-		RaycastHit hit;
-		if (!Physics.Raycast(transform.position, dir, out hit))
-			return;
-		draggedBody = hit.collider.transform.root.gameObject;
-		Character bodyChar = draggedBody.GetComponent<Character>();
-		if (bodyChar == null || bodyChar.isAlive) {
-			draggedBody = null;
-		} else {
-			bodyChar.beingDragged = true;
+
+		Vector3 inFrontPos = transform.position + transform.forward * 1f;
+		List<Character> chars = GameManager.instance.DeadCharactersWithinDistance(inFrontPos, 1.5f);
+
+		// must have line of sight
+		foreach (Character c in chars) {
+			Vector3 dir = c.transform.position - transform.position;
+			RaycastHit hit;
+			if (!Physics.Raycast(transform.position, dir, out hit))
+				continue;
+			if (hit.collider.GetComponentInParent<Character>() != c)
+				continue;
+			draggedBody = c.gameObject;
+			Character bodyChar = draggedBody.GetComponent<Character>();
+			if (bodyChar == null || bodyChar.isAlive) {
+				draggedBody = null;
+			} else {
+				bodyChar.beingDragged = true;
+				break;
+			}
 		}
 	}
 
 	protected void Drag() {
 		if (draggedBody != null) {
 			Vector3 dragPos = transform.position + transform.forward.normalized * 1.2f;
-			dragPos.y = draggedBody.transform.position.y;
-			draggedBody.GetComponent<Rigidbody>().MovePosition(Vector3.Lerp(draggedBody.transform.position, dragPos, .3f));
+			// add a bit of a buffer between the floor and character to avoid friction
+			dragPos.y = Mathf.Max(draggedBody.transform.position.y, .4f);
+			Vector3 force = (dragPos - draggedBody.transform.position).normalized;
+			draggedBody.GetComponent<Rigidbody>().AddForce(force * 10000f, ForceMode.Force);
 		}
 	}
 
 	public void ReleaseBody() {
+		if (draggedBody == null)
+			return;
+		Debug.Log("released");
 		draggedBody.GetComponent<Character>().beingDragged = false;
 		draggedBody = null;
 	}
