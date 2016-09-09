@@ -52,6 +52,7 @@ public abstract class Character : PossibleObjective, Damageable {
 	public bool isDragging {
 		get { return draggedBody != null; }
 	}
+	public bool beingDragged;
 
 	public abstract void Alert(Character.Reaction importance, Vector3 position);
 
@@ -296,6 +297,8 @@ public abstract class Character : PossibleObjective, Damageable {
 		Character bodyChar = draggedBody.GetComponent<Character>();
 		if (bodyChar == null || bodyChar.isAlive) {
 			draggedBody = null;
+		} else {
+			bodyChar.beingDragged = true;
 		}
 	}
 
@@ -308,6 +311,7 @@ public abstract class Character : PossibleObjective, Damageable {
 	}
 
 	public void ReleaseBody() {
+		draggedBody.GetComponent<Character>().beingDragged = false;
 		draggedBody = null;
 	}
 }
