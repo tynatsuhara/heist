@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour {
 	public PlayerControls player;
 
 	public bool alarmsRaised = false;
+	public bool gameOver = false;
 
 	void Awake() {
 		instance = this;
@@ -80,9 +81,12 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void GameOver(bool success) {
+		if (gameOver)
+			return;
+		
+		gameOver = true;
 		CancelInvoke("SpawnCop");
 		Debug.Log("game over! you " + (success ? "win!" : "lose!"));
-		this.enabled = false;
 	}
 
 	public void SpawnCop() {
