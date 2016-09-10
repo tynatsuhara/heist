@@ -23,12 +23,12 @@ public class WorldBlood : MonoBehaviour {
 	}
 	
 	public void BleedFrom(GameObject bleeder, Vector3 worldLocation, bool randomizePosition = true) {
-		PicaVoxel.Volume vol = LevelBuilder.instance.FloorTileAt(worldLocation);
-		if (vol == null || vol.transform.root == bleeder.transform)
-			return;
+		Vector3 circlePos = Random.insideUnitCircle * (randomizePosition ? Random.Range(.3f, .5f) : 0);
 		worldLocation.y = -.05f;
-		Vector3 circlePos = Random.insideUnitCircle * (randomizePosition ? .5f : 0f);
-		Vector3 pos = worldLocation - new Vector3(circlePos.x, .03f, circlePos.y);
+		Vector3 pos = worldLocation - new Vector3(circlePos.x, 0f, circlePos.y);
+		PicaVoxel.Volume vol = LevelBuilder.instance.FloorTileAt(pos);
+		if (vol == null)
+			return;
 		PicaVoxel.Voxel? voxq = vol.GetVoxelAtWorldPosition(pos);
 		if (voxq == null)
 			return;
