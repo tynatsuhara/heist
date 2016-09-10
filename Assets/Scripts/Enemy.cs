@@ -28,10 +28,11 @@ public class Enemy : Character {
 		playerScript = player.GetComponent<Character>();
 		agent = GetComponent<NavMeshAgent>();
 		speech = GetComponentInChildren<TextObject>();
-		GetComponent<CharacterCustomization>().ColorCharacter(copUniform, true);
 	}
 
 	void Start() {
+		GetComponent<CharacterCustomization>().ColorCharacter(copUniform, true);
+
 		if (GameManager.instance.alarmsRaised) {
 			Alert(Reaction.AGGRO, transform.position + transform.forward);
 		}

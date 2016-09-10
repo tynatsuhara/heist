@@ -10,17 +10,30 @@ public class Cheats : MonoBehaviour {
 	private static KeyCode down = KeyCode.DownArrow;
 	private static KeyCode left = KeyCode.LeftArrow;
 	private static KeyCode right = KeyCode.RightArrow;
-	private static KeyCode b = KeyCode.B;
-	private static KeyCode a = KeyCode.A;
 
-	private static KeyCode[] trackedKeys = { up, down, left, right, b, a };
+	private static KeyCode[] trackedKeys = { 
+		up, down, left, right,
+		KeyCode.A, KeyCode.B,
+		KeyCode.C, KeyCode.D,
+		KeyCode.E, KeyCode.F,
+		KeyCode.G, KeyCode.H,
+		KeyCode.I, KeyCode.J,
+		KeyCode.K, KeyCode.L,
+		KeyCode.M, KeyCode.N,
+		KeyCode.O, KeyCode.P,
+		KeyCode.Q, KeyCode.R,
+		KeyCode.S, KeyCode.T,
+		KeyCode.U, KeyCode.V,
+		KeyCode.W, KeyCode.X,
+		KeyCode.Y, KeyCode.Z
+	};
 	public static Cheats instance;
 
 	private List<KeyCode> prevKeys;
 	private Dictionary<string, KeyCode[]> cheats;
 	private Dictionary<string, bool> enabledCheats;
 
-	void Start() {
+	void Awake() {
 		GenerateCheats();
 
 		prevKeys = new List<KeyCode>();
@@ -32,7 +45,7 @@ public class Cheats : MonoBehaviour {
 		enabledCheats = new Dictionary<string, bool>();
 
 		// doubles speed of the player
-		cheats.Add("konami", new KeyCode[]{ up, up, down, down, left, right, left, right, b, a });
+		cheats.Add("konami", new KeyCode[]{ up, up, down, down, left, right, left, right, KeyCode.A, KeyCode.B });
 
 		foreach (string key in cheats.Keys) {
 			enabledCheats[key] = false;
