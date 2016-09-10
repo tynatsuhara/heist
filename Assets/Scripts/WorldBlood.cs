@@ -34,7 +34,6 @@ public class WorldBlood : MonoBehaviour {
 			return;
 		PicaVoxel.Voxel vox = (PicaVoxel.Voxel)voxq;
 		if (vox.State == PicaVoxel.VoxelState.Active) {
-			byte gb = (byte)Random.Range(0, 30);
 			vox.Color = BloodColor();
 			vol.SetVoxelAtWorldPosition(pos, vox);
 		}
