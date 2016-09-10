@@ -5,6 +5,15 @@ public class WorldBlood : MonoBehaviour {
 
 	public static WorldBlood instance;
 
+	private Color32[] options = {
+		new Color32(255, 94, 94, 255),
+		new Color32(255, 160, 94, 255),
+		new Color32(246, 255, 0, 255),
+		new Color32(94, 255, 108, 255),
+		new Color32(115, 173, 255, 255),
+		new Color32(255, 115, 255, 255)
+	};
+
 	public static Color32[] rainbow = {
 		Color.red
 	};
@@ -33,7 +42,7 @@ public class WorldBlood : MonoBehaviour {
 
 	public Color32 BloodColor() {
 		if (Cheats.instance.IsCheatEnabled("pride")) {
-			return (Color32) Color.green;
+			return options[Random.Range(0, options.Length)];
 		}
 
 		byte gb = (byte)Random.Range(0, 30);

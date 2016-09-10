@@ -44,8 +44,9 @@ public class Cheats : MonoBehaviour {
 		cheats = new Dictionary<string, KeyCode[]>();
 		enabledCheats = new Dictionary<string, bool>();
 
-		// doubles speed of the player
+		// multiplies speed of the player
 		cheats.Add("konami", new KeyCode[]{ up, up, down, down, left, right, left, right, KeyCode.A, KeyCode.B });
+		cheats.Add("pride", new KeyCode[]{ KeyCode.P, KeyCode.R, KeyCode.I, KeyCode.D, KeyCode.E });
 
 		foreach (string key in cheats.Keys) {
 			enabledCheats[key] = false;

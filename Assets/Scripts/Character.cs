@@ -207,8 +207,7 @@ public abstract class Character : PossibleObjective, Damageable {
 			position.y -= .5f;
 		for (int i = 0; i < amount; i++) {
 			PicaVoxel.Voxel voxel = new PicaVoxel.Voxel();
-			byte gb = (byte)Random.Range(0, 30);
-			voxel.Color = new Color32((byte)(120 + Random.Range(0, 60)), gb, gb, 0);
+			voxel.Color = WorldBlood.instance.BloodColor();
 			voxel.State = PicaVoxel.VoxelState.Active;
 			Vector3 spawnPos = position + Random.insideUnitSphere * .2f;
 			PicaVoxel.PicaVoxelPoint pos = volume.GetVoxelArrayPosition(spawnPos);
