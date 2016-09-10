@@ -57,14 +57,14 @@ public class GameUI : MonoBehaviour {
 	}
 
 	public void UpdateAmmo(int ammo, int clipSize) {
-		ammoText.Say("" + ammo, permanent: true);
+		ammoText.Say(ammo + "/" + clipSize, permanent: true);
 	}
 
 	public void UpdateHealth(float health, float healthMax, float armor, float armorMax) {
 		if (armor <= 0) {
-			healthText.Say("" + health, permanent: true);
+			healthText.Say(health + " HP", permanent: true);
 		} else {
-			healthText.Say(armor + " (" + health + ")", permanent: true);
+			healthText.Say(health + " HP + " + armor + " ARMOR", permanent: true);
 		}
 	}
 
