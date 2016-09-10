@@ -90,7 +90,7 @@ public class Cheats : MonoBehaviour {
 
 			if (match && !enabledCheats[key]) {
 				enabledCheats[key] = true;
-				GameUI.instance.topCenterText.Say("Cheat Enabled: " + key.ToUpper());
+				GameUI.instance.topCenterText.Say("Cheat Enabled: " + key.ToUpper(), showFlash:true);
 				Debug.Log(key + " cheat enabled");
 			}
 		}
