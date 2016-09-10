@@ -6,8 +6,38 @@ public class TextObject : MonoBehaviour {
 
 	private Text text;
 
+	private float flashSpeed = .1f;
+	private float togglingStartTime;
+	private float togglesLeft;
+	private bool shouldClear;
+	private float timeToClear;
+
 	void Awake() {
 		text = GetComponent<Text>();
+	}
+
+	void Update() {
+		CheckToggleTime();
+		CheckClearTime();
+	}
+
+	private void CheckClearTime() {
+		if (shouldClear && Time.realtimeSinceStartup >= timeToClear) {
+			shouldClear = false;
+			Clear();
+		}
+	}
+
+	private void CheckToggleTime() {
+		if (togglesLeft <= 0)
+			return;
+
+		float elapsed = Time.realtimeSinceStartup - togglingStartTime;
+		if (elapsed > flashSpeed) {
+			togglesLeft--;
+			togglingStartTime += flashSpeed;
+			text.enabled = !text.enabled;
+		}
 	}
 
 	// Dispaly a message in the text box
@@ -16,16 +46,16 @@ public class TextObject : MonoBehaviour {
 		CancelInvoke();
 		text.text = message.ToUpper();
 		text.enabled = true;
-		float flashSpeed = .1f;
-		int flashTimes = 6;  // make sure it's an even number
+		int flashTimes = 6;
 		if (showFlash) {
-			for (int i = 0; i < flashTimes; i++) {
-				Invoke("ToggleEnabled", flashSpeed * i);
-			}
+			togglingStartTime = Time.realtimeSinceStartup;
+			togglesLeft = flashTimes;  // make it an even number
 		}
 
-		if (!permanent)
-			Invoke("Clear", duration + (showFlash ? flashTimes * flashSpeed : 0));
+		if (!permanent) {
+			shouldClear = true;
+			timeToClear = Time.realtimeSinceStartup + duration +  (showFlash ? flashTimes * flashSpeed : 0);
+		}
 	}
 
 	// Display a series of messages in the text box
@@ -42,10 +72,6 @@ public class TextObject : MonoBehaviour {
 	// Remove any displayed text
 	public void Clear() {
 		text.text = "";
-	}
-
-	private void ToggleEnabled() {
-		text.enabled = !text.enabled;
 	}
 
 	private void SetColor(string color) {
