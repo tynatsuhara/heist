@@ -37,7 +37,7 @@ public class Pistol : Gun {
 		
 		PlayerEffects(shakePower, shakeLength);
 
-		if (!silenced) {
+		if (!silenced && isPlayer) {
 			GameManager.instance.AlertInRange(Character.Reaction.AGGRO, 
 				transform.position, 15f, visual: (silenced ? transform.root.gameObject : null));
 		}

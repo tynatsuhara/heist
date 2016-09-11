@@ -11,6 +11,9 @@ public class Enemy : Character {
 	public bool alerted;
 	public bool suspicious;
 	public bool knowsPlayerLocation;
+	public static bool enemyIsKnown;  // the enemies know that the player is their target
+	public static Vector3 lastKnownPlayerLocation;
+	public Vector3 investigatePoint;
 
 	public float walkingAnimationThreshold;
 	private bool invoked;
@@ -39,6 +42,7 @@ public class Enemy : Character {
 
 		if (GameManager.instance.alarmsRaised) {
 			Alert(Reaction.AGGRO);
+			knowsPlayerLocation = enemyIsKnown;
 		}
 
 		InvokeRepeating("CheckForEvidence", 0f, .5f);
@@ -109,7 +113,8 @@ public class Enemy : Character {
 	public override void Alert(Character.Reaction importance, Vector3 position) {
 		if (alerted || !isAlive)
 			return;
-		LookAt(player.transform);
+		LookAt(position);
+		investigatePoint = position;
 		if (importance == Reaction.AGGRO) {
 			alerted = true;
 			GameManager.instance.WereGoingLoudBoys();
@@ -125,8 +130,12 @@ public class Enemy : Character {
 	private void AggroBehavior() {
 		bool inRange = (player.transform.position - transform.position).magnitude < gunScript.range;
 
+		DrawWeapon();		
+		// If one enemy can see the player, they all know where he is
 		if (CanSee(player)) {
-			DrawWeapon();			
+			knowsPlayerLocation = true;
+			enemyIsKnown = true;
+			lastKnownPlayerLocation = player.transform.position;
 			if (inRange) {
 				agent.destination = transform.position;
 			} else {
@@ -135,25 +144,48 @@ public class Enemy : Character {
 			if (playerScript.isAlive) {
 				Shoot();
 			}
+			LookAt(lastKnownPlayerLocation);			
+		// If they can't see him, go to where they know he was last
+		} else if (knowsPlayerLocation) {
+			LoseLookTarget();
+			agent.destination = lastKnownPlayerLocation;
 		} else {
-			agent.destination = player.transform.position;
+			LoseLookTarget();			
+			agent.destination = investigatePoint;
 		}
 	}
 
 	private void SuspiciousBehavior() {
-
+		float followDistance = 4f;
+		if (CanSee(player)) {
+			lastKnownPlayerLocation = player.transform.position;
+			knowsPlayerLocation = true;
+			if ((transform.position - player.transform.position).magnitude < followDistance) {
+				agent.destination = transform.position;			
+			} else {
+				agent.destination = lastKnownPlayerLocation;
+			}
+		} else if (knowsPlayerLocation) {
+			agent.destination = lastKnownPlayerLocation;
+		} else {
+			agent.destination = investigatePoint;
+		}
+		CheckCanSeeEvidence();
 	}
 
 	private void PassiveBehavior() {
 		// TODO: follow path if has one
 		
+		CheckCanSeeEvidence();
+	}
+
+	private void CheckCanSeeEvidence() {
 		if (!invoked && seesEvidence) {
 			float reactionTime = (Random.Range(.2f, 1f));
 			Invoke("GlimpsedPlayer", reactionTime);
 			invoked = true;
 		}
 	}
-
 
 
 
@@ -172,6 +204,7 @@ public class Enemy : Character {
 	void OnCollisionEnter(Collision collision) {
         if (collision.collider.transform.root.gameObject == player) {
 			Alert(Reaction.SUSPICIOUS);
+			LookAt(player.transform);			
 		}
     }
 }
