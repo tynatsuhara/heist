@@ -14,6 +14,7 @@ public class Enemy : Character {
 	public static bool enemyIsKnown;  // the enemies know that the player is their target
 	public static Vector3 lastKnownPlayerLocation;
 	public Vector3 investigatePoint;
+	public float timeSpentWatchingPlayer;  // suspiciously watch the player for a while, then un-aggro
 
 	public float walkingAnimationThreshold;
 	private bool invoked;
@@ -119,6 +120,7 @@ public class Enemy : Character {
 			alerted = true;
 			GameManager.instance.WereGoingLoudBoys();
 		} else if (importance == Reaction.SUSPICIOUS) {
+			timeSpentWatchingPlayer = 0f;
 			suspicious = true;
 		} else if (importance == Reaction.MILDLY_SUSPICIOUS) {
 
@@ -165,6 +167,14 @@ public class Enemy : Character {
 			} else {
 				agent.destination = lastKnownPlayerLocation;
 			}
+			timeSpentWatchingPlayer += Time.deltaTime;
+			float timeSpentWatchingBeforeGivingUp = 5f;
+			if (timeSpentWatchingPlayer > timeSpentWatchingBeforeGivingUp) {
+				suspicious = false;
+				agent.destination = transform.position;
+				LoseLookTarget();					
+				Debug.Log("nothing to see here");
+			}			
 		} else if (knowsPlayerLocation) {
 			agent.destination = lastKnownPlayerLocation;
 		} else {
