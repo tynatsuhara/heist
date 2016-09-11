@@ -7,7 +7,9 @@ public class Enemy : Character {
 	private Character playerScript;
 	private NavMeshAgent agent;
 
+	// state booleans, in order of precedence
 	public bool alerted;
+
 	public float walkingAnimationThreshold;
 	private bool invoked;
 
@@ -34,7 +36,7 @@ public class Enemy : Character {
 		GetComponent<CharacterCustomization>().ColorCharacter(copUniform, true);
 
 		if (GameManager.instance.alarmsRaised) {
-			Alert(Reaction.AGGRO, transform.position + transform.forward);
+			Alert(Reaction.AGGRO);
 		}
 	}
 	
@@ -100,16 +102,22 @@ public class Enemy : Character {
 		Alert(Reaction.AGGRO, player.transform.position);
 	}
 
+	public void Alert(Character.Reaction importance) {
+		Alert(importance, transform.position + transform.forward);
+	}
 
 	// TODO: being alerted without knowing location   <- could accomplish with global lastKnownLocation?
 	public override void Alert(Character.Reaction importance, Vector3 position) {
 		if (alerted || !isAlive)
 			return;
-		DrawWeapon();
 		LookAt(player.transform);
 		if (importance == Reaction.AGGRO) {
 			alerted = true;
 			GameManager.instance.WereGoingLoudBoys();
+		} else if (importance == Reaction.SUSPICIOUS) {
+			LookAt(player.transform);
+		} else if (importance == Reaction.MILDLY_SUSPICIOUS) {
+
 		}
 	}
 
@@ -117,6 +125,7 @@ public class Enemy : Character {
 		bool inRange = (player.transform.position - transform.position).magnitude < gunScript.range;
 
 		if (CanSee(player)) {
+			DrawWeapon();			
 			if (inRange) {
 				agent.destination = transform.position;
 			} else {
@@ -141,5 +150,11 @@ public class Enemy : Character {
 			}
 		}
 	}
+
+	void OnCollisionEnter(Collision collision) {
+        if (collision.collider.transform.root.gameObject == player) {
+			Alert(Reaction.SUSPICIOUS);
+		}
+    }
 }
 

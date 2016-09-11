@@ -18,7 +18,7 @@ public class GameUI : MonoBehaviour {
 	public TextObject objectivesText;
 	public TextObject healthText;
 	public TextObject topCenterText;
-	public GameObject tintLayer;
+	public GameObject pauseMenu;
 	public Transform cursor;
 
 	private List<Dictionary<string, int>> displayedInventories;
@@ -29,7 +29,7 @@ public class GameUI : MonoBehaviour {
 	}
 
 	void Update() {
-		tintLayer.SetActive(GameManager.paused);
+		pauseMenu.SetActive(GameManager.paused);
 
 		cursor.transform.position = Input.mousePosition;
 		Cursor.visible = false;
