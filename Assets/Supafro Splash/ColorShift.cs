@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class ColorShift : MonoBehaviour {
@@ -36,6 +37,6 @@ public class ColorShift : MonoBehaviour {
 	}
 
 	private void Transition() {
-		Debug.Log("Transition!");
+		SceneManager.LoadScene("game");
 	}
 }

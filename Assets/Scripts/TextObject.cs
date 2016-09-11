@@ -12,11 +12,19 @@ public class TextObject : MonoBehaviour {
 	private bool shouldClear;
 	private float timeToClear;
 
+	public bool pausable = true;
+
 	void Awake() {
 		text = GetComponent<Text>();
 	}
 
 	void Update() {
+		if (GameManager.paused && pausable) {
+			togglingStartTime += Time.unscaledDeltaTime;
+			timeToClear += Time.unscaledDeltaTime;
+			return;
+		}
+			
 		CheckToggleTime();
 		CheckClearTime();
 	}
