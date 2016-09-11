@@ -61,10 +61,11 @@ public class GameManager : MonoBehaviour {
 	// Alerts all characters to the given range to an event with the given
 	// severity and range. If visual is nonnull, the character must have line
 	// of sight to the visual to be alerted.
-	//    severity: [1 - 5], with 1 being very mild and 10 being full aggro
 	public void AlertInRange(Character.Reaction importance, Vector3 location, float range, GameObject visual = null) {
 		foreach (Character c in characters) {
 			if ((c.transform.position - player.transform.position).magnitude < range) {
+				if (visual != null && !c.CanSee(player.gameObject))
+					continue;
 				c.Alert(importance, location);
 			}
 		}

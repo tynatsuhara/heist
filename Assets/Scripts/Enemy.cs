@@ -7,8 +7,10 @@ public class Enemy : Character {
 	private Character playerScript;
 	private NavMeshAgent agent;
 
-	// state booleans, in order of precedence
+	// state booleans, in somewhat order of precedence
 	public bool alerted;
+	public bool suspicious;
+	public bool knowsPlayerLocation;
 
 	public float walkingAnimationThreshold;
 	private bool invoked;
@@ -38,6 +40,8 @@ public class Enemy : Character {
 		if (GameManager.instance.alarmsRaised) {
 			Alert(Reaction.AGGRO);
 		}
+
+		InvokeRepeating("CheckForEvidence", 0f, .5f);
 	}
 	
 	// Update is called once per frame
@@ -47,10 +51,13 @@ public class Enemy : Character {
 
 		LegAnimation();
 
-		if (alerted)
+		if (alerted) {
 			AggroBehavior();
-		else
+		} else if (suspicious) {
+			SuspiciousBehavior();
+		} else {
 			PassiveBehavior();
+		}
 	}
 
 	void FixedUpdate () {
@@ -61,17 +68,10 @@ public class Enemy : Character {
 		Rotate();
 	}
 
-	private void PassiveBehavior() {
-		// TODO: follow path if has one
-		
-		if (!invoked && CanSeeEvidence()) {
-			float reactionTime = (Random.Range(.2f, 1f));
-			Invoke("GlimpsedPlayer", reactionTime);
-			invoked = true;
-		}
+	private bool seesEvidence;
+	private void CheckForEvidence() {
+		seesEvidence = CanSeeEvidence();
 	}
-
-
 	// TODO: can they see the player, bodies, etc?
 	private bool CanSeeEvidence() {
 		bool visiblePlayer = (CanSee(player) && playerScript.IsEquipped());
@@ -87,7 +87,6 @@ public class Enemy : Character {
 
 		return false;
 	}
-
 
 	private void GlimpsedPlayer() {
 		if (!CanSee(player) || !playerScript.IsEquipped() || !isAlive) {
@@ -115,11 +114,13 @@ public class Enemy : Character {
 			alerted = true;
 			GameManager.instance.WereGoingLoudBoys();
 		} else if (importance == Reaction.SUSPICIOUS) {
-			LookAt(player.transform);
+			suspicious = true;
 		} else if (importance == Reaction.MILDLY_SUSPICIOUS) {
 
 		}
 	}
+
+
 
 	private void AggroBehavior() {
 		bool inRange = (player.transform.position - transform.position).magnitude < gunScript.range;
@@ -138,6 +139,23 @@ public class Enemy : Character {
 			agent.destination = player.transform.position;
 		}
 	}
+
+	private void SuspiciousBehavior() {
+
+	}
+
+	private void PassiveBehavior() {
+		// TODO: follow path if has one
+		
+		if (!invoked && seesEvidence) {
+			float reactionTime = (Random.Range(.2f, 1f));
+			Invoke("GlimpsedPlayer", reactionTime);
+			invoked = true;
+		}
+	}
+
+
+
 
 	private void LegAnimation() {
 		if (agent.velocity == Vector3.zero) {
