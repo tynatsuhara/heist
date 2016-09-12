@@ -152,7 +152,6 @@ public class Enemy : Character {
 			LoseLookTarget();
 			agent.destination = lastKnownPlayerLocation;
 			if (agent.velocity.magnitude == 0f) {
-				Debug.Log("can't find him");
 				// TODO: What happens when you can't find the enemy?
 				//       Maybe regroup with other officers. Maybe explore.
 			}
@@ -178,7 +177,6 @@ public class Enemy : Character {
 				suspicious = false;
 				agent.destination = transform.position;
 				LoseLookTarget();					
-				Debug.Log("nothing to see here");
 			}			
 		} else if (knowsPlayerLocation) {
 			agent.destination = lastKnownPlayerLocation;
@@ -205,11 +203,13 @@ public class Enemy : Character {
 
 
 	private void LegAnimation() {
-		if (agent.velocity == Vector3.zero) {
+		Vector3 velocity = agent.velocity;
+		velocity.y = 0f;
+		if (velocity == Vector3.zero) {
 			if (walk.isWalking) {
 				walk.StopWalk();
 			}
-		} else if (agent.velocity.magnitude > walkingAnimationThreshold) {
+		} else if (velocity.magnitude > 0f) {
 			if (!walk.isWalking) {
 				walk.StartWalk();
 			}

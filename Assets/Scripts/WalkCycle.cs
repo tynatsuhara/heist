@@ -30,11 +30,12 @@ public class WalkCycle : MonoBehaviour {
 		volume.SetFrame(walkingFirstFrame);
 	}
 
-	public void StopWalk() {
+	public void StopWalk(bool immediate = false) {
 		startFrame = standingFirstFrame;
 		endFrame = standingLastFrame;
 		timeElapsed = 0f;
-		volume.SetFrame(standingFirstFrame);
+		if (immediate)
+			volume.SetFrame(standingFirstFrame);
 	}
 	
 	void Update () {

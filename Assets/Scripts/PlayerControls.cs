@@ -83,7 +83,7 @@ public class PlayerControls : Character {
 		if ((x != 0 || z != 0) && !walk.isWalking) {
 			walk.StartWalk();
 		} else if (x == 0 && z == 0 && walk.isWalking) {
-			walk.StopWalk();
+			walk.StopWalk(true);
 		}
 		if (x != 0 || z != 0) {
 			lastMoveDirection = new Vector3(x, 0, z).normalized;
