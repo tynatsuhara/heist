@@ -151,6 +151,11 @@ public class Enemy : Character {
 		} else if (knowsPlayerLocation) {
 			LoseLookTarget();
 			agent.destination = lastKnownPlayerLocation;
+			if (agent.velocity.magnitude == 0f) {
+				Debug.Log("can't find him");
+				// TODO: What happens when you can't find the enemy?
+				//       Maybe regroup with other officers. Maybe explore.
+			}
 		} else {
 			LoseLookTarget();			
 			agent.destination = investigatePoint;
