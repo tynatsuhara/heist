@@ -104,6 +104,7 @@ public class GameManager : MonoBehaviour {
 	public void SpawnCop() {
 		GameObject enemy = (GameObject) Instantiate(enemyPrefabs[0], 
 			new Vector3(6f, 1f, 6f) + 5f * Random.insideUnitSphere, Quaternion.identity);
+		characters.Add(enemy.GetComponent<Character>());
 	}
 
 	public void MarkObjectiveComplete(PossibleObjective po) {
