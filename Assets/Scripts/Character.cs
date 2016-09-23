@@ -280,9 +280,8 @@ public abstract class Character : PossibleObjective, Damageable {
 		return weaponDrawn;
 	}
 
+	private float viewDist = 20f;
 	public bool CanSee(GameObject target) {
-		float viewDist = 20f;
-
 		Vector3 diff = transform.position - target.transform.position;
 		if (diff.magnitude > viewDist)
 			return false;

@@ -111,11 +111,14 @@ public class Enemy : Character {
 	}
 
 	// TODO: being alerted without knowing location   <- could accomplish with global lastKnownLocation?
-	public override void Alert(Character.Reaction importance, Vector3 position) {
-		if (alerted || !isAlive)
+	public override void Alert(Reaction importance, Vector3 position) {
+		if (!isAlive)
 			return;
-		LookAt(position);
-		investigatePoint = position;
+
+		if (!alerted || (alerted && importance == Reaction.AGGRO)) {
+			investigatePoint = position;			
+		}
+
 		if (importance == Reaction.AGGRO) {
 			alerted = true;
 			GameManager.instance.WereGoingLoudBoys();
@@ -152,6 +155,7 @@ public class Enemy : Character {
 			LoseLookTarget();
 			agent.destination = lastKnownPlayerLocation;
 			if (agent.velocity.magnitude == 0f) {
+				knowsPlayerLocation = false;
 				// TODO: What happens when you can't find the enemy?
 				//       Maybe regroup with other officers. Maybe explore.
 			}
