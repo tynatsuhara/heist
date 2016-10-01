@@ -19,7 +19,10 @@ public class Civilian : Character {
 	}
 	
 	void Update () {
-	
+		if (!isAlive || GameManager.paused)
+			return;
+
+		
 	}
 
 	public override void Alert(Character.Reaction importance, Vector3 position) {
