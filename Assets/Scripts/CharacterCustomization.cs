@@ -3,6 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+/**
+ * Abandon hope all ye who enter here
+ */
+
 public class CharacterCustomization : MonoBehaviour {
 
 	public Color32 shirtColor1;   // 0

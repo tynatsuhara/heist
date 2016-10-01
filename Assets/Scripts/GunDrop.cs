@@ -14,10 +14,10 @@ public class GunDrop : BasicDrop {
 		if (c == null 
 			|| (onlyForPlayer && c.tag != "Player")
 			|| (mustBeEquipped && !c.IsEquipped())
-			|| c.weaponInv)
+			|| c.weaponInv == null)
 			return;
 
-		c.inventory.Add(item, amount);
+		c.weaponInv.Add(item, amount);
 
 		if (isObjective && !isCompleted)
 			MarkCompleted();
