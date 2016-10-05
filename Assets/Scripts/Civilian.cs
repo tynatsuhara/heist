@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Civilian : Character {
+public class Civilian : Character, Interactable {
 
 	private string[] copUniform = {
 		"0 0-73; 1 57 60 44 45 31; 2 46; 6 58 59; 4 14-27; 3 17",
@@ -40,6 +40,8 @@ public class Civilian : Character {
 	void Update () {
 		if (!isAlive || GameManager.paused)
 			return;
+		
+		timeInCurrentState += Time.deltaTime;
 
 		switch (currentState) {
 			case CivilianState.PASSIVE:
@@ -74,6 +76,7 @@ public class Civilian : Character {
 	}
 
 	private bool transitioningState;
+	private float timeInCurrentState;
 	private CivilianState stateToTransitionTo;
 	private void TransitionState(CivilianState newState, float time = 0f) {
 		stateToTransitionTo = newState;
@@ -85,6 +88,9 @@ public class Civilian : Character {
 		} 
 	}
 	private void CompleteTransition() {
+		if (currentState != stateToTransitionTo)
+			timeInCurrentState = 0f;
+		
 		currentState = stateToTransitionTo;
 		transitioningState = false;
 	}
@@ -112,7 +118,17 @@ public class Civilian : Character {
 	private void StateAlerting() {}
 
 	// CivilianState.FLEEING
-	private void StateFleeing() {}		
+	private void StateFleeing() {
+		// any states that can come after CivilianState.HELD_HOSTAGE_UNTIED should check this
+		if (rb.constraints == RigidbodyConstraints.None) {
+			rb.rotation = Quaternion.Euler(new Vector3(0, rb.rotation.y, 0));
+			rb.position = new Vector3(rb.position.x, 1.1f, rb.position.z);
+			arms.SetFrame(0);
+			rb.constraints = RigidbodyConstraints.FreezeRotation;
+		}
+
+
+	}
 
 	// CivilianState.ATTACKING
 	private void StateAttacking() {
@@ -130,17 +146,17 @@ public class Civilian : Character {
 
 		rb.constraints = RigidbodyConstraints.None;
 		GetComponent<NavMeshAgent>().enabled = false;
-		// rb.AddTorque(Vector3.forward, ForceMode.Acceleration);
 		Vector3 rot = rb.rotation.eulerAngles;
-		rot.x += 25f;
-		Debug.Log(rot);
-		// rb.rotation = Quaternion.Euler(rot);
-		Debug.Log(rb.rotation);		
+		rot.x += 35f;
 		rb.MoveRotation(Quaternion.Euler(rot));
 	}
 
 	// CivilianState.HELD_HOSTAGE_TIED
-	private void StateHeldHostageTied() {}	
+	private void StateHeldHostageTied() {
+		if (arms.CurrentFrame != 2) {
+			arms.SetFrame(2);
+		}
+	}
 
 	// CivilianState.HELD_HOSTAGE_CALLING
 	private void StateHeldHostageCalling() {}
@@ -152,6 +168,14 @@ public class Civilian : Character {
 			currentState == CivilianState.HELD_HOSTAGE_TIED)
 			return;
 
-		TransitionState(CivilianState.HELD_HOSTAGE_UNTIED);
+		arms.SetFrame(1);  // hands up			
+		TransitionState(CivilianState.HELD_HOSTAGE_UNTIED, Random.Range(.3f, 1.3f));
 	}
+
+	public void Interact(Character character) {
+		if (currentState == CivilianState.HELD_HOSTAGE_UNTIED || currentState == CivilianState.HELD_HOSTAGE_CALLING) {
+			TransitionState(CivilianState.HELD_HOSTAGE_TIED);
+		}
+	}
+	public void Uninteract(Character character) {}
 }

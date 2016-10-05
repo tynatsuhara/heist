@@ -304,18 +304,20 @@ public abstract class Character : PossibleObjective, Damageable {
 			return;
 
 		Vector3 inFrontPos = transform.position + transform.forward * 1f;
-		List<Character> chars = GameManager.instance.CharactersWithinDistance(inFrontPos, 1.5f).Where(x => {
+		List<Character> draggableChars = GameManager.instance.CharactersWithinDistance(inFrontPos, 1.5f).Where(x => {
 			if (x is Civilian) {
 				Civilian z = (Civilian) x;
-				return z.currentState == Civilian.CivilianState.HELD_HOSTAGE_CALLING || 
+				if (z.currentState == Civilian.CivilianState.HELD_HOSTAGE_CALLING || 
 					z.currentState == Civilian.CivilianState.HELD_HOSTAGE_TIED ||
-					z.currentState == Civilian.CivilianState.HELD_HOSTAGE_CALLING;
+					z.currentState == Civilian.CivilianState.HELD_HOSTAGE_UNTIED) {
+					return true;
+				}
 			}
 			return !x.isAlive;
 		}).ToList();
 
 		// must have line of sight
-		foreach (Character c in chars) {
+		foreach (Character c in draggableChars) {
 			Vector3 dir = c.transform.position - transform.position;
 			RaycastHit hit;
 			if (!Physics.Raycast(transform.position, dir, out hit))
@@ -324,12 +326,8 @@ public abstract class Character : PossibleObjective, Damageable {
 				continue;
 			draggedBody = c.gameObject;
 			Character bodyChar = draggedBody.GetComponent<Character>();
-			if (bodyChar == null || bodyChar.isAlive) {
-				draggedBody = null;
-			} else {
-				bodyChar.beingDragged = true;
-				break;
-			}
+			bodyChar.beingDragged = true;
+			break;
 		}
 	}
 
