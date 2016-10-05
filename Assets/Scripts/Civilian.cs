@@ -144,10 +144,11 @@ public class Civilian : Character, Interactable {
 		if (rb.constraints == RigidbodyConstraints.None)
 			return;
 
+		LoseLookTarget();
 		rb.constraints = RigidbodyConstraints.None;
 		GetComponent<NavMeshAgent>().enabled = false;
 		Vector3 rot = rb.rotation.eulerAngles;
-		rot.x += 35f;
+		rot.x += 32f;
 		rb.MoveRotation(Quaternion.Euler(rot));
 	}
 

@@ -112,7 +112,7 @@ public class PlayerControls : Character {
 
 	public void Shout() {
 		if (!speech.currentlyDisplaying) {
-			speech.SayRandom(Speech.PLAYER_SHOUT, showFlash: true, color:"blue");
+			speech.SayRandom(Speech.PLAYER_SHOUT, showFlash: true, color:"yellow");
 		}
 		GameManager.instance.AlertInRange(Reaction.AGGRO, transform.position, 4f);
 	}
