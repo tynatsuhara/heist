@@ -98,9 +98,6 @@ public abstract class Character : PossibleObjective, Damageable {
 		if (!weaponDrawn)
 			damage *= 2f;
 
-		if (isAlive && !isPlayer)
-			Invoke("Alert", .7f);
-
 		if (armor > 0) {
 			armor -= damage;
 			if (armor >= 0) {
@@ -114,6 +111,9 @@ public abstract class Character : PossibleObjective, Damageable {
 			}
 			damage = -armor;  // for applying leftover damage
 		}
+
+		if (isAlive && !isPlayer)
+			Invoke("Alert", .7f);
 
 		if (isAlive)
 			Bleed(Random.Range(0, 10), location, angle);
@@ -303,7 +303,7 @@ public abstract class Character : PossibleObjective, Damageable {
 			return;
 
 		Vector3 inFrontPos = transform.position + transform.forward * 1f;
-		List<Character> chars = GameManager.instance.DeadCharactersWithinDistance(inFrontPos, 1.5f);
+		List<Character> chars = GameManager.instance.CharactersWithinDistance(inFrontPos, 1.5f, dead:true);
 
 		// must have line of sight
 		foreach (Character c in chars) {

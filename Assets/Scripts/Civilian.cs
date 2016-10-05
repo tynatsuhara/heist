@@ -3,10 +3,6 @@ using System.Collections;
 
 public class Civilian : Character {
 
-	private Character playerScript;
-
-	private bool braveCitizen;  // can enter attacking state
-
 	private string[] copUniform = {
 		"0 0-73; 1 57 60 44 45 31; 2 46; 6 58 59; 4 14-27; 3 17",
 		"8 37 40; 7 26-33 44-51 60 62-69 71 78-89 96-119 91-94",
@@ -15,15 +11,18 @@ public class Civilian : Character {
 	};
 
 	private enum CivilianState {
-		PASSIVE,
-		ALERTING,
-		FLEEING,
-		ATTACKING,
+		PASSIVE,                    // default behavior
+		ALERTING,                   // running to notify guards
+		FLEEING,                    // running off the map
+		ATTACKING,                  // surprising the player
 		HELD_HOSTAGE_UNTIED,
 		HELD_HOSTAGE_TIED,
 		HELD_HOSTAGE_CALLING
 	}
 	private CivilianState currentState;
+
+	private Character playerScript;	
+	private bool braveCitizen;  // can enter attacking state	
 
 	void Awake() {
 		rb = GetComponent<Rigidbody>();
@@ -42,7 +41,23 @@ public class Civilian : Character {
 		if (!isAlive || GameManager.paused)
 			return;
 
-		PassiveBehavior();
+		switch (currentState) {
+			case CivilianState.PASSIVE:
+				StatePassive();
+				break;
+			case CivilianState.ALERTING:
+				break;
+			case CivilianState.FLEEING:
+				break;
+			case CivilianState.ATTACKING:
+				break;
+			case CivilianState.HELD_HOSTAGE_UNTIED:
+				break;
+			case CivilianState.HELD_HOSTAGE_TIED:
+				break;
+			case CivilianState.HELD_HOSTAGE_CALLING:
+				break;
+		}
 	}
 
 	void FixedUpdate () {
@@ -52,8 +67,20 @@ public class Civilian : Character {
 		Rotate();
 	}
 
+	private bool transitioningState;
+	private CivilianState stateToTransitionTo;
+	private void TransitionState(CivilianState newState, float time) {
+		stateToTransitionTo = newState;
+		transitioningState = true;		
+		Invoke("CompleteTransition", time);
+	}
+	private void CompleteTransition() {
+		currentState = stateToTransitionTo;
+		transitioningState = false;
+	}
+
 	private bool drawWeaponInvoked = false;
-	private void PassiveBehavior() {
+	private void StatePassive() {
 		if (braveCitizen && playerScript.IsEquipped()) {
 			if (!drawWeaponInvoked && !weaponDrawn && CanSee(playerScript.gameObject) && !playerScript.CanSee(gameObject)) {
 				Invoke("DrawWeaponIfUnseen", Random.Range(.3f, 4f));

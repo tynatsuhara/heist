@@ -7,6 +7,20 @@ public class Enemy : Character {
 	private Character playerScript;
 	private NavMeshAgent agent;
 
+
+
+	// refactor AI to use these
+	private enum EnemyState {
+		PASSIVE,
+		SEARCHING,          // they know something is up, but don't know of the player
+		AGGRO_SEARCHING,    // they are aware of the player, but don't know location
+		AGGRO_ATTACKING
+	}
+
+
+	// TODO: static lastPlayerLocation and lastSightingTime
+
+
 	// state booleans, in somewhat order of precedence
 	public bool alerted;
 	public bool suspicious;

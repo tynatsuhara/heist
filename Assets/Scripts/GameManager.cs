@@ -72,9 +72,10 @@ public class GameManager : MonoBehaviour {
 	}
 
 	// Return all characters in the given range from the given point, ordered by increasing distance
-	public List<Character> DeadCharactersWithinDistance(Vector3 from, float range) {
+	public List<Character> CharactersWithinDistance(Vector3 from, float range, bool dead = false) {
+		List<Character> listToSearch = dead ? deadCharacters : characters;
 		List<Character> ret = new List<Character>();
-		foreach (Character c in deadCharacters) {
+		foreach (Character c in listToSearch) {
 			if ((c.transform.position - from).magnitude < range) {
 				ret.Add(c);
 			}
