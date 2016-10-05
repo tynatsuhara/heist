@@ -5,7 +5,7 @@ public class Civilian : Character {
 
 	private Character playerScript;
 
-	private bool braveCitizen;  // they have a gun and will take matters into their own hands
+	private bool braveCitizen;  // can enter attacking state
 
 	private string[] copUniform = {
 		"0 0-73; 1 57 60 44 45 31; 2 46; 6 58 59; 4 14-27; 3 17",
@@ -13,6 +13,17 @@ public class Civilian : Character {
 		"0 1; 5 0",
 		"0 1-3"
 	};
+
+	private enum CivilianState {
+		PASSIVE,
+		ALERTING,
+		FLEEING,
+		ATTACKING,
+		HELD_HOSTAGE_UNTIED,
+		HELD_HOSTAGE_TIED,
+		HELD_HOSTAGE_CALLING
+	}
+	private CivilianState currentState;
 
 	void Awake() {
 		rb = GetComponent<Rigidbody>();
@@ -48,7 +59,7 @@ public class Civilian : Character {
 				Invoke("DrawWeaponIfUnseen", Random.Range(.3f, 4f));
 				drawWeaponInvoked = true;
 			}
-			if (weaponDrawn) {
+			if (weaponDrawn && CanSee(playerScript.gameObject, fov:40f)) {
 				LookAt(playerScript.transform);
 				Shoot();
 			}

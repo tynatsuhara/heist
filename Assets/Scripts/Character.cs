@@ -280,16 +280,16 @@ public abstract class Character : PossibleObjective, Damageable {
 		return weaponDrawn;
 	}
 
-	private float viewDist = 20f;
-	public bool CanSee(GameObject target) {
+	public bool CanSee(GameObject target, float fov = 130f, float viewDist = 20f) {
 		Vector3 diff = transform.position - target.transform.position;
 		if (diff.magnitude > viewDist)
 			return false;
 		
 		float angle = Vector3.Dot(Vector3.Normalize(transform.position - target.transform.position), transform.forward);
-		float viewingAngle = -.3f;
-		if (angle >= viewingAngle)
+		float angleDegrees = 90 + Mathf.Asin(angle) * Mathf.Rad2Deg;
+		if (angleDegrees > fov / 2f) {
 			return false;
+		}
 
 		RaycastHit hit;
 		if (Physics.Raycast(transform.position, target.transform.position - transform.position, out hit))

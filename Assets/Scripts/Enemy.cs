@@ -146,7 +146,7 @@ public class Enemy : Character {
 			} else {
 				agent.destination = player.transform.position;
 			}
-			if (playerScript.isAlive) {
+			if (playerScript.isAlive && CanSee(player, fov:40f)) {
 				Shoot();
 			}
 			LookAt(lastKnownPlayerLocation);			
