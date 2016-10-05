@@ -1,5 +1,6 @@
 using UnityEngine;
-using System.Collections;
+using System.Linq;
+using System.Collections.Generic;
 
 public class PlayerControls : Character {
 
@@ -29,6 +30,9 @@ public class PlayerControls : Character {
 			return;
 
 		if (Input.GetKeyDown(KeyCode.F)) {
+			if (weaponDrawn) {
+				Shout();
+			}
 			DrawWeapon();
 		}
 
@@ -104,6 +108,13 @@ public class PlayerControls : Character {
     	if (playerPlane.Raycast(ray, out hitdist)) {
 			LookAt(ray.GetPoint(hitdist));
 		}
+	}
+
+	public void Shout() {
+		if (!speech.currentlyDisplaying) {
+			speech.SayRandom(Speech.PLAYER_SHOUT, showFlash: true, color:"blue");
+		}
+		GameManager.instance.AlertInRange(Reaction.AGGRO, transform.position, 4f);
 	}
 
 	public override void Alert(Character.Reaction importance, Vector3 position) {}

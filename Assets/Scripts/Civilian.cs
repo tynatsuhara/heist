@@ -33,7 +33,7 @@ public class Civilian : Character {
 
 	void Start () {
 		GetComponent<CharacterCustomization>().ColorCharacter(copUniform, true);
-
+		currentState = CivilianState.PASSIVE;
 		braveCitizen = Random.Range(0, 100) < 10;
 	}
 	
@@ -46,17 +46,22 @@ public class Civilian : Character {
 				StatePassive();
 				break;
 			case CivilianState.ALERTING:
+				StateAlerting();
 				break;
 			case CivilianState.FLEEING:
+				StateFleeing();
 				break;
 			case CivilianState.ATTACKING:
 				StateAttacking();
 				break;
 			case CivilianState.HELD_HOSTAGE_UNTIED:
+				StateHeldHostageUntied();
 				break;
 			case CivilianState.HELD_HOSTAGE_TIED:
+				StateHeldHostageTied();
 				break;
 			case CivilianState.HELD_HOSTAGE_CALLING:
+				StateHeldHostageCalling();
 				break;
 		}
 	}
@@ -70,7 +75,7 @@ public class Civilian : Character {
 
 	private bool transitioningState;
 	private CivilianState stateToTransitionTo;
-	private void TransitionState(CivilianState newState, float time) {
+	private void TransitionState(CivilianState newState, float time = 0f) {
 		stateToTransitionTo = newState;
 		transitioningState = true;
 		if (time <= 0f) {
@@ -103,6 +108,12 @@ public class Civilian : Character {
 		}
 	}
 
+	// CivilianState.ALERTING
+	private void StateAlerting() {}
+
+	// CivilianState.FLEEING
+	private void StateFleeing() {}		
+
 	// CivilianState.ATTACKING
 	private void StateAttacking() {
 		DrawWeapon();
@@ -112,7 +123,35 @@ public class Civilian : Character {
 		}
 	}
 
-	public override void Alert(Character.Reaction importance, Vector3 position) {
+	// CivilianState.HELD_HOSTAGE_UNTIED
+	private void StateHeldHostageUntied() {
+		if (rb.constraints == RigidbodyConstraints.None)
+			return;
 
+		rb.constraints = RigidbodyConstraints.None;
+		GetComponent<NavMeshAgent>().enabled = false;
+		// rb.AddTorque(Vector3.forward, ForceMode.Acceleration);
+		Vector3 rot = rb.rotation.eulerAngles;
+		rot.x += 25f;
+		Debug.Log(rot);
+		// rb.rotation = Quaternion.Euler(rot);
+		Debug.Log(rb.rotation);		
+		rb.MoveRotation(Quaternion.Euler(rot));
+	}
+
+	// CivilianState.HELD_HOSTAGE_TIED
+	private void StateHeldHostageTied() {}	
+
+	// CivilianState.HELD_HOSTAGE_CALLING
+	private void StateHeldHostageCalling() {}
+
+
+	public override void Alert(Character.Reaction importance, Vector3 position) {
+		if (currentState == CivilianState.HELD_HOSTAGE_CALLING ||
+			currentState == CivilianState.HELD_HOSTAGE_UNTIED ||
+			currentState == CivilianState.HELD_HOSTAGE_TIED)
+			return;
+
+		TransitionState(CivilianState.HELD_HOSTAGE_UNTIED);
 	}
 }

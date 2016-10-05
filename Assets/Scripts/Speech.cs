@@ -32,6 +32,16 @@ public class Speech {
 		"OH IT'S LIT"
 	};
 
+	public static readonly string[] PLAYER_SHOUT = {
+		"EAT THAT DIRT",
+		"GET DOWN",
+		"GET THE FUCK DOWN",
+		"DON'T MOVE",
+		"ON THE GROUND",
+		"EVERYBODY DOWN",
+		"NOBODY MOVE"
+	};
+
 	private Speech() {}
 }
 

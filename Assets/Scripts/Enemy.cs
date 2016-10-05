@@ -117,10 +117,6 @@ public class Enemy : Character {
 		Alert(Reaction.AGGRO, player.transform.position);
 	}
 
-	public void Alert() {
-		Alert(Reaction.AGGRO, player.transform.position);
-	}
-
 	public void Alert(Character.Reaction importance) {
 		Alert(importance, transform.position + transform.forward);
 	}
@@ -161,7 +157,7 @@ public class Enemy : Character {
 			} else {
 				agent.destination = player.transform.position;
 			}
-			if (playerScript.isAlive && CanSee(player, fov:40f)) {
+			if (playerScript.isAlive && CanSee(player, fov:30f)) {
 				Shoot();
 			}
 			LookAt(lastKnownPlayerLocation);			

@@ -56,6 +56,7 @@ public abstract class Character : PossibleObjective, Damageable {
 	public bool beingDragged;
 
 	public abstract void Alert(Character.Reaction importance, Vector3 position);
+	public void Alert() { Alert(Reaction.AGGRO, GameManager.instance.player.transform.position); }
 
 	public void KnockBack(float force) {
 		rb.AddForce(force * -transform.forward, ForceMode.Impulse);

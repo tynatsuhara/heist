@@ -13,6 +13,7 @@ public class TextObject : MonoBehaviour {
 	private float timeToClear;
 
 	public bool pausable = true;
+	public bool currentlyDisplaying = false;
 
 	void Awake() {
 		text = GetComponent<Text>();
@@ -33,6 +34,7 @@ public class TextObject : MonoBehaviour {
 		if (shouldClear && Time.realtimeSinceStartup >= timeToClear) {
 			shouldClear = false;
 			Clear();
+			currentlyDisplaying = false;
 		}
 	}
 
@@ -50,6 +52,7 @@ public class TextObject : MonoBehaviour {
 
 	// Dispaly a message in the text box
 	public void Say(string message, bool showFlash = false, float duration = 2f, string color = "white", bool permanent = false) {
+		currentlyDisplaying = true;
 		SetColor(color);
 		CancelInvoke();
 		text.text = message.ToUpper();
@@ -79,6 +82,7 @@ public class TextObject : MonoBehaviour {
 
 	// Remove any displayed text
 	public void Clear() {
+		currentlyDisplaying = false;
 		text.text = "";
 	}
 
