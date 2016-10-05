@@ -10,7 +10,7 @@ public class Civilian : Character {
 		"0 1-3"
 	};
 
-	private enum CivilianState {
+	public enum CivilianState {
 		PASSIVE,                    // default behavior
 		ALERTING,                   // running to notify guards
 		FLEEING,                    // running off the map
@@ -19,7 +19,7 @@ public class Civilian : Character {
 		HELD_HOSTAGE_TIED,
 		HELD_HOSTAGE_CALLING
 	}
-	private CivilianState currentState;
+	public CivilianState currentState;
 
 	private Character playerScript;	
 	private bool braveCitizen;  // can enter attacking state	
@@ -50,6 +50,7 @@ public class Civilian : Character {
 			case CivilianState.FLEEING:
 				break;
 			case CivilianState.ATTACKING:
+				StateAttacking();
 				break;
 			case CivilianState.HELD_HOSTAGE_UNTIED:
 				break;
@@ -71,33 +72,43 @@ public class Civilian : Character {
 	private CivilianState stateToTransitionTo;
 	private void TransitionState(CivilianState newState, float time) {
 		stateToTransitionTo = newState;
-		transitioningState = true;		
-		Invoke("CompleteTransition", time);
+		transitioningState = true;
+		if (time <= 0f) {
+			CompleteTransition();
+		} else {
+			Invoke("CompleteTransition", time);
+		} 
 	}
 	private void CompleteTransition() {
 		currentState = stateToTransitionTo;
 		transitioningState = false;
 	}
 
-	private bool drawWeaponInvoked = false;
+	//=================== STATE FUNCTIONS ===================//
+
+	// CivilianState.PASSIVE
+	private bool checkDrawWeaponInvoked = false;
 	private void StatePassive() {
-		if (braveCitizen && playerScript.IsEquipped()) {
-			if (!drawWeaponInvoked && !weaponDrawn && CanSee(playerScript.gameObject) && !playerScript.CanSee(gameObject)) {
-				Invoke("DrawWeaponIfUnseen", Random.Range(.3f, 4f));
-				drawWeaponInvoked = true;
-			}
-			if (weaponDrawn && CanSee(playerScript.gameObject, fov:40f)) {
-				LookAt(playerScript.transform);
-				Shoot();
+		LoseLookTarget();
+		if (!checkDrawWeaponInvoked && braveCitizen && playerScript.IsEquipped()) {
+			if (CanSee(playerScript.gameObject) && !playerScript.CanSee(gameObject)) {
+				Invoke("CheckDrawWeapon", Random.Range(.3f, 3f));
+				checkDrawWeaponInvoked = true;				
 			}
 		}
 	}
-
-	private void DrawWeaponIfUnseen() {
+	private void CheckDrawWeapon() {
 		if (!playerScript.CanSee(gameObject)) {
-			DrawWeapon();
-		} else {
-			drawWeaponInvoked = false;
+			TransitionState(CivilianState.ATTACKING, 0f);
+		}
+	}
+
+	// CivilianState.ATTACKING
+	private void StateAttacking() {
+		DrawWeapon();
+		if (CanSee(playerScript.gameObject, fov:40f)) {
+			LookAt(playerScript.transform);
+			Shoot();
 		}
 	}
 

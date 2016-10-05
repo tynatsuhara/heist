@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Linq;
 
 public class Enemy : Character {
 
@@ -97,7 +98,7 @@ public class Enemy : Character {
 		if (visiblePlayer)
 			return true;
 		
-		Character[] dead = GameManager.instance.DeadCharacters();
+		Character[] dead = GameManager.characters.Where(x => !x.isAlive).ToArray();
 		foreach (Character c in dead) {
 			if (CanSee(c.gameObject)) {
 				return true;

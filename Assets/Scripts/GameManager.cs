@@ -13,8 +13,7 @@ public class GameManager : MonoBehaviour {
 	public bool objectivesComplete;
 
 	private List<PossibleObjective> objectives;
-	private List<Character> characters;
-	private List<Character> deadCharacters;
+	public static List<Character> characters;
 	public PlayerControls player;
 
 	public bool alarmsRaised = false;
@@ -31,7 +30,6 @@ public class GameManager : MonoBehaviour {
 
 		// 2. spawn characters?
 		characters = Object.FindObjectsOfType<Character>().Where(x => !(x is PlayerControls)).ToList();
-		deadCharacters = new List<Character>();
 		player = GameObject.FindWithTag("Player").GetComponent<PlayerControls>();
 
 		// 3. get objectives
@@ -72,10 +70,9 @@ public class GameManager : MonoBehaviour {
 	}
 
 	// Return all characters in the given range from the given point, ordered by increasing distance
-	public List<Character> CharactersWithinDistance(Vector3 from, float range, bool dead = false) {
-		List<Character> listToSearch = dead ? deadCharacters : characters;
+	public List<Character> CharactersWithinDistance(Vector3 from, float range) {
 		List<Character> ret = new List<Character>();
-		foreach (Character c in listToSearch) {
+		foreach (Character c in characters) {
 			if ((c.transform.position - from).magnitude < range) {
 				ret.Add(c);
 			}
@@ -119,11 +116,6 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void MarkDead(Character character) {
-		characters.Remove(character);
-		deadCharacters.Add(character);
-	}
-
-	public Character[] DeadCharacters() {
-		return deadCharacters.ToArray();
+		// currently does nothing -- oops!
 	}
 }

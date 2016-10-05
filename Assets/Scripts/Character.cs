@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 
 public abstract class Character : PossibleObjective, Damageable {
@@ -303,7 +303,15 @@ public abstract class Character : PossibleObjective, Damageable {
 			return;
 
 		Vector3 inFrontPos = transform.position + transform.forward * 1f;
-		List<Character> chars = GameManager.instance.CharactersWithinDistance(inFrontPos, 1.5f, dead:true);
+		List<Character> chars = GameManager.instance.CharactersWithinDistance(inFrontPos, 1.5f).Where(x => {
+			if (x is Civilian) {
+				Civilian z = (Civilian) x;
+				return z.currentState == Civilian.CivilianState.HELD_HOSTAGE_CALLING || 
+					z.currentState == Civilian.CivilianState.HELD_HOSTAGE_TIED ||
+					z.currentState == Civilian.CivilianState.HELD_HOSTAGE_CALLING;
+			}
+			return !x.isAlive;
+		}).ToList();
 
 		// must have line of sight
 		foreach (Character c in chars) {
