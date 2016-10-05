@@ -266,7 +266,14 @@ public abstract class Character : PossibleObjective, Damageable {
 			currentInteractScript = hit.collider.GetComponentInParent<Interactable>();
 			if (currentInteractScript != null) {
 				currentInteractScript.Interact(this);
+				return;
 			}
+		}
+
+		List<Character> charsInFront = CharactersInFront().Where(x => x is Interactable).ToList();
+		if (charsInFront.Count > 0) {
+			currentInteractScript = (Interactable) charsInFront[0];
+			currentInteractScript.Interact(this);
 		}
 	}
 	public void InteractCancel() {
@@ -299,12 +306,16 @@ public abstract class Character : PossibleObjective, Damageable {
 		return false;
 	}
 
+	private List<Character> CharactersInFront() {
+		Vector3 inFrontPos = transform.position + transform.forward * .75f;
+		return GameManager.instance.CharactersWithinDistance(inFrontPos, 1.2f);
+	}
+
 	public void DragBody() {
 		if (draggedBody != null)
 			return;
-
-		Vector3 inFrontPos = transform.position + transform.forward * 1f;
-		List<Character> draggableChars = GameManager.instance.CharactersWithinDistance(inFrontPos, 1.5f).Where(x => {
+		
+		List<Character> draggableChars = CharactersInFront().Where(x => {
 			if (x is Civilian) {
 				Civilian z = (Civilian) x;
 				if (z.currentState == Civilian.CivilianState.HELD_HOSTAGE_CALLING || 
