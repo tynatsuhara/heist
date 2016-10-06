@@ -88,32 +88,6 @@ public class Enemy : Character {
 		Rotate();
 	}
 
-	private bool seesEvidence;
-	private void CheckForEvidence() {
-		seesEvidence = CanSeeEvidence();
-	}
-	// TODO: can they see the player, bodies, etc?
-	private bool CanSeeEvidence() {
-		bool visiblePlayer = (CanSee(player) && playerScript.IsEquipped());
-		if (visiblePlayer)
-			return true;
-		
-		foreach (Character c in GameManager.characters) {
-			bool isEvidence = !c.isAlive;
-			if (c is Civilian) {
-				Civilian civ = (Civilian) c;
-				isEvidence |= civ.currentState == Civilian.CivilianState.HELD_HOSTAGE_CALLING;
-				isEvidence |= civ.currentState == Civilian.CivilianState.HELD_HOSTAGE_TIED;
-				isEvidence |= civ.currentState == Civilian.CivilianState.HELD_HOSTAGE_UNTIED;
-			}
-			if (isEvidence && CanSee(c.gameObject)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
 	private void GlimpsedPlayer() {
 		if (!CanSee(player) || !playerScript.IsEquipped() || !isAlive) {
 			invoked = false;

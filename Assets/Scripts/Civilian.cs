@@ -22,13 +22,14 @@ public class Civilian : Character, Interactable {
 	public CivilianState currentState;
 
 	private Character playerScript;	
-	private bool braveCitizen;  // can enter attacking state	
+	public bool braveCitizen;  // can enter attacking state	
 
 	void Awake() {
 		rb = GetComponent<Rigidbody>();
 		gunScript = gun.GetComponent<Gun>();
 		playerScript = GameObject.FindWithTag("Player").GetComponent<PlayerControls>();
 		speech = GetComponentInChildren<TextObject>();
+		InvokeRepeating("CheckForEvidence", 0f, .5f);
 	}
 
 	void Start () {
@@ -101,16 +102,40 @@ public class Civilian : Character, Interactable {
 	private bool checkDrawWeaponInvoked = false;
 	private void StatePassive() {
 		LoseLookTarget();
-		if (!checkDrawWeaponInvoked && braveCitizen && playerScript.IsEquipped()) {
-			if (CanSee(playerScript.gameObject) && !playerScript.CanSee(gameObject)) {
+
+		if (seesEvidence) {
+			// TODO: switch to ALERTING
+
+			
+		}
+		BraveCitizenCheck();		
+	}
+	private void CheckDrawWeapon() {
+		if (!playerScript.CanSee(gameObject)) {
+			TransitionState(CivilianState.ATTACKING, 0f);
+		} else {
+			checkDrawWeaponInvoked = false;
+		}
+	}
+	private void BraveCitizenCheck() {
+		if (braveCitizen && !checkDrawWeaponInvoked && playerScript.IsEquipped() && playerScript.isAlive) {
+			// switch to attacking
+			bool canSeePlayer = currentState == CivilianState.PASSIVE ? CanSee(playerScript.gameObject) : ClearShot(playerScript.gameObject);
+			if (canSeePlayer && !playerScript.CanSee(gameObject)) {
 				Invoke("CheckDrawWeapon", Random.Range(.3f, 3f));
 				checkDrawWeaponInvoked = true;				
 			}
 		}
 	}
-	private void CheckDrawWeapon() {
-		if (!playerScript.CanSee(gameObject)) {
-			TransitionState(CivilianState.ATTACKING, 0f);
+
+	// any states that can come after CivilianState.HELD_HOSTAGE_UNTIED should call this	
+	private void ResetRB() {
+		if (rb.constraints == RigidbodyConstraints.None) {
+			rb.rotation = Quaternion.Euler(new Vector3(0, rb.rotation.y, 0));
+			rb.position = new Vector3(rb.position.x, 1.1f, rb.position.z);
+			GetComponent<NavMeshAgent>().enabled = true;			
+			arms.SetFrame(0);
+			rb.constraints = RigidbodyConstraints.FreezeRotation;
 		}
 	}
 
@@ -119,32 +144,27 @@ public class Civilian : Character, Interactable {
 
 	// CivilianState.FLEEING
 	private void StateFleeing() {
-		// any states that can come after CivilianState.HELD_HOSTAGE_UNTIED should check this
-		if (rb.constraints == RigidbodyConstraints.None) {
-			rb.rotation = Quaternion.Euler(new Vector3(0, rb.rotation.y, 0));
-			rb.position = new Vector3(rb.position.x, 1.1f, rb.position.z);
-			arms.SetFrame(0);
-			rb.constraints = RigidbodyConstraints.FreezeRotation;
-		}
-
-
+		ResetRB();
 	}
 
 	// CivilianState.ATTACKING
 	private void StateAttacking() {
+		ResetRB();
 		DrawWeapon();
+		LookAt(playerScript.transform);		
 		if (CanSee(playerScript.gameObject, fov:40f)) {
-			LookAt(playerScript.transform);
 			Shoot();
 		}
 	}
 
 	// CivilianState.HELD_HOSTAGE_UNTIED
 	private void StateHeldHostageUntied() {
+		BraveCitizenCheck();
+		LoseLookTarget();						
+
 		if (rb.constraints == RigidbodyConstraints.None)
 			return;
 
-		LoseLookTarget();
 		rb.constraints = RigidbodyConstraints.None;
 		GetComponent<NavMeshAgent>().enabled = false;
 		Vector3 rot = rb.rotation.eulerAngles;
@@ -164,7 +184,8 @@ public class Civilian : Character, Interactable {
 
 
 	public override void Alert(Character.Reaction importance, Vector3 position) {
-		if (currentState == CivilianState.HELD_HOSTAGE_CALLING ||
+		if (currentState == CivilianState.ATTACKING ||
+			currentState == CivilianState.HELD_HOSTAGE_CALLING ||
 			currentState == CivilianState.HELD_HOSTAGE_UNTIED ||
 			currentState == CivilianState.HELD_HOSTAGE_TIED)
 			return;

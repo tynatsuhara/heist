@@ -288,6 +288,32 @@ public abstract class Character : PossibleObjective, Damageable {
 		return weaponDrawn;
 	}
 
+	public bool seesEvidence;
+	public void CheckForEvidence() {
+		seesEvidence = CanSeeEvidence();
+	}
+
+	private bool CanSeeEvidence() {
+		bool visiblePlayer = (CanSee(GameManager.instance.player.gameObject) && GameManager.instance.player.IsEquipped());
+		if (visiblePlayer)
+			return true;
+		
+		foreach (Character c in GameManager.characters) {
+			bool isEvidence = !c.isAlive;
+			if (c is Civilian) {
+				Civilian civ = (Civilian) c;
+				isEvidence |= civ.currentState == Civilian.CivilianState.HELD_HOSTAGE_CALLING;
+				isEvidence |= civ.currentState == Civilian.CivilianState.HELD_HOSTAGE_TIED;
+				isEvidence |= civ.currentState == Civilian.CivilianState.HELD_HOSTAGE_UNTIED;
+			}
+			if (isEvidence && CanSee(c.gameObject)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	public bool CanSee(GameObject target, float fov = 130f, float viewDist = 20f) {
 		Vector3 diff = transform.position - target.transform.position;
 		if (diff.magnitude > viewDist)
@@ -301,6 +327,14 @@ public abstract class Character : PossibleObjective, Damageable {
 
 		RaycastHit hit;
 		if (Physics.Raycast(transform.position, target.transform.position - transform.position, out hit))
+			return hit.collider.transform.root.gameObject == target;
+
+		return false;
+	}
+
+	public bool ClearShot(GameObject target, float dist = 20f) {
+		RaycastHit hit;
+		if (Physics.Raycast(transform.position, target.transform.position - transform.position, out hit, dist))
 			return hit.collider.transform.root.gameObject == target;
 
 		return false;
