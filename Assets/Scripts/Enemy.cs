@@ -98,9 +98,15 @@ public class Enemy : Character {
 		if (visiblePlayer)
 			return true;
 		
-		Character[] dead = GameManager.characters.Where(x => !x.isAlive).ToArray();
-		foreach (Character c in dead) {
-			if (CanSee(c.gameObject)) {
+		foreach (Character c in GameManager.characters) {
+			bool isEvidence = !c.isAlive;
+			if (c is Civilian) {
+				Civilian civ = (Civilian) c;
+				isEvidence |= civ.currentState == Civilian.CivilianState.HELD_HOSTAGE_CALLING;
+				isEvidence |= civ.currentState == Civilian.CivilianState.HELD_HOSTAGE_TIED;
+				isEvidence |= civ.currentState == Civilian.CivilianState.HELD_HOSTAGE_UNTIED;
+			}
+			if (isEvidence && CanSee(c.gameObject)) {
 				return true;
 			}
 		}
