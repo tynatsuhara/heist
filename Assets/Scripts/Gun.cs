@@ -31,7 +31,8 @@ public abstract class Gun : MonoBehaviour {
 		bool keepGoing = true;
 		bool hitEnemy = false;
 		for (int i = 0; i < hits.Length && keepGoing; i++) {
-			Damageable damageScript = hits[i].transform.root.GetComponent<Damageable>();
+			// Damageable damageScript = hits[i].transform.root.GetComponent<Damageable>();
+			Damageable damageScript = hits[i].transform.GetComponentInParent<Damageable>();
 			if (damageScript == null)
 				break;
 			if (!hitEnemy) {
