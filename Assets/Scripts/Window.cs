@@ -9,7 +9,6 @@ public class Window : MonoBehaviour, Damageable {
 		exploder.transform.position = location + new Vector3(0f, Random.Range(-.3f, .6f) , 0f);
 		exploder.ExplosionRadius = Random.Range(.3f, .6f);
 		exploder.Explode();
-		Debug.Log("hit window");
 		return true;
 	}
 }
