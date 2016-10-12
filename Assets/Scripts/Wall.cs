@@ -10,11 +10,14 @@ public class Wall : MonoBehaviour, Damageable {
 	// The return value is used for projectile damage. If the bullet should go
 	// through the object and continue, return true. Otherwise return false.
 	public bool Damage(Vector3 location, Vector3 angle, float damage) {
-		if (damage >= damangeThreshold) {
+		if (damage >= damangeThreshold && canBeShotThrough) {
 			if (exploder != null) {
+				exploder.transform.position = location + new Vector3(0f, UnityEngine.Random.Range(-.5f, 1f), 0f);
 				float explosionScale = 3f;
 				exploder.Explode(angle * explosionScale);
 			}
+		} else {
+			// discoloration of Wall?
 		}
 
 		return canBeShotThrough;
