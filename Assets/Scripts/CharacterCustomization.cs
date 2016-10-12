@@ -37,7 +37,7 @@ public class CharacterCustomization : MonoBehaviour {
 		"0 1-3"
 	};
 
-	public void ColorCharacter(string[] outfit, bool randomize = false) {
+	public void ColorCharacter(string[] outfit, bool randomize = false, Accessory[] accessories = null) {
 		if (randomize && hairColors != null && hairColors.Length > 0) {
 			hairColor = hairColors[Random.Range(0, hairColors.Length)];
 		}
@@ -59,8 +59,16 @@ public class CharacterCustomization : MonoBehaviour {
 			eyeColor
 		};
 
-		PicaVoxel.Volume[] volumez = { body, head, legs, arms, gunz };
-		for (int i = 0; i < volumez.Length; i++) {
+		List<PicaVoxel.Volume> volumez = new List<PicaVoxel.Volume>(new PicaVoxel.Volume[] { body, head, legs, arms, gunz });
+		if (accessories != null) {
+			foreach (Accessory a in accessories) {
+				if (a.GetComponentInParent<PicaVoxel.Volume>() != null) {
+					volumez.Add(a.GetComponentInParent<PicaVoxel.Volume>());
+				}
+			}
+		}
+
+		for (int i = 0; i < volumez.Count; i++) {
 			PicaVoxel.Volume volume = volumez[i];
 			Dictionary<byte, int> palette = palettes[i == 4 ? 3 : i];
 
