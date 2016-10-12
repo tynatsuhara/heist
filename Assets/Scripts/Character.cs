@@ -11,7 +11,7 @@ public abstract class Character : PossibleObjective, Damageable {
 		AGGRO
 	};
 	private Vector3 suspicionPos;
-
+	public LayerMask sightLayers;
 	public TextObject speech;
 	
 	protected Rigidbody rb;
@@ -326,7 +326,7 @@ public abstract class Character : PossibleObjective, Damageable {
 		}
 
 		RaycastHit hit;
-		if (Physics.Raycast(transform.position, target.transform.position - transform.position, out hit))
+		if (Physics.Raycast(transform.position, target.transform.position - transform.position, out hit, viewDist, sightLayers))
 			return hit.collider.transform.root.gameObject == target;
 
 		return false;
