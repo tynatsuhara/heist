@@ -12,12 +12,16 @@ public class Wall : MonoBehaviour, Damageable {
 	public bool Damage(Vector3 location, Vector3 angle, float damage) {
 		if (damage >= damangeThreshold && canBeShotThrough) {
 			if (exploder != null) {
-				exploder.transform.position = location + new Vector3(0f, UnityEngine.Random.Range(-.5f, 1f), 0f);
+				exploder.ExplosionRadius = UnityEngine.Random.Range(.1f, .25f);
+				exploder.transform.position = location + new Vector3(UnityEngine.Random.Range(-.1f, .1f), 
+																	 UnityEngine.Random.Range(-.5f, 1f), 
+																	 UnityEngine.Random.Range(-.1f, .1f));
 				float explosionScale = 3f;
 				exploder.Explode(angle * explosionScale);
 			}
 		} else {
 			// discoloration of Wall?
+			
 		}
 
 		return canBeShotThrough;

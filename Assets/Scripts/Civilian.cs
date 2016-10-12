@@ -190,7 +190,7 @@ public class Civilian : Character, Interactable {
 			currentState == CivilianState.HELD_HOSTAGE_TIED)
 			return;
 
-		arms.SetFrame(1);  // hands up			
+		arms.SetFrame(1);  // hands up
 		TransitionState(CivilianState.HELD_HOSTAGE_UNTIED, Random.Range(.3f, 1.3f));
 	}
 
