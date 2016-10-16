@@ -117,6 +117,15 @@ public class CharacterCustomization : MonoBehaviour {
 
 		if (accessories != null) {
 			outfit_.AddRange(accessories.Select(i => i.colorString));
+			foreach (Accessory a in accessories) {
+				// apply accessory coloring to the head and body
+				if (a.bodyString != null && a.bodyString.Length > 0) {
+					outfit_[0] += ';' + a.bodyString;
+				}
+				if (a.headString != null && a.headString.Length > 0) {
+					outfit_[1] += ';' + a.headString;
+				}
+			}
 		}
 
 		Dictionary<byte, int>[] res = new Dictionary<byte, int>[outfit_.Count];
@@ -124,7 +133,7 @@ public class CharacterCustomization : MonoBehaviour {
 		for (int j = 0; j < outfit_.Count; j++) {
 			var palette = outfit_[j];
 			Dictionary<int, byte[]> dict = new Dictionary<int, byte[]>();
-			List<string> strings = palette.Split(';').ToList();
+			List<string> strings = palette.Split(';').Where(x => x.Length > 0).ToList();
 			foreach (string s in strings) {
 				string[] ranges = s.Trim().Split(' ');
 				int color = int.Parse(ranges[0]);
