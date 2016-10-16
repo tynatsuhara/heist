@@ -15,7 +15,7 @@ public class PlayerControls : Character {
 		rb = GetComponent<Rigidbody>();
 		gunScript = gun.GetComponent<Gun>();
 		speech = GetComponentInChildren<TextObject>();
-		GetComponent<CharacterCustomization>().ColorCharacter(outfit);
+		GetComponent<CharacterCustomization>().ColorCharacter(outfit, accessories:accessories);
 
 		gunScript.UpdateUI();
 		GameUI.instance.UpdateHealth(health, healthMax, armor, armorMax);

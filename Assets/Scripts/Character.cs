@@ -13,6 +13,7 @@ public abstract class Character : PossibleObjective, Damageable {
 	private Vector3 suspicionPos;
 	public LayerMask sightLayers;
 	public TextObject speech;
+	public Accessory[] accessories;
 	
 	protected Rigidbody rb;
 	public WalkCycle walk;
