@@ -30,6 +30,8 @@ public class CharacterCustomization : MonoBehaviour {
 	public Color32[] skinColors;
 
 	// outfit format: [body, head, legs, arms]
+	// string format:
+	//     "<color number> <number or inclusive range>(s); <etc>"
 	private string[] exampleOutfit = {
 		"3 0-13 70-73; 0 14-69; 1 58-59 44-45 30-31 16-17",
 		"8 37 40; 7 26-33 44-51 60 62-69 71",
@@ -70,6 +72,7 @@ public class CharacterCustomization : MonoBehaviour {
 
 		for (int i = 0; i < volumez.Count; i++) {
 			PicaVoxel.Volume volume = volumez[i];
+			// arms and guns use the same palette
 			Dictionary<byte, int> palette = palettes[i == 4 ? 3 : i];
 
 			foreach (PicaVoxel.Frame frame in volume.Frames) {
