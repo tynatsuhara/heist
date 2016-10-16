@@ -47,7 +47,7 @@ public class CharacterCustomization : MonoBehaviour {
 			skinColor = skinColors[Random.Range(0, skinColors.Length)];
 		}
 
-		var palettes = Parse(outfit);
+		var palettes = Parse(outfit, accessories);
 
 		Color32[] colors = {
 			shirtColor1,
@@ -66,6 +66,7 @@ public class CharacterCustomization : MonoBehaviour {
 			foreach (Accessory a in accessories) {
 				if (a.GetComponentInParent<PicaVoxel.Volume>() != null) {
 					volumez.Add(a.GetComponentInParent<PicaVoxel.Volume>());
+					
 				}
 			}
 		}
@@ -73,7 +74,7 @@ public class CharacterCustomization : MonoBehaviour {
 		for (int i = 0; i < volumez.Count; i++) {
 			PicaVoxel.Volume volume = volumez[i];
 			// arms and guns use the same palette
-			Dictionary<byte, int> palette = palettes[i == 4 ? 3 : i];
+			Dictionary<byte, int> palette = palettes[i];
 
 			foreach (PicaVoxel.Frame frame in volume.Frames) {
 				for (int x = 0; x < frame.XSize; x++) {
@@ -105,17 +106,23 @@ public class CharacterCustomization : MonoBehaviour {
 		}
 	}
 
-	// Randomizes a byte and clamps it
+	// Randomizes a byte and clamps it between 0 and 255
 	private byte JiggleByte(byte b, int jiggleFactor) {
 		return (byte)Mathf.Clamp(b + Random.Range(0, jiggleFactor + 1), 0, 255);
 	}
 
-	private static Dictionary<byte, int>[] Parse(string[] outfit) {
+	private static Dictionary<byte, int>[] Parse(string[] outfit, Accessory[] accessories) {
+		List<string> outfit_ = new List<string>(outfit);
+		outfit_.Add(outfit[3]);
 
-		Dictionary<byte, int>[] res = new Dictionary<byte, int>[outfit.Length];
+		if (accessories != null) {
+			outfit_.AddRange(accessories.Select(i => i.colorString));
+		}
 
-		for (int j = 0; j < outfit.Length; j++) {
-			var palette = outfit[j];
+		Dictionary<byte, int>[] res = new Dictionary<byte, int>[outfit_.Count];
+
+		for (int j = 0; j < outfit_.Count; j++) {
+			var palette = outfit_[j];
 			Dictionary<int, byte[]> dict = new Dictionary<int, byte[]>();
 			List<string> strings = palette.Split(';').ToList();
 			foreach (string s in strings) {
