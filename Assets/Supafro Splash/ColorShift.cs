@@ -15,6 +15,8 @@ public class ColorShift : MonoBehaviour {
 	private bool invoked;
 	private float layer1Speed;
 	private float layer2Speed;
+	public float growRate;
+	public CanvasScaler scaler;
 
 	void Awake() {
 		layer1Speed = Random.Range(.3f, 1.2f) * Random.Range(0, 2) == 0 ? 1f : -1f;
@@ -24,6 +26,7 @@ public class ColorShift : MonoBehaviour {
 	}
 
 	void Update() {
+		scaler.scaleFactor += growRate * Time.deltaTime;
 		Cycle(layer1, layer1Speed);
 		Cycle(layer2, layer2Speed);
 	}

@@ -366,10 +366,12 @@ public abstract class Character : PossibleObjective, Damageable {
 		foreach (Character c in draggableChars) {
 			Vector3 dir = c.transform.position - transform.position;
 			RaycastHit hit;
-			if (!Physics.Raycast(transform.position, dir, out hit))
+			if (!Physics.Raycast(transform.position, dir, out hit)) {
 				continue;
-			if (hit.collider.GetComponentInParent<Character>() != c)
+			}
+			if (hit.collider.GetComponentInParent<Character>() != c) {
 				continue;
+			}
 			draggedBody = c.gameObject;
 			Character bodyChar = draggedBody.GetComponent<Character>();
 			bodyChar.beingDragged = true;
