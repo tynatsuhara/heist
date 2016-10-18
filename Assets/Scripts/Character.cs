@@ -25,7 +25,7 @@ public abstract class Character : PossibleObjective, Damageable {
 
 	public Inventory inventory;
 	public Inventory weaponInv;
-	private Bag bag;
+	public Bag bag;
 	public bool hasBag {
 		get { return bag != null; }
 	}
@@ -406,5 +406,11 @@ public abstract class Character : PossibleObjective, Damageable {
 		this.bag = bag;
 		bag.transform.parent = transform;
 		bag.transform.localPosition = new Vector3(.5f, -.8f, -.2f);
+	}
+
+	public void DropBag() {
+		if (!hasBag) return;
+
+		// drop stuff
 	}
 }

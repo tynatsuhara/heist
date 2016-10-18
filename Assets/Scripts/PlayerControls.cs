@@ -75,13 +75,14 @@ public class PlayerControls : Character {
 			speed *= .5f;
 		if (Cheats.instance.IsCheatEnabled("konami"))
 			speed *= 3f;
+		if (hasBag)
+			speed *= bag.speedMultiplier;
 
 		Vector3 pos = transform.position;
 		pos.x += speed * (z * Mathf.Sin(cameraRotation * Mathf.Deg2Rad) + 
 			x * Mathf.Sin((cameraRotation + 90) * Mathf.Deg2Rad));
 		pos.z += speed * (z * Mathf.Cos(cameraRotation * Mathf.Deg2Rad) + 
 			x * Mathf.Cos((cameraRotation + 90) * Mathf.Deg2Rad));
-//		transform.position = pos;
 		rb.MovePosition(pos);
 
 		if ((x != 0 || z != 0) && !walk.isWalking) {
