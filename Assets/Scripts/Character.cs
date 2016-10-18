@@ -25,6 +25,10 @@ public abstract class Character : PossibleObjective, Damageable {
 
 	public Inventory inventory;
 	public Inventory weaponInv;
+	private Bag bag;
+	public bool hasBag {
+		get { return bag != null; }
+	}
 
 	public PicaVoxel.Volume head;
 	public PicaVoxel.Volume body;
@@ -394,5 +398,13 @@ public abstract class Character : PossibleObjective, Damageable {
 			return;
 		draggedBody.GetComponent<Character>().beingDragged = false;
 		draggedBody = null;
+	}
+
+	public void AddBag(Bag bag) {
+		if (hasBag) return;
+
+		this.bag = bag;
+		bag.transform.parent = transform;
+		bag.transform.localPosition = new Vector3(.5f, -.8f, -.2f);
 	}
 }
