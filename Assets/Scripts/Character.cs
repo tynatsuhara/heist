@@ -405,7 +405,8 @@ public abstract class Character : PossibleObjective, Damageable {
 
 		this.bag = bag;
 		bag.transform.parent = transform;
-		bag.transform.localPosition = new Vector3(.5f, -.8f, -.2f);
+		bag.transform.localPosition = new Vector3(.5f, -.8f, -.1f);
+		bag.transform.localRotation = Quaternion.Euler(0f, 180f, 0f);
 	}
 
 	public void DropBag() {
