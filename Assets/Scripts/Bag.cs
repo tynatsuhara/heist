@@ -17,6 +17,7 @@ public class Bag : PossibleObjective, Interactable {
 			return;
 
 		SetOnGround(false);
+		MarkCompleted();
 		character.AddBag(this);
 	}
 
