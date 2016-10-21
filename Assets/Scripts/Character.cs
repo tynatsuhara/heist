@@ -266,6 +266,12 @@ public abstract class Character : PossibleObjective, Damageable {
 			return;
 		}
 
+		float interactDist = 1.8f;
+		float interactStep = .1f;
+		for (float i = 0; i < interactDist - interactStep * 5; i += interactStep) {
+			Debug.DrawRay(transform.position, (transform.forward * (interactDist - i) - transform.up * i) * (1 + i * .7f), Color.red, 10f);
+		}
+
 		RaycastHit hit;
 		if (Physics.Raycast(transform.position, transform.forward, out hit, 1.8f)) {
 			currentInteractScript = hit.collider.GetComponentInParent<Interactable>();
