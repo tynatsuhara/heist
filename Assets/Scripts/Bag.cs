@@ -9,7 +9,7 @@ public class Bag : PossibleObjective, Interactable {
 
 	void Start() {
 		SetOnGround(true);
-		GetComponent<Rigidbody>().mass = (1 - speedMultiplier) * 150;
+		GetComponent<Rigidbody>().mass = (1 - speedMultiplier) * 180 + 5;
 	}
 
 	public void Interact(Character character) {
