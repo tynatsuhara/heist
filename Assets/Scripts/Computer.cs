@@ -24,7 +24,6 @@ public class Computer : PossibleObjective, Interactable {
 	}
 
 	public void Interact(Character character) {
-		Debug.Log("Interacted with");
 		if (itemsToPower == null)
 			return;
 		// speech.Say(new string[]{ "HACKING   ", "HACKING.  ", "HACKING.. ", "HACKING..." }, interval: .2f, loop: true);
