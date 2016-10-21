@@ -115,7 +115,5 @@ public class GameManager : MonoBehaviour {
 		return objectives.All(x => !x.isRequired || x.isCompleted);
 	}
 
-	public void MarkDead(Character character) {
-		// currently does nothing -- oops!
-	}
+	
 }

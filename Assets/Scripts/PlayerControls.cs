@@ -67,10 +67,13 @@ public class PlayerControls : Character {
 		
     	LookAtMouse();
 		Move(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+		walking = Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0;
 		Drag();
 		Rotate();
     }
 
+
+	// Returns true if the character moved 
 	public void Move(float x, float z) {
 		float cameraRotation = CameraMovement.instance.transform.eulerAngles.y;
 

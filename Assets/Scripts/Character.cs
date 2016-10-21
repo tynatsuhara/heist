@@ -18,6 +18,9 @@ public abstract class Character : PossibleObjective, Damageable {
 	protected Rigidbody rb;
 	public WalkCycle walk;
 
+	// each inheriting class should define walking
+	public bool walking;
+
 	public float healthMax;
 	public float health;
 	public float armorMax;
@@ -154,8 +157,6 @@ public abstract class Character : PossibleObjective, Damageable {
 	}
 
 	public virtual void Die(Vector3 angle) {
-		GameManager.instance.MarkDead(this);
-
 		NavMeshAgent agent = GetComponent<NavMeshAgent>();
 		if (agent != null)
 			agent.enabled = false;
@@ -411,7 +412,7 @@ public abstract class Character : PossibleObjective, Damageable {
 		bag.DropBag();
 		bag.transform.position = transform.position + transform.forward * 1f - transform.up * .6f;
 		bag.transform.parent = null;
-		bag.GetComponent<Rigidbody>().AddForce(transform.forward * (walk.isWalking ? 2000 : 600f), ForceMode.Impulse);
+		bag.GetComponent<Rigidbody>().AddForce(transform.forward * (walking ? 2000 : 600f), ForceMode.Impulse);
 		bag = null;
 	}
 

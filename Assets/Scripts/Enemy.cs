@@ -70,6 +70,7 @@ public class Enemy : Character {
 			return;
 
 		LegAnimation();
+		walking = agent.enabled && agent.velocity != Vector3.zero;
 
 		if (alerted) {
 			AggroBehavior();
