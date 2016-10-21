@@ -269,22 +269,16 @@ public abstract class Character : PossibleObjective, Damageable {
 		float interactDist = 1.8f;
 		float interactStep = .1f;
 		for (float i = 0; i < interactDist - interactStep * 5; i += interactStep) {
-			Debug.DrawRay(transform.position, (transform.forward * (interactDist - i) - transform.up * i) * (1 + i * .7f), Color.red, 10f);
-		}
-
-		RaycastHit hit;
-		if (Physics.Raycast(transform.position, transform.forward, out hit, 1.8f)) {
-			currentInteractScript = hit.collider.GetComponentInParent<Interactable>();
-			if (currentInteractScript != null) {
-				currentInteractScript.Interact(this);
-				return;
+			RaycastHit hit;
+			if (Physics.Raycast(transform.position, 
+								(transform.forward * (interactDist - i) - transform.up * i), 
+								out hit, (1 + i * .7f))) {
+				currentInteractScript = hit.collider.GetComponentInParent<Interactable>();
+				if (currentInteractScript != null) {
+					currentInteractScript.Interact(this);
+					return;
+				}
 			}
-		}
-
-		List<Character> charsInFront = CharactersInFront().Where(x => x is Interactable).ToList();
-		if (charsInFront.Count > 0) {
-			currentInteractScript = (Interactable) charsInFront[0];
-			currentInteractScript.Interact(this);
 		}
 	}
 	public void InteractCancel() {
@@ -363,11 +357,7 @@ public abstract class Character : PossibleObjective, Damageable {
 		List<Character> draggableChars = CharactersInFront().Where(x => {
 			if (x is Civilian) {
 				Civilian z = (Civilian) x;
-				if (z.currentState == Civilian.CivilianState.HELD_HOSTAGE_CALLING || 
-					z.currentState == Civilian.CivilianState.HELD_HOSTAGE_TIED ||
-					z.currentState == Civilian.CivilianState.HELD_HOSTAGE_UNTIED) {
-					return true;
-				}
+				return z.currentState == Civilian.CivilianState.HELD_HOSTAGE_TIED;
 			}
 			return !x.isAlive;
 		}).ToList();
