@@ -407,7 +407,11 @@ public abstract class Character : PossibleObjective, Damageable {
 	}
 
 	public void DropBag() {
-		if (!hasBag || FacingObstruction()) return;
+		if (!hasBag) return;
+		GameObject facingObject = FacingObstruction();
+		if (facingObject != null && facingObject.GetComponentInParent<Car>() != GameManager.instance.getaway) {
+			return;
+		}
 
 		bag.DropBag();
 		bag.transform.position = transform.position + transform.forward * 1f - transform.up * .6f;
@@ -416,9 +420,12 @@ public abstract class Character : PossibleObjective, Damageable {
 		bag = null;
 	}
 
-	// Returns if the player is within distance of something like a wall, facing it
-	public bool FacingObstruction(float distance = 1f) {
+	// Returns the gameObject the player is facing, or null if there isn't one
+	public GameObject FacingObstruction(float distance = 1f) {
 		RaycastHit hit;
-		return Physics.Raycast(transform.position, transform.forward, out hit, distance);
+		if (Physics.Raycast(transform.position, transform.forward, out hit, distance)) {
+			return hit.collider.gameObject;
+		}
+		return null;
 	}
 }

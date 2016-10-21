@@ -129,14 +129,18 @@ public class GameManager : MonoBehaviour {
 
 	private Dictionary<string, List<int>> lootAmounts;
 	public void AddLoot(string category, int dollarAmount) {
+		if (category == null || category.Length == 0)
+			return;
+		
 		category = category.ToUpper();
 		if (lootAmounts == null) {
 			lootAmounts = new Dictionary<string, List<int>>();
 		}
 
-		List<int> loots;
-		lootAmounts.TryGetValue(category, out loots);
+		List<int> loots = lootAmounts.ContainsKey(category) ? lootAmounts[category] : new List<int>();
 		loots.Add(dollarAmount);
 		lootAmounts[category] = loots;
+
+		Debug.Log(category + " + $" + dollarAmount);
 	}
 }

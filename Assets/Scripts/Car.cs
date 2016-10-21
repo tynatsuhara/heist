@@ -79,6 +79,11 @@ public class Car : MonoBehaviour, Damageable, Interactable {
 		if (charactersByDoors.Contains(c)) {
 			if (GetIn(c)) {
 				c.gameObject.SetActive(false);
+				// if the player gets in the getaway with a bag, we need to save the money in it
+				if (c.hasBag && this == GameManager.instance.getaway) {
+					c.bag.SaveLoot();
+					c.DropBag();
+				}
 			}
 		}
 	}

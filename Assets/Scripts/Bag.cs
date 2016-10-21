@@ -6,6 +6,9 @@ public class Bag : PossibleObjective, Interactable {
 	private bool onGround;
 	public float speedMultiplier = .75f;
 	public Collider collider;
+	public string lootCategory;
+	public int dollarAmount;
+	private bool putInGetaway;
 
 	void Start() {
 		SetOnGround(true);
@@ -32,5 +35,23 @@ public class Bag : PossibleObjective, Interactable {
 		GetComponent<PicaVoxel.Volume>().SetFrame(onGround ? 0 : 1);
 		collider.enabled = onGround;
 		this.onGround = onGround;
+	}
+
+	void OnCollisionEnter(Collision collision) {
+		if (!onGround)
+			return;
+
+		if (collision.collider.GetComponentInParent<Car>() == GameManager.instance.getaway) {
+			SaveLoot();
+		}
+	}
+
+	public void SaveLoot() {
+		if (putInGetaway)
+			return;
+		
+		putInGetaway = true;
+		GameManager.instance.AddLoot(lootCategory, dollarAmount);
+		gameObject.SetActive(false);
 	}
 }
