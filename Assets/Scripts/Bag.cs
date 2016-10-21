@@ -8,24 +8,27 @@ public class Bag : PossibleObjective, Interactable {
 	public Collider collider;
 
 	void Start() {
-		onGround = true;
+		SetOnGround(true);
+		GetComponent<Rigidbody>().mass = (1 - speedMultiplier) * 150;
 	}
 
 	public void Interact(Character character) {
 		if (!onGround || character.hasBag)
 			return;
 
-		GetComponent<Rigidbody>().isKinematic = true;
-		collider.enabled = false;
-		character.AddBag(this);		
+		SetOnGround(false);
+		character.AddBag(this);
 	}
 
-	public void Uninteract(Character character) {
-
-	}
+	public void Uninteract(Character character) {}
 
 	public void DropBag() {
-		GetComponent<Rigidbody>().isKinematic = false;
-		collider.enabled = true;
+		SetOnGround(true);
+	}
+
+	private void SetOnGround(bool onGround) {
+		GetComponent<Rigidbody>().isKinematic = !onGround;
+		collider.enabled = onGround;
+		this.onGround = onGround;
 	}
 }
