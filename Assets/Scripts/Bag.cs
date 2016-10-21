@@ -29,6 +29,7 @@ public class Bag : PossibleObjective, Interactable {
 
 	private void SetOnGround(bool onGround) {
 		GetComponent<Rigidbody>().isKinematic = !onGround;
+		GetComponent<PicaVoxel.Volume>().SetFrame(onGround ? 0 : 1);
 		collider.enabled = onGround;
 		this.onGround = onGround;
 	}
