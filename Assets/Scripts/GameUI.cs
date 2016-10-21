@@ -80,8 +80,13 @@ public class GameUI : MonoBehaviour {
 
 	public void UpdateObjectives(PossibleObjective[] array) {
 		string res = "";
+		bool hasObjectivesLeft = false;
 		foreach (PossibleObjective po in array) {
 			if (po.isObjective && !po.isCompleted && !po.isLocked) {
+				if (!hasObjectivesLeft) {
+					hasObjectivesLeft = true;
+					res += "objectives:\n";
+				}
 				res += po.message + "\n";
 			}
 		}

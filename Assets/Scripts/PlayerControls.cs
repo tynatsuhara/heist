@@ -42,6 +42,10 @@ public class PlayerControls : Character {
 			InteractCancel();
 		}
 
+		if (Input.GetKeyDown(KeyCode.G)) {
+			DropBag();
+		}
+
 		if (Input.GetKeyDown(KeyCode.Space)) {
 			DragBody();
 		} else if (Input.GetKeyUp(KeyCode.Space)) {
