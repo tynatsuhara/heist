@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System;
 
-public abstract class PossibleObjective : MonoBehaviour {
+public class PossibleObjective : MonoBehaviour {
 
 	public bool isObjective;
 	public bool isRequired;
