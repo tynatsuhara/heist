@@ -411,12 +411,12 @@ public abstract class Character : PossibleObjective, Damageable {
 		bag.DropBag();
 		bag.transform.position = transform.position + transform.forward * 1f - transform.up * .6f;
 		bag.transform.parent = null;
-		bag.GetComponent<Rigidbody>().AddForce(transform.forward * (walk.isWalking ? 2000 : 700f), ForceMode.Impulse);
+		bag.GetComponent<Rigidbody>().AddForce(transform.forward * (walk.isWalking ? 2000 : 600f), ForceMode.Impulse);
 		bag = null;
 	}
 
 	// Returns if the player is within distance of something like a wall, facing it
-	public bool FacingObstruction(float distance = .8f) {
+	public bool FacingObstruction(float distance = 1f) {
 		RaycastHit hit;
 		return Physics.Raycast(transform.position, transform.forward, out hit, distance);
 	}
