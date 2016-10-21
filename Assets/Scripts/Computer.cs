@@ -25,7 +25,6 @@ public class Computer : PossibleObjective, Interactable {
 	public void Interact(Character character) {
 		if (itemsToPower == null)
 			return;
-		// speech.Say(new string[]{ "HACKING   ", "HACKING.  ", "HACKING.. ", "HACKING..." }, interval: .2f, loop: true);
 		if (!invoked) {
 			Invoke("Hack", hackTime);
 			invoked = true;
@@ -53,7 +52,9 @@ public class Computer : PossibleObjective, Interactable {
 			invoked = false;
 		}
 		hackProgressTime = 0;
-		speech.Clear();
+		if (!hacked) {
+			speech.Clear();
+		}
 		hacker = null;
 	}
 }
