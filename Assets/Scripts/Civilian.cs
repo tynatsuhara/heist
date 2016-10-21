@@ -185,13 +185,17 @@ public class Civilian : Character, Interactable {
 
 	public override void Alert(Character.Reaction importance, Vector3 position) {
 		if (currentState == CivilianState.ATTACKING ||
-			currentState == CivilianState.HELD_HOSTAGE_CALLING ||
 			currentState == CivilianState.HELD_HOSTAGE_UNTIED ||
 			currentState == CivilianState.HELD_HOSTAGE_TIED)
 			return;
 
+		if (currentState == CivilianState.HELD_HOSTAGE_CALLING) {
+			TransitionState(CivilianState.HELD_HOSTAGE_UNTIED);
+			return;
+		}
+
 		arms.SetFrame(1);  // hands up
-		TransitionState(CivilianState.HELD_HOSTAGE_UNTIED, Random.Range(.3f, 1.3f));
+		TransitionState(CivilianState.HELD_HOSTAGE_UNTIED, Random.Range(.3f, 1f));
 	}
 
 	public void Interact(Character character) {
