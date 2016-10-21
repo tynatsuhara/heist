@@ -47,12 +47,24 @@ public class GameManager : MonoBehaviour {
 		}
 
 		CheckPause();
+		CheckSceneReload();
 	}
 
 	private void CheckPause() {
 		if (Input.GetKeyDown(KeyCode.Escape)) {
-			paused = !paused;
-			Time.timeScale = paused ? 0 : 1;
+			SetPaused(!paused);
+		}
+	}
+
+	private void SetPaused(bool paused) {
+		GameManager.paused = paused;
+		Time.timeScale = paused ? 0 : 1;
+	}
+
+	private void CheckSceneReload() {
+		if (paused && Input.GetKeyDown(KeyCode.N)) {
+			SetPaused(false);			
+			Application.LoadLevel(Application.loadedLevel);
 		}
 	}
 
@@ -111,9 +123,20 @@ public class GameManager : MonoBehaviour {
 		GameUI.instance.UpdateObjectives(objectives.ToArray());
 	}
 
-	bool CheckObjectivesComplete() {
+	private bool CheckObjectivesComplete() {
 		return objectives.All(x => !x.isRequired || x.isCompleted);
 	}
 
-	
+	private Dictionary<string, List<int>> lootAmounts;
+	public void AddLoot(string category, int dollarAmount) {
+		category = category.ToUpper();
+		if (lootAmounts == null) {
+			lootAmounts = new Dictionary<string, List<int>>();
+		}
+
+		List<int> loots;
+		lootAmounts.TryGetValue(category, out loots);
+		loots.Add(dollarAmount);
+		lootAmounts[category] = loots;
+	}
 }
