@@ -12,8 +12,7 @@ public class Computer : PossibleObjective, Interactable {
 
 	public void Update() {
 		if (invoked && !hacker.CanSee(gameObject, 140f, 2)) {
-			CancelInvoke("Hack");
-			invoked = false;
+			Uninteract(null);
 		} else if (invoked && !GameManager.paused) {
 			hackProgressTime += Time.unscaledDeltaTime;
 		}

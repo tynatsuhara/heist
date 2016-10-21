@@ -61,7 +61,7 @@ public class TextObject : MonoBehaviour {
 			shouldClear = false;
 			Clear();
 			currentlyDisplaying = false;
-			wordQueue.Clear();		
+			wordQueue.Clear();
 		}
 	}
 
