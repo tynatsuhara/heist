@@ -34,10 +34,14 @@ public class TextObject : MonoBehaviour {
 			lastSayTime += Time.unscaledDeltaTime;
 			return;
 		}
-		text.text = wordQueue.Count > 0 ? wordQueue[0] : "";
+		text.text = wordQueue.Count > 0 ? ParseString(wordQueue[0]) : "";
 		CheckLoopTime();	
 		CheckToggleTime();
 		CheckClearTime();
+	}
+
+	private string ParseString(string str) {
+		return str.ToUpper().Replace("%", "È");
 	}
 
 	private void CheckLoopTime() {
