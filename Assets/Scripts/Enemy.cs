@@ -59,6 +59,8 @@ public class Enemy : Character {
 		if (GameManager.instance.alarmsRaised) {
 			Alert(Reaction.AGGRO);
 			knowsPlayerLocation = enemyIsKnown;
+		} else {
+			CheckForCameraComputer();
 		}
 
 		InvokeRepeating("CheckForEvidence", 0f, .5f);
@@ -196,7 +198,12 @@ public class Enemy : Character {
 		}
 	}
 
-
+	private void CheckForCameraComputer() {
+		RaycastHit hit;
+		if (Physics.Raycast(transform.position, transform.forward, out hit, 1.5f)) {
+			
+		}
+	}
 
 	private void LegAnimation() {
 		Vector3 velocity = agent.velocity;

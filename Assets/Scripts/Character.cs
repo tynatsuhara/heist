@@ -269,6 +269,7 @@ public abstract class Character : PossibleObjective, Damageable {
 
 		float interactDist = 1.8f;
 		float interactStep = .1f;
+		// look straight forward, then downwards if you don't see anything
 		for (float i = 0; i < interactDist - interactStep * 5; i += interactStep) {
 			RaycastHit hit;
 			if (Physics.Raycast(transform.position, 
