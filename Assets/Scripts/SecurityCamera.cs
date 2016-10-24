@@ -23,7 +23,9 @@ public class SecurityCamera : MonoBehaviour {
 	}
 
 	void Update () {
-		Debug.Log("can see player = " + CanSee(GameManager.instance.player.gameObject, 80f));
+		if (CanSee(GameManager.instance.player.gameObject, 80f)) {
+			Debug.Log("can see player");
+		}
 		KeepRotating();
 	}
 
