@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class SecurityCamera : MonoBehaviour {
+public class SecurityCamera : MonoBehaviour, Damageable {
 
 	public GameObject cameraTop;
 	public Transform hinge;
@@ -12,6 +12,7 @@ public class SecurityCamera : MonoBehaviour {
 	private bool changeDirectionInvoked;
 	private bool rotatingRight;
 	private float rotatedDist;
+	private bool broken;
 	
 	void Start() {
 		// randomize rotation
@@ -23,10 +24,17 @@ public class SecurityCamera : MonoBehaviour {
 	}
 
 	void Update () {
-		if (CanSee(GameManager.instance.player.gameObject, 80f)) {
-			Debug.Log("can see player");
-		}
 		KeepRotating();
+	}
+
+	public bool Damage(Vector3 location, Vector3 angle, float damage) {
+		bool wasAlreadyBroken = broken;
+		broken = true;
+		return !wasAlreadyBroken;
+	}
+
+	public bool PlayerInSight() {
+		return !broken && CanSee(GameManager.instance.player.gameObject, 80f)
 	}
 
 	private void KeepRotating() {

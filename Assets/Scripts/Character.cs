@@ -301,6 +301,9 @@ public abstract class Character : PossibleObjective, Damageable {
 	}
 
 	private bool CanSeeEvidence() {
+
+		// TODO: also check if the person is looking at security cameras
+
 		bool visiblePlayer = (CanSee(GameManager.instance.player.gameObject) && GameManager.instance.player.IsEquipped());
 		if (visiblePlayer)
 			return true;
