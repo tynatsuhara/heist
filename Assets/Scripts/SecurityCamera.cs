@@ -34,7 +34,7 @@ public class SecurityCamera : MonoBehaviour, Damageable {
 	}
 
 	public bool PlayerInSight() {
-		return !broken && CanSee(GameManager.instance.player.gameObject, 80f)
+		return !broken && CanSee(GameManager.instance.player.gameObject, 80f);
 	}
 
 	private void KeepRotating() {
@@ -59,7 +59,6 @@ public class SecurityCamera : MonoBehaviour, Damageable {
 	}
 	private void ResumeMoving() {
 		changeDirectionInvoked = false;
-		Debug.Log("resume moving");
 	}
 
 	public bool CanSee(GameObject target, float fov = 130f, float maxViewDist = 20f, float minViewDist = 1f) {
