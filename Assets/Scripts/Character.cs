@@ -162,6 +162,7 @@ public abstract class Character : PossibleObjective, Damageable {
 	}
 
 	public virtual void Die(Vector3 angle, bool explode = false) {
+		InteractCancel();
 		NavMeshAgent agent = GetComponent<NavMeshAgent>();
 		if (agent != null)
 			agent.enabled = false;
