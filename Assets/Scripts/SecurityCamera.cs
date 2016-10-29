@@ -27,7 +27,7 @@ public class SecurityCamera : MonoBehaviour, Damageable {
 		KeepRotating();
 	}
 
-	public bool Damage(Vector3 location, Vector3 angle, float damage) {
+	public bool Damage(Vector3 location, Vector3 angle, float damage, bool melee = false) {
 		bool wasAlreadyBroken = broken;
 		broken = true;
 		return !wasAlreadyBroken;

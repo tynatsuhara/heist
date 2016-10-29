@@ -101,7 +101,7 @@ public abstract class Character : PossibleObjective, Damageable {
 		}
 	}
 		
-	public virtual bool Damage(Vector3 location, Vector3 angle, float damage) {
+	public virtual bool Damage(Vector3 location, Vector3 angle, float damage, bool melee = false) {
 		bool isPlayer = tag.Equals("Player");
 
 		if (!weaponDrawn)
@@ -258,6 +258,10 @@ public abstract class Character : PossibleObjective, Damageable {
 		if (weaponDrawn_ && gunScript != null && !isDragging) {
 			gunScript.Reload();
 		} 
+	}
+
+	public void Melee() {
+
 	}
 
 	protected Interactable currentInteractScript;
