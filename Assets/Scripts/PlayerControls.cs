@@ -104,8 +104,8 @@ public class PlayerControls : Character {
 		}
 	}
 
-	public override void Die(Vector3 angle) {
-		base.Die(angle);
+	public override void Die(Vector3 angle, bool explode = false) {
+		base.Die(angle, explode);
 		GameManager.instance.GameOver(false);
 	}
 

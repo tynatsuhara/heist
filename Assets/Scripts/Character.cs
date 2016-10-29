@@ -132,7 +132,7 @@ public abstract class Character : PossibleObjective, Damageable {
 		health -= damage;
 		exploder.transform.position = location + angle * Random.Range(-.1f, .15f) + new Vector3(0, Random.Range(-.7f, .3f), 0);
 		if (!isAlive && wasAlive) {
-			Die(angle);
+			Die(angle, !melee);
 		}
 
 		// regular knockback
@@ -161,7 +161,7 @@ public abstract class Character : PossibleObjective, Damageable {
 		Die(Vector3.one);
 	}
 
-	public virtual void Die(Vector3 angle) {
+	public virtual void Die(Vector3 angle, bool explode = false) {
 		NavMeshAgent agent = GetComponent<NavMeshAgent>();
 		if (agent != null)
 			agent.enabled = false;
@@ -172,7 +172,9 @@ public abstract class Character : PossibleObjective, Damageable {
 		walk.StopWalk();
 		rb.constraints = RigidbodyConstraints.None;
 		HideWeapon();
-		exploder.Explode(angle * 3);
+
+		if (explode)
+			exploder.Explode(angle * 3);
 
 		if (isObjective && !isCompleted)
 			MarkCompleted();
