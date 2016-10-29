@@ -143,7 +143,12 @@ public abstract class Character : PossibleObjective, Damageable {
 			} else if (!isAlive) {
 				forceVal *= .5f;
 			}
-			rb.AddForceAtPosition(forceVal * angle.normalized, exploder.transform.position, ForceMode.Impulse);
+			if (melee) {
+				forceVal *= 2f;
+			}
+			rb.AddForceAtPosition(forceVal * angle.normalized, 
+								  melee ? transform.position + Vector3.up * Random.Range(-.4f, .3f) : exploder.transform.position,
+								  ForceMode.Impulse);
 		}
 
 		if (isPlayer)
@@ -261,7 +266,13 @@ public abstract class Character : PossibleObjective, Damageable {
 	}
 
 	public void Melee() {
-
+		List<Character> chars = GameManager.instance.CharactersWithinDistance(transform.position + transform.forward * 1f, .5f);
+		foreach (Character c in chars) {
+			if (CanSee(c.gameObject, 90)) {
+				c.Damage(c.transform.position, transform.forward, 1f, melee: true);
+				break;
+			}
+		}
 	}
 
 	protected Interactable currentInteractScript;

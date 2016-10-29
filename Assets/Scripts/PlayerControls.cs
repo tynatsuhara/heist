@@ -54,6 +54,8 @@ public class PlayerControls : Character {
 
 		if (Input.GetMouseButton(0)) {
 			Shoot();
+		} else if (Input.GetMouseButtonDown(1)) {
+			Melee();
 		}
 
 		if (Input.GetKeyDown(KeyCode.R)) {
