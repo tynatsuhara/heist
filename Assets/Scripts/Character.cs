@@ -269,11 +269,13 @@ public abstract class Character : PossibleObjective, Damageable {
 	}
 
 	public void Melee() {
-		List<Character> chars = GameManager.instance.CharactersWithinDistance(transform.position + transform.forward * 1f, .5f);
-		foreach (Character c in chars) {
-			if (CanSee(c.gameObject, 90)) {
-				c.Damage(c.transform.position, transform.forward, 1f, melee: true);
-				break;
+		if (weaponDrawn_ && gunScript != null && !isDragging) {
+			List<Character> chars = GameManager.instance.CharactersWithinDistance(transform.position + transform.forward * 1f, .5f);
+			foreach (Character c in chars) {
+				if (CanSee(c.gameObject, 90)) {
+					c.Damage(c.transform.position, transform.forward, 1f, melee: true);
+					break;
+				}
 			}
 		}
 	}
@@ -380,7 +382,7 @@ public abstract class Character : PossibleObjective, Damageable {
 		List<Character> draggableChars = CharactersInFront().Where(x => {
 			if (x is Civilian) {
 				Civilian z = (Civilian) x;
-				return z.currentState == Civilian.CivilianState.HELD_HOSTAGE_TIED;
+				return !x.isAlive || z.currentState == Civilian.CivilianState.HELD_HOSTAGE_TIED;
 			}
 			return !x.isAlive;
 		}).ToList();
