@@ -184,7 +184,8 @@ public class Civilian : Character, Interactable {
 
 
 	public override void Alert(Character.Reaction importance, Vector3 position) {
-		if (currentState == CivilianState.ATTACKING ||
+		if (!isAlive||
+			currentState == CivilianState.ATTACKING ||
 			currentState == CivilianState.HELD_HOSTAGE_UNTIED ||
 			currentState == CivilianState.HELD_HOSTAGE_TIED)
 			return;
