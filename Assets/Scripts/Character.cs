@@ -32,6 +32,9 @@ public abstract class Character : PossibleObjective, Damageable {
 	public bool hasBag {
 		get { return bag != null; }
 	}
+	public bool isHacking {
+		get { return currentInteractScript is Computer; }
+	}
 
 	public PicaVoxel.Volume head;
 	public PicaVoxel.Volume body;
@@ -310,9 +313,9 @@ public abstract class Character : PossibleObjective, Damageable {
 		}
 	}
 
-	// Basically, they're not a civilian. Has a weapon/mask/whatever.
+	// Basically, they're not a civilian. Has a weapon/mask/whatever. Cops should attack!
 	public bool IsEquipped() {
-		return weaponDrawn;
+		return weaponDrawn || hasBag || isHacking;
 	}
 
 	public bool seesEvidence;
@@ -320,11 +323,12 @@ public abstract class Character : PossibleObjective, Damageable {
 		seesEvidence = CanSeeEvidence();
 	}
 
+	public CameraComputer cameraScreen;
 	private bool CanSeeEvidence() {
 
-		// TODO: also check if the person is looking at security cameras
-
-		bool visiblePlayer = (CanSee(GameManager.instance.player.gameObject) && GameManager.instance.player.IsEquipped());
+		bool canSeeOnCameras = cameraScreen != null && cameraScreen.PlayerInSight();
+		bool canSeePlayer = CanSee(GameManager.instance.player.gameObject) || canSeeOnCameras;
+		bool visiblePlayer = (canSeePlayer && GameManager.instance.player.IsEquipped());
 		if (visiblePlayer)
 			return true;
 		
