@@ -18,22 +18,18 @@ public class GunAnimation : MonoBehaviour {
 		playing = true;
 	}
 
-	public void Hold() {
-		playing = false;
-		volume.SetFrame(0);
-	}
-	
 	void Update () {
-		if (GameManager.paused || !playing)
+		if (GameManager.paused || !playing || volume.CurrentFrame == 1)
 			return;
 
 		timer += Time.deltaTime;
-		if (timer > interval) {
-			timer -= interval;
+		if (timer >= interval) {
+			timer = 0;
 			volume.SetFrame((volume.CurrentFrame + 1) % volume.NumFrames);
 		}
 		if (volume.CurrentFrame == 0) {
-			Hold();
+			Debug.Log("back at CurrentFrame 0");
+			playing = false;			
 		}
 	}
 }

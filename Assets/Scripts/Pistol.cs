@@ -84,7 +84,7 @@ public class Pistol : Gun {
 		transform.parent = null;
 		GetComponent<Rigidbody>().isKinematic = false;
 		GetComponent<Rigidbody>().AddForce(force, ForceMode.Impulse);
-		GetComponent<Rigidbody>().AddTorque(Random.insideUnitSphere * 10f, ForceMode.Force);
+		GetComponent<Rigidbody>().AddTorque(Random.insideUnitSphere * Random.Range(10f, 100f), ForceMode.Force);
 		owner = null;
 	}
 
