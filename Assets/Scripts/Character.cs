@@ -321,7 +321,6 @@ public abstract class Character : PossibleObjective, Damageable {
 	public bool seesEvidence;
 	public void CheckForEvidence() {
 		seesEvidence = CanSeeEvidence();
-		Debug.Log(seesEvidence);
 	}
 
 	public Computer cameraScreen;
