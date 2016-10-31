@@ -175,7 +175,7 @@ public abstract class Character : PossibleObjective, Damageable {
 
 		walk.StopWalk();
 		rb.constraints = RigidbodyConstraints.None;
-		DropWeapon();
+		DropWeapon(angle * Random.Range(5, 10) + Vector3.up * Random.Range(2, 6));
 
 		if (explode)
 			exploder.Explode(angle * 3);
@@ -250,12 +250,12 @@ public abstract class Character : PossibleObjective, Damageable {
 		SetWeaponDrawn(false);
 	}
 
-	public void DropWeapon() {
+	public void DropWeapon(Vector3 force) {
 		if (gun == null)
 			return;
 		
 		SetWeaponDrawn(false, true);
-		gunScript.Drop();
+		gunScript.Drop(force);
 		gunScript = null;
 		gun = null;
 	}

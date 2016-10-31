@@ -26,7 +26,7 @@ public class Pistol : Gun {
 		RaycastShoot(transform.root.position, transform.root.forward);
 		// SetFrame before Play to avoid delay
 		volume.SetFrame(ANIM_START_FRAME);
-		anim.Play();
+		anim.Shoot();
 		canShoot = false;
 		bulletsFired++;
 		Invoke("ResetShoot", shootSpeed + (bulletsFired == clipSize ? reloadSpeed : 0));
@@ -77,12 +77,14 @@ public class Pistol : Gun {
 		}
 	}
 
-	public override void Drop() {
+	public override void Drop(Vector3 force) {
 		CancelInvoke();
 		volume.SetFrame(DROPPED_GUN_FRAME);
 		droppedCollider.enabled = true;
 		transform.parent = null;
 		GetComponent<Rigidbody>().isKinematic = false;
+		GetComponent<Rigidbody>().AddForce(force, ForceMode.Impulse);
+		GetComponent<Rigidbody>().AddTorque(Random.insideUnitSphere * 10f, ForceMode.Force);
 		owner = null;
 	}
 
