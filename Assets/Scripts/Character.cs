@@ -175,7 +175,7 @@ public abstract class Character : PossibleObjective, Damageable {
 
 		walk.StopWalk();
 		rb.constraints = RigidbodyConstraints.None;
-		HideWeapon();
+		DropWeapon();
 
 		if (explode)
 			exploder.Explode(angle * 3);
@@ -250,13 +250,25 @@ public abstract class Character : PossibleObjective, Damageable {
 		SetWeaponDrawn(false);
 	}
 
-	protected void SetWeaponDrawn(bool drawn) {
+	public void DropWeapon() {
+		if (gun == null)
+			return;
+		
+		SetWeaponDrawn(false, true);
+		gunScript.Drop();
+		gunScript = null;
+		gun = null;
+	}
+
+	protected void SetWeaponDrawn(bool drawn, bool weaponDropped = false) {
 		if (drawn == weaponDrawn_)
 			return;
 
 		weaponDrawn_ = drawn;
 		arms.gameObject.SetActive(!drawn);
-		gun.SetActive(drawn);
+
+		if (!weaponDropped)
+			gun.SetActive(drawn);
 	}
 
 	public void Shoot() {
@@ -311,6 +323,18 @@ public abstract class Character : PossibleObjective, Damageable {
 			currentInteractScript.Uninteract(this);
 			currentInteractScript = null;
 		}
+	}
+
+	public void SpawnGun() {
+		if (gun == null)
+			return;
+		
+		gun = Instantiate(gun) as GameObject;
+		GetComponent<CharacterCustomization>().gunz = gun.GetComponent<PicaVoxel.Volume>();
+		gunScript = gun.GetComponent<Gun>();
+		gun.transform.parent = transform;
+		gun.transform.localPosition = gunScript.inPlayerPos;
+		gun.transform.localRotation = Quaternion.Euler(gunScript.inPlayerRot);
 	}
 
 	// Basically, they're not a civilian. Has a weapon/mask/whatever. Cops should attack!

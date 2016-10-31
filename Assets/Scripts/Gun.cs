@@ -8,6 +8,8 @@ public abstract class Gun : MonoBehaviour {
 	public PicaVoxel.BasicAnimator anim;
 	public float damage;
 	public float range;
+	public Vector3 inPlayerPos;
+	public Vector3 inPlayerRot;
 
 	public bool isPlayer;
 
@@ -18,6 +20,7 @@ public abstract class Gun : MonoBehaviour {
 		isPlayer = owner.name == "Player";
 	}
 
+	abstract public void Drop();
 	abstract public void Shoot();
 	abstract public void Release();
 	abstract public void Reload();

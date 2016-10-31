@@ -45,7 +45,7 @@ public class Enemy : Character {
 		copUniform[3] = "0 " + Random.Range(1, 3) + "-3";  // sleeve length
 
 		rb = GetComponent<Rigidbody>();
-		gunScript = gun.GetComponent<Gun>();
+		SpawnGun();
 
 		player = GameObject.FindWithTag("Player");
 		playerScript = player.GetComponent<Character>();
