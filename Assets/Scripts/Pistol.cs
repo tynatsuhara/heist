@@ -12,6 +12,11 @@ public class Pistol : Gun {
 	public float reloadSpeed = 1f;
 	public float shakePower = .3f;
 	public float shakeLength = .3f;
+	public Collider droppedCollider;
+
+	// Gun frames
+	private const int DROPPED_GUN_FRAME = 1;	 
+	private const int ANIM_START_FRAME = 2;
 
 	public override void Shoot() {
 		if (!canShoot)
@@ -19,8 +24,9 @@ public class Pistol : Gun {
 		
 		owner.KnockBack(knockback);
 		RaycastShoot(transform.root.position, transform.root.forward);
-		volume.SetFrame(1);
-		anim.Play();
+		// SetFrame before Play to avoid delay
+		volume.SetFrame(ANIM_START_FRAME);
+		anim.Shoot();
 		canShoot = false;
 		bulletsFired++;
 		Invoke("ResetShoot", shootSpeed + (bulletsFired == clipSize ? reloadSpeed : 0));
@@ -69,6 +75,17 @@ public class Pistol : Gun {
 				UpdateUI();
 			}
 		}
+	}
+
+	public override void Drop(Vector3 force) {
+		CancelInvoke();
+		volume.SetFrame(DROPPED_GUN_FRAME);
+		droppedCollider.enabled = true;
+		transform.parent = null;
+		GetComponent<Rigidbody>().isKinematic = false;
+		GetComponent<Rigidbody>().AddForce(force, ForceMode.Impulse);
+		GetComponent<Rigidbody>().AddTorque(Random.insideUnitSphere * 10f, ForceMode.Force);
+		owner = null;
 	}
 
 	public override void UpdateUI() {

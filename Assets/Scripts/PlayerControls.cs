@@ -13,7 +13,7 @@ public class PlayerControls : Character {
 
 	void Start() {
 		rb = GetComponent<Rigidbody>();
-		gunScript = gun.GetComponent<Gun>();
+		SpawnGun();
 		speech = GetComponentInChildren<TextObject>();
 		GetComponent<CharacterCustomization>().ColorCharacter(outfit, accessories:accessories);
 

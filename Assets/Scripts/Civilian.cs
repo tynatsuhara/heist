@@ -26,7 +26,7 @@ public class Civilian : Character, Interactable {
 
 	void Awake() {
 		rb = GetComponent<Rigidbody>();
-		gunScript = gun.GetComponent<Gun>();
+		SpawnGun();
 		playerScript = GameObject.FindWithTag("Player").GetComponent<PlayerControls>();
 		speech = GetComponentInChildren<TextObject>();
 		InvokeRepeating("CheckForEvidence", 0f, .5f);

@@ -45,7 +45,7 @@ public class Enemy : Character {
 		copUniform[3] = "0 " + Random.Range(1, 3) + "-3";  // sleeve length
 
 		rb = GetComponent<Rigidbody>();
-		gunScript = gun.GetComponent<Gun>();
+		SpawnGun();
 
 		player = GameObject.FindWithTag("Player");
 		playerScript = player.GetComponent<Character>();
@@ -143,7 +143,7 @@ public class Enemy : Character {
 			} else {
 				agent.destination = player.transform.position;
 			}
-			if (playerScript.isAlive && CanSee(player, fov:30f)) {
+			if (CanSee(player, fov:30f)) {
 				Shoot();
 			}
 			LookAt(lastKnownPlayerLocation);			

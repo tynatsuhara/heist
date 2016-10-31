@@ -5,19 +5,22 @@ public abstract class Gun : MonoBehaviour {
 
 	public Character owner;
 	public PicaVoxel.Volume volume;
-	public PicaVoxel.BasicAnimator anim;
+	public GunAnimation anim;
 	public float damage;
 	public float range;
+	public Vector3 inPlayerPos;
+	public Vector3 inPlayerRot;
 
 	public bool isPlayer;
 
 	void Awake() {
 		owner = transform.root.GetComponent<Character>();
 		volume = GetComponent<PicaVoxel.Volume>();
-		anim = GetComponent<PicaVoxel.BasicAnimator>();
+		anim = GetComponent<GunAnimation>();
 		isPlayer = owner.name == "Player";
 	}
 
+	abstract public void Drop(Vector3 force);
 	abstract public void Shoot();
 	abstract public void Release();
 	abstract public void Reload();
