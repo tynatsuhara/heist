@@ -8,7 +8,7 @@ public class SecurityCamera : MonoBehaviour, Damageable {
 	public float rotationRange;  // assuming it starts centered
 	public float rotationSpeed;  // degrees/sec
 	public float stopTime;       // how long the camera stays still before reversing direction
-
+	public PicaVoxel.Exploder exploder;
 	private bool changeDirectionInvoked;
 	private bool rotatingRight;
 	private float rotatedDist;
@@ -20,7 +20,7 @@ public class SecurityCamera : MonoBehaviour, Damageable {
 		float delta = Random.Range(0f, rotationRange);
 		rotatingRight = Random.Range(0, 2) == 1;
 		rotatedDist = rotatingRight ? delta : rotationRange - delta;
-		cameraTop.transform.RotateAround(hinge.position, Vector3.up, delta);				
+		cameraTop.transform.RotateAround(hinge.position, Vector3.up, delta);
 	}
 
 	void Update () {
@@ -28,9 +28,13 @@ public class SecurityCamera : MonoBehaviour, Damageable {
 	}
 
 	public bool Damage(Vector3 location, Vector3 angle, float damage, bool melee = false) {
-		bool wasAlreadyBroken = broken;
+		if (broken)
+			return true;
+
+		exploder.Explode();
 		broken = true;
-		return !wasAlreadyBroken;
+		this.enabled = false;
+		return false;
 	}
 
 	public bool PlayerInSight() {
