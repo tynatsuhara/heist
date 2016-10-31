@@ -321,11 +321,11 @@ public abstract class Character : PossibleObjective, Damageable {
 	public bool seesEvidence;
 	public void CheckForEvidence() {
 		seesEvidence = CanSeeEvidence();
+		Debug.Log(seesEvidence);
 	}
 
-	public CameraComputer cameraScreen;
+	public Computer cameraScreen;
 	private bool CanSeeEvidence() {
-
 		bool canSeeOnCameras = cameraScreen != null && cameraScreen.PlayerInSight();
 		bool canSeePlayer = CanSee(GameManager.instance.player.gameObject) || canSeeOnCameras;
 		bool visiblePlayer = (canSeePlayer && GameManager.instance.player.IsEquipped());

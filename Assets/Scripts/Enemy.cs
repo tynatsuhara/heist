@@ -54,6 +54,7 @@ public class Enemy : Character {
 	}
 
 	void Start() {
+		CheckForCameraComputer();
 		GetComponent<CharacterCustomization>().ColorCharacter(copUniform, true);
 
 		if (GameManager.instance.alarmsRaised) {
@@ -92,7 +93,9 @@ public class Enemy : Character {
 	}
 
 	private void GlimpsedPlayer() {
-		if (!CanSee(player) || !playerScript.IsEquipped() || !isAlive) {
+		bool canSeeOnCameras = cameraScreen != null && cameraScreen.PlayerInSight();
+		bool canSeePlayer = CanSee(GameManager.instance.player.gameObject) || canSeeOnCameras;
+		if (!canSeePlayer || !playerScript.IsEquipped() || !isAlive) {
 			invoked = false;
 			return;
 		}
@@ -200,8 +203,8 @@ public class Enemy : Character {
 
 	private void CheckForCameraComputer() {
 		RaycastHit hit;
-		if (Physics.Raycast(transform.position, transform.forward, out hit, 1.5f)) {
-			
+		if (Physics.Raycast(transform.position, transform.forward, out hit, 2f)) {
+			cameraScreen = hit.collider.GetComponentInParent<Computer>();
 		}
 	}
 

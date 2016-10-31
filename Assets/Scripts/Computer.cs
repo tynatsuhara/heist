@@ -9,6 +9,7 @@ public class Computer : PossibleObjective, Interactable {
 	public float hackTime;
 	private float hackProgressTime;
 	private bool hacked;
+	public SecurityCamera[] hookedUpCameras;
 
 	public void Update() {
 		if (invoked && !hacker.CanSee(gameObject, 140f, 2)) {
@@ -56,5 +57,14 @@ public class Computer : PossibleObjective, Interactable {
 			speech.Clear();
 		}
 		hacker = null;
+	}
+
+	public bool PlayerInSight() {
+		foreach (SecurityCamera c in hookedUpCameras) {
+			if (c.PlayerInSight()) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
