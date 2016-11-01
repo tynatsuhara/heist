@@ -9,7 +9,7 @@ public class GunAnimation : MonoBehaviour {
 	private bool playing;
 	private float timer;
 
-	void Start () {
+	void Awake () {
 		volume = GetComponent<PicaVoxel.Volume>();
 	}
 
@@ -28,7 +28,6 @@ public class GunAnimation : MonoBehaviour {
 			volume.SetFrame((volume.CurrentFrame + 1) % volume.NumFrames);
 		}
 		if (volume.CurrentFrame == 0) {
-			Debug.Log("back at CurrentFrame 0");
 			playing = false;			
 		}
 	}
