@@ -21,6 +21,7 @@ public abstract class Gun : MonoBehaviour {
 	}
 
 	abstract public void Drop(Vector3 force);
+	abstract public void Melee();
 	abstract public void Shoot();
 	abstract public void Release();
 	abstract public void Reload();

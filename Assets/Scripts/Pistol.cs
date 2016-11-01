@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class Pistol : Gun {
 
@@ -90,6 +90,16 @@ public class Pistol : Gun {
 
 	public override void UpdateUI() {
 		GameUI.instance.UpdateAmmo(clipSize - bulletsFired, clipSize);
+	}
+
+	public override void Melee() {
+		List<Character> chars = GameManager.instance.CharactersWithinDistance(owner.transform.position + owner.transform.forward * 1f, .5f);
+		foreach (Character c in chars) {
+			if (owner.CanSee(c.gameObject, 90)) {
+				c.Damage(c.transform.position, owner.transform.forward, 1f, melee: true);
+				break;
+			}
+		}
 	}
 
 	public override void Release() {}
