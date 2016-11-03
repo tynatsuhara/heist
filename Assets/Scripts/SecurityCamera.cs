@@ -13,6 +13,7 @@ public class SecurityCamera : MonoBehaviour, Damageable {
 	private bool rotatingRight;
 	private float rotatedDist;
 	private bool broken;
+	public LayerMask sightLayers;
 	
 	void Start() {
 		// randomize rotation
@@ -79,7 +80,7 @@ public class SecurityCamera : MonoBehaviour, Damageable {
 		}
 
 		RaycastHit hit;
-		if (Physics.Raycast(camPos, target.transform.position - camPos, out hit, maxViewDist))
+		if (Physics.Raycast(camPos, target.transform.position - camPos, out hit, maxViewDist, sightLayers))
 			return hit.collider.transform.root.gameObject == target;
 
 		return false;
