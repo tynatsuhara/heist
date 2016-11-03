@@ -19,7 +19,7 @@ public class Pistol : Gun {
 	private const int ANIM_START_FRAME = 2;
 
 	public override void Shoot() {
-		if (!canShoot)
+		if (!canShoot || bulletsFired == clipSize)
 			return;
 		
 		owner.KnockBack(knockback);
@@ -29,12 +29,8 @@ public class Pistol : Gun {
 		anim.Shoot();
 		canShoot = false;
 		bulletsFired++;
-		Invoke("ResetShoot", shootSpeed + (bulletsFired == clipSize ? reloadSpeed : 0));
-		if (bulletsFired == clipSize) {
-			transform.Translate(Vector3.down * .1f);
-			transform.Translate(Vector3.forward * .1f);
-		}
-
+		Invoke("ResetShoot", shootSpeed);
+		
 		byte[] bytes = new byte[6];
 		bytes[0] = (byte)PicaVoxel.VoxelState.Active;
 		PicaVoxel.Voxel vox = new PicaVoxel.Voxel(bytes);
@@ -54,21 +50,24 @@ public class Pistol : Gun {
 	}
 
 	public override void Reload() {
-		// they're already reloading || they don't need to reload
-		if (bulletsFired == clipSize || bulletsFired == 0)
+		if (bulletsFired == 0)  // already reloading or no need to
 			return;
 		
 		CancelInvoke("ResetShoot");
-		bulletsFired = clipSize;
+		bulletsFired = 0;
 		canShoot = false;
 		transform.Translate(Vector3.down * .1f);
 		transform.Translate(Vector3.forward * .1f);
 		Invoke("ResetShoot", shootSpeed + reloadSpeed);
 	}
 
+	public override bool NeedsToReload() {
+		return bulletsFired == clipSize;
+	}
+
 	private void ResetShoot() {
 		canShoot = true;
-		if (bulletsFired % clipSize == 0) {  // just finished reloading
+		if (bulletsFired == 0) {  // just finished reloading
 			bulletsFired = 0;
 			transform.Translate(Vector3.up * .1f);
 			transform.Translate(Vector3.back * .1f);

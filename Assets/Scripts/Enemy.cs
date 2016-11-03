@@ -162,6 +162,12 @@ public class Enemy : Character {
 		}
 	}
 
+	public override void Shoot() {
+		base.Shoot();
+		if (gunScript.NeedsToReload())
+			Reload();
+	}
+
 	private void SuspiciousBehavior() {
 		float followDistance = 4f;
 		if (CanSee(player)) {

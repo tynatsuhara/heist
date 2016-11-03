@@ -273,7 +273,7 @@ public abstract class Character : PossibleObjective, Damageable {
 			gun.SetActive(drawn);
 	}
 
-	public void Shoot() {
+	public virtual void Shoot() {
 		if (weaponDrawn_ && gunScript != null && !isDragging) {
 			gunScript.Shoot();
 		} 
