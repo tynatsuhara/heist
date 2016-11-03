@@ -54,6 +54,7 @@ public class Pistol : Gun {
 	}
 
 	public override void Reload() {
+		// they're already reloading || they don't need to reload
 		if (bulletsFired == clipSize || bulletsFired == 0)
 			return;
 		
