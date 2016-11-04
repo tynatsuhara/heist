@@ -274,7 +274,7 @@ public abstract class Character : PossibleObjective, Damageable {
 	}
 
 	public virtual void Shoot() {
-		if (weaponDrawn_ && gunScript != null && !isDragging) {
+		if (weaponDrawn_ && gunScript != null && !isDragging && !isHacking) {
 			gunScript.Shoot();
 		} 
 	}
