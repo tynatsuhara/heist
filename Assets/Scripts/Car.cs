@@ -11,16 +11,26 @@ public class Car : MonoBehaviour, Damageable, Interactable {
 	private List<Character> charactersByDoors;
 	public PicaVoxel.Exploder exploder;
 	private Collider[] doorSpots;	
+	public Transform destination;
 
 	private int spotsFilled;
 	public bool isEmpty {
 		get { return spotsFilled == 0; }
 	}
+	public bool isGetaway {
+		get { return this == GameManager.instance.getaway; }
+	}
 
-	void Start() {
+	void Awake() {
 		characters = new Character[spots];
 		charactersByDoors = new List<Character>();
 		doorSpots = Object.FindObjectsOfType<Collider>().Where((x) => x.isTrigger).ToArray();
+	}
+
+	void Update() {
+		if (destination != null) {
+			GetComponent<NavMeshAgent>().SetDestination(destination.position);
+		}
 	}
 
 	public bool GetIn(Character c) {
@@ -76,6 +86,8 @@ public class Car : MonoBehaviour, Damageable, Interactable {
 	}
 
 	public void Interact(Character c) {
+		if (!isGetaway)
+			return;
 		if (charactersByDoors.Contains(c)) {
 			if (GetIn(c)) {
 				c.gameObject.SetActive(false);
@@ -91,12 +103,16 @@ public class Car : MonoBehaviour, Damageable, Interactable {
 	public void Uninteract(Character character) {}
 
 	void OnTriggerEnter(Collider other) {
+		if (!isGetaway)
+			return;
 		Character c = other.GetComponentInParent<Character>();
 		if (c != null)
 			charactersByDoors.Add(c);
 	}
 
 	void OnTriggerExit(Collider other) {
+		if (!isGetaway)
+			return;
 		Character c = other.GetComponentInParent<Character>();
 		if (c != null)
 			charactersByDoors.Remove(c);

@@ -44,6 +44,7 @@ public class GameManager : MonoBehaviour {
 		// WIN!
 		if (!getaway.isEmpty) {
 			GameOver(true);
+			getaway.destination = GameObject.Find("EscapePoint").transform;
 		}
 
 		CheckPause();
