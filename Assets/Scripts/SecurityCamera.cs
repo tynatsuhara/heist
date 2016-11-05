@@ -38,8 +38,8 @@ public class SecurityCamera : MonoBehaviour, Damageable {
 		return false;
 	}
 
-	public bool PlayerInSight() {
-		return !broken && CanSee(GameManager.instance.player.gameObject, 80f);
+	public bool InSight(GameObject go) {
+		return !broken && CanSee(go , 80f);
 	}
 
 	private void KeepRotating() {

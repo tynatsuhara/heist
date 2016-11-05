@@ -359,7 +359,8 @@ public abstract class Character : PossibleObjective, Damageable {
 				isEvidence |= civ.currentState == Civilian.CivilianState.HELD_HOSTAGE_TIED;
 				isEvidence |= civ.currentState == Civilian.CivilianState.HELD_HOSTAGE_UNTIED;
 			}
-			if (isEvidence && CanSee(c.gameObject)) {
+			if ((isEvidence && CanSee(c.gameObject)) || 
+			    (isEvidence && cameraScreen != null && cameraScreen.InSight(c.gameObject))) {
 				return true;
 			}
 		}

@@ -93,12 +93,10 @@ public class Enemy : Character {
 	}
 
 	private void GlimpsedPlayer() {
-		bool canSeeOnCameras = cameraScreen != null && cameraScreen.PlayerInSight();
-		bool canSeePlayer = CanSee(GameManager.instance.player.gameObject) || canSeeOnCameras;
-		if (!canSeePlayer || !playerScript.IsEquipped() || !isAlive) {
-			invoked = false;
+		CheckCanSeeEvidence();
+		if (!seesEvidence)
 			return;
-		}
+		
 		speech.SayRandom(Speech.ENEMY_SPOTTED_PLAYER, showFlash: true, color: "red");
 		Alert(Reaction.AGGRO, player.transform.position);
 	}

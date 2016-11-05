@@ -60,8 +60,12 @@ public class Computer : PossibleObjective, Interactable {
 	}
 
 	public bool PlayerInSight() {
+		return InSight(GameManager.instance.player.gameObject);
+	}
+
+	public bool InSight(GameObject go) {
 		foreach (SecurityCamera c in hookedUpCameras) {
-			if (c.PlayerInSight()) {
+			if (c.InSight(go)) {
 				return true;
 			}
 		}
