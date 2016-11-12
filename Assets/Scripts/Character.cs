@@ -67,7 +67,10 @@ public abstract class Character : PossibleObjective, Damageable {
 	public bool beingDragged;
 
 	public abstract void Alert(Character.Reaction importance, Vector3 position);
-	public void Alert() { Alert(Reaction.AGGRO, GameManager.instance.player.transform.position); }
+	public void Alert() {
+		PlayerControls pc = ClosestPlayerInSight();
+		Alert(Reaction.AGGRO, pc.transform.position);
+	}
 
 	public void KnockBack(float force) {
 		rb.AddForce(force * -transform.forward, ForceMode.Impulse);
@@ -346,9 +349,8 @@ public abstract class Character : PossibleObjective, Damageable {
 	public Computer cameraScreen;
 	private bool CanSeeEvidence() {
 		bool canSeeOnCameras = cameraScreen != null && cameraScreen.PlayerInSight();
-		bool canSeePlayer = CanSee(GameManager.instance.player.gameObject) || canSeeOnCameras;
-		bool visiblePlayer = (canSeePlayer && GameManager.instance.player.IsEquipped());
-		if (visiblePlayer)
+		List<PlayerControls> seenPlayers = GameManager.players.Where(x => CanSee(x.gameObject) && x.IsEquipped()).ToList();
+		if (seenPlayers.Count > 0 || canSeeOnCameras)
 			return true;
 		
 		foreach (Character c in GameManager.characters) {
@@ -384,6 +386,19 @@ public abstract class Character : PossibleObjective, Damageable {
 			return hit.collider.transform.root.gameObject == target;
 
 		return false;
+	}
+
+	public PlayerControls ClosestPlayerInSight() {
+		PlayerControls playerScript = null;
+		foreach (PlayerControls pc in GameManager.players) {
+			if (!CanSee(pc.gameObject))
+				continue;
+
+			if (playerScript == null || ((transform.position - pc.transform.position).magnitude < 
+									     (transform.position - playerScript.transform.position).magnitude))
+				playerScript = pc;
+		}
+		return playerScript;
 	}
 
 	public bool ClearShot(GameObject target, float dist = 20f) {

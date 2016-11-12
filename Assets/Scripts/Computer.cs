@@ -60,7 +60,12 @@ public class Computer : PossibleObjective, Interactable {
 	}
 
 	public bool PlayerInSight() {
-		return InSight(GameManager.instance.player.gameObject);
+		foreach (PlayerControls pc in GameManager.players) {
+			if (InSight(pc.gameObject) && pc.IsEquipped()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public bool InSight(GameObject go) {

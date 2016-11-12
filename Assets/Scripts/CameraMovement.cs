@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Linq;
 
 public class CameraMovement : MonoBehaviour {
 
@@ -10,7 +10,7 @@ public class CameraMovement : MonoBehaviour {
 	public float rotationSpeed;
 	public Camera cam;
 
-	public Transform player;
+	public Transform[] players;
 
 	private float power;
 	private float duration;
@@ -28,13 +28,17 @@ public class CameraMovement : MonoBehaviour {
 	}
 	
 	void Update () {
+		Transform[] newPlayers = GameManager.players.Where(x => x.isAlive).Select(x => x.transform).ToArray();
+		if (newPlayers.Length > 0)		
+			players = newPlayers;
 		UpdatePosition();
 	}
 
 	private void UpdatePosition() {
 		transform.localPosition = diff;
-		transform.position = player.transform.position;
-		cam.transform.LookAt(player.position);
+		transform.position = AveragePointBetweenPlayers();
+		Vector3 cameraLookAtPosition = transform.position;
+		cam.transform.LookAt(transform.position);
 
 		// rotation
 		bool rotateButtonPress = Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.C);
@@ -43,9 +47,9 @@ public class CameraMovement : MonoBehaviour {
 			int dir = Input.GetKeyDown(KeyCode.Z) ? -1 : 1;
 			Quaternion tempRot = transform.rotation;
 			transform.rotation = rotationGoal;
-			transform.RotateAround(player.position, Vector3.up, -rotationAngle * dir);
+			transform.RotateAround(cameraLookAtPosition, Vector3.up, -rotationAngle * dir);
 			rotationGoal = transform.rotation;
-			transform.RotateAround(player.position, Vector3.up, rotationAngle * dir);
+			transform.RotateAround(cameraLookAtPosition, Vector3.up, rotationAngle * dir);
 			transform.rotation = tempRot;
 			rotating = true;
 		} 
@@ -69,5 +73,22 @@ public class CameraMovement : MonoBehaviour {
 		this.power = power;
 		this.duration = duration;
 		timeElapsed = 0;
+	}
+
+	// pre: at least one player in the players array
+	private Vector3 AveragePointBetweenPlayers() {
+		Vector3 minValues = new Vector3(players[0].position.x, players[0].position.y, players[0].position.z);
+		Vector3 maxValues = minValues;
+		for (int i = 1; i < players.Length; i++) {
+			minValues.x = Mathf.Min(minValues.x, players[i].position.x);
+			minValues.y = Mathf.Min(minValues.y, players[i].position.y);
+			minValues.z = Mathf.Min(minValues.z, players[i].position.z);
+			maxValues.x = Mathf.Max(maxValues.x, players[i].position.x);
+			maxValues.y = Mathf.Max(maxValues.y, players[i].position.y);
+			maxValues.z = Mathf.Max(maxValues.z, players[i].position.z);
+		}
+		return new Vector3(minValues.x + (maxValues.x - minValues.x) / 2,
+						   minValues.y + (maxValues.y - minValues.y) / 2,
+						   minValues.z + (maxValues.z - minValues.z) / 2);
 	}
 }

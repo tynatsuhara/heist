@@ -20,14 +20,11 @@ public class Civilian : Character, Interactable {
 		HELD_HOSTAGE_CALLING
 	}
 	public CivilianState currentState;
-
-	private Character playerScript;	
 	public bool braveCitizen;  // can enter attacking state	
 
 	void Awake() {
 		rb = GetComponent<Rigidbody>();
 		SpawnGun();
-		playerScript = GameObject.FindWithTag("Player").GetComponent<PlayerControls>();
 		speech = GetComponentInChildren<TextObject>();
 		InvokeRepeating("CheckForEvidence", 0f, .5f);
 	}
@@ -111,13 +108,20 @@ public class Civilian : Character, Interactable {
 		BraveCitizenCheck();		
 	}
 	private void CheckDrawWeapon() {
-		if (!playerScript.CanSee(gameObject)) {
+		if (!SeenByAnyPlayers()) {
 			TransitionState(CivilianState.ATTACKING, 0f);
 		} else {
 			checkDrawWeaponInvoked = false;
 		}
 	}
 	private void BraveCitizenCheck() {
+		if (SeenByAnyPlayers())
+			return;
+		
+		PlayerControls playerScript = ClosestPlayerInSight();
+		if (playerScript == null)
+			return;
+
 		if (braveCitizen && !checkDrawWeaponInvoked && playerScript.IsEquipped() && playerScript.isAlive) {
 			// switch to attacking
 			bool canSeePlayer = currentState == CivilianState.PASSIVE ? CanSee(playerScript.gameObject) : ClearShot(playerScript.gameObject);
@@ -126,6 +130,14 @@ public class Civilian : Character, Interactable {
 				checkDrawWeaponInvoked = true;				
 			}
 		}
+	}
+
+	private bool SeenByAnyPlayers() {
+		foreach (PlayerControls pc in GameManager.players) {
+			if (pc.CanSee(gameObject))
+				return true;
+		}
+		return false;
 	}
 
 	// any states that can come after CivilianState.HELD_HOSTAGE_UNTIED should call this	
@@ -151,8 +163,9 @@ public class Civilian : Character, Interactable {
 	private void StateAttacking() {
 		ResetRB();
 		DrawWeapon();
-		LookAt(playerScript.transform);		
-		if (CanSee(playerScript.gameObject, fov:40f)) {
+		PlayerControls pc = ClosestPlayerInSight();
+		LookAt(pc.transform);		
+		if (CanSee(pc.gameObject, fov:40f)) {
 			Shoot();
 		}
 	}

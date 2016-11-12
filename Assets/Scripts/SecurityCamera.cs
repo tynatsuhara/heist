@@ -72,7 +72,7 @@ public class SecurityCamera : MonoBehaviour, Damageable {
 			return false;
 		
 		Vector3 camPos = cameraTop.transform.position;
-		camPos.y = GameManager.instance.player.transform.position.y;
+		camPos.y = 1f;
 		float angle = Vector3.Dot(Vector3.Normalize(transform.position - target.transform.position), cameraTop.transform.right);
 		float angleDegrees = 90 + Mathf.Asin(angle) * Mathf.Rad2Deg;
 		if (angleDegrees > fov / 2f) {

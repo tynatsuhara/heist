@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour {
 
 	private List<PossibleObjective> objectives;
 	public static List<Character> characters;
-	public PlayerControls player;
+	public static List<PlayerControls> players;
 
 	public bool alarmsRaised = false;
 	public bool gameOver = false;
@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour {
 
 		// 2. spawn characters?
 		characters = Object.FindObjectsOfType<Character>().Where(x => !(x is PlayerControls)).ToList();
-		player = GameObject.FindWithTag("Player").GetComponent<PlayerControls>();
+		players = Object.FindObjectsOfType<PlayerControls>().ToList();
 
 		// 3. get objectives
 		objectives = Object.FindObjectsOfType<PossibleObjective>().Where(x => x.isObjective && !x.isCompleted).ToList();
@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour {
 		getaway.locked = !objectivesComplete;
 
 		// WIN!
-		if (!getaway.isEmpty) {
+		if (getaway.ContainsAllPlayers()) {
 			GameOver(true);
 			getaway.destination = GameObject.Find("EscapePoint").transform;
 		}
@@ -74,8 +74,8 @@ public class GameManager : MonoBehaviour {
 	// of sight to the visual to be alerted.
 	public void AlertInRange(Character.Reaction importance, Vector3 location, float range, GameObject visual = null) {
 		foreach (Character c in characters) {
-			if ((c.transform.position - player.transform.position).magnitude < range) {
-				if (visual != null && !c.CanSee(player.gameObject))
+			if ((c.transform.position - location).magnitude < range) {
+				if (visual != null && !c.CanSee(visual))
 					continue;
 				c.Alert(importance, location);
 			}
@@ -90,7 +90,7 @@ public class GameManager : MonoBehaviour {
 				ret.Add(c);
 			}
 		}
-		return ret.OrderBy(c => (c.transform.position - player.transform.position).magnitude).ToList();
+		return ret.OrderBy(c => (c.transform.position - from).magnitude).ToList();
 	}
 
 	// Call this to indicate it is no longer a stealth-possible mission,
