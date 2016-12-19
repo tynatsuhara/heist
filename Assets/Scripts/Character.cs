@@ -10,7 +10,6 @@ public abstract class Character : PossibleObjective, Damageable {
 		SUSPICIOUS,
 		AGGRO
 	};
-	private Vector3 suspicionPos;
 	public LayerMask sightLayers;
 	public TextObject speech;
 	public Accessory[] accessories;
@@ -69,7 +68,8 @@ public abstract class Character : PossibleObjective, Damageable {
 	public abstract void Alert(Character.Reaction importance, Vector3 position);
 	public void Alert() {
 		PlayerControls pc = ClosestPlayerInSight();
-		Alert(Reaction.AGGRO, pc.transform.position);
+		if (pc != null)
+			Alert(Reaction.AGGRO, pc.transform.position);
 	}
 
 	public void KnockBack(float force) {
