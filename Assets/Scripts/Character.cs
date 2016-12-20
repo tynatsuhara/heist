@@ -124,7 +124,7 @@ public abstract class Character : PossibleObjective, Damageable {
 
 				return false;
 			}
-			damage = -armor;  // for applying leftover damage
+			damage = -armor;  // for applying leftover damage later
 		}
 
 		if (isAlive && !isPlayer)
@@ -135,7 +135,7 @@ public abstract class Character : PossibleObjective, Damageable {
 
 		bool wasAlive = isAlive;  // save it beforehand
 
-		health -= damage;
+		health = Mathf.Max(0, health - damage);
 		exploder.transform.position = location + angle * Random.Range(-.1f, .15f) + new Vector3(0, Random.Range(-.7f, .3f), 0);
 		if (!isAlive && wasAlive) {
 			Die(angle, !melee);
