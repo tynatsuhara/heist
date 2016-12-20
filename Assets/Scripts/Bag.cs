@@ -9,6 +9,7 @@ public class Bag : PossibleObjective, Interactable {
 	public string lootCategory;
 	public int dollarAmount;
 	private bool putInGetaway;
+	private Character holder;
 
 	void Start() {
 		SetOnGround(true);
@@ -16,9 +17,12 @@ public class Bag : PossibleObjective, Interactable {
 	}
 
 	public void Interact(Character character) {
-		if (!onGround || character.hasBag)
+		if (character.hasBag || (holder != null && holder.isAlive))
 			return;
 
+		if (holder != null)
+			holder.DropBag(false);
+		holder = character;
 		SetOnGround(false);
 		MarkCompleted();
 		character.AddBag(this);
@@ -27,6 +31,7 @@ public class Bag : PossibleObjective, Interactable {
 	public void Uninteract(Character character) {}
 
 	public void DropBag() {
+		holder = null;
 		SetOnGround(true);
 	}
 

@@ -10,7 +10,7 @@ public class CameraMovement : MonoBehaviour {
 	public float rotationSpeed;
 	public Camera cam;
 
-	public Transform[] players;
+	private Transform[] players;
 
 	private float power;
 	private float duration;

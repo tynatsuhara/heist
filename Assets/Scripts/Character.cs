@@ -469,7 +469,7 @@ public abstract class Character : PossibleObjective, Damageable {
 		bag.transform.localRotation = Quaternion.Euler(0f, 180f, 0f);
 	}
 
-	public void DropBag() {
+	public void DropBag(bool launch = true) {
 		if (!hasBag) return;
 		GameObject facingObject = FacingObstruction();
 		if (facingObject != null && facingObject.GetComponentInParent<Car>() != GameManager.instance.getaway) {
@@ -477,9 +477,11 @@ public abstract class Character : PossibleObjective, Damageable {
 		}
 
 		bag.DropBag();
-		bag.transform.position = transform.position + transform.forward * 1f - transform.up * .6f;
 		bag.transform.parent = null;
-		bag.GetComponent<Rigidbody>().AddForce(transform.forward * (walking ? 2000 : 600f), ForceMode.Impulse);
+		if (launch) {
+			bag.transform.position = transform.position + transform.forward * 1f - transform.up * .6f;
+			bag.GetComponent<Rigidbody>().AddForce(transform.forward * (walking ? 2000 : 600f), ForceMode.Impulse);
+		}
 		bag = null;
 	}
 
