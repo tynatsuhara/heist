@@ -17,7 +17,7 @@ public abstract class Gun : MonoBehaviour {
 		owner = transform.root.GetComponent<Character>();
 		volume = GetComponent<PicaVoxel.Volume>();
 		anim = GetComponent<GunAnimation>();
-		isPlayer = owner.name == "Player";
+		isPlayer = transform.root.GetComponent<PlayerControls>() != null;
 	}
 
 	abstract public void Drop(Vector3 force);
