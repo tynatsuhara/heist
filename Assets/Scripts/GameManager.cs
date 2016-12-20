@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour {
 	public static bool paused = false;
 
 	public GameObject[] enemyPrefabs;
+	public GameObject playerPrefab;
 	public Car getaway;
 	public bool objectivesComplete;
 
@@ -30,7 +31,7 @@ public class GameManager : MonoBehaviour {
 
 		// 2. spawn characters?
 		characters = Object.FindObjectsOfType<Character>().Where(x => !(x is PlayerControls)).ToList();
-		players = Object.FindObjectsOfType<PlayerControls>().ToList();
+		players = SpawnPlayers(1);
 
 		// 3. get objectives
 		objectives = Object.FindObjectsOfType<PossibleObjective>().Where(x => x.isObjective && !x.isCompleted).ToList();
@@ -110,6 +111,15 @@ public class GameManager : MonoBehaviour {
 		gameOver = true;
 		CancelInvoke("SpawnCop");
 		Debug.Log("game over! you " + (success ? "win!" : "lose!"));
+	}
+
+	private List<PlayerControls> SpawnPlayers(int amount) {
+		List<PlayerControls> result = new List<PlayerControls>();
+		for (int i = 0; i < amount; i++) {
+			GameObject p = Instantiate(playerPrefab, new Vector3(i, 1f, 1f), Quaternion.identity) as GameObject;
+			result.Add(p.GetComponent<PlayerControls>());
+		}
+		return result;
 	}
 
 	public void SpawnCop() {

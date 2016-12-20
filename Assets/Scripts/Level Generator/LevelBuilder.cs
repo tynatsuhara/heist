@@ -37,7 +37,7 @@ public class LevelBuilder : MonoBehaviour {
 		}
 
 
-		List<Room> rooms = spawnRoomsFromArrayCounts();
+		// List<Room> rooms = spawnRoomsFromArrayCounts();
 
 		/*
 		 * Steps:
