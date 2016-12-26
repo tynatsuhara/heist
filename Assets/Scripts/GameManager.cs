@@ -58,9 +58,12 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
+	private float currentTimeScale;
 	private void SetPaused(bool paused) {
+		if (paused && !GameManager.paused)
+			currentTimeScale = Time.timeScale;
 		GameManager.paused = paused;
-		Time.timeScale = paused ? 0 : 1;
+		Time.timeScale = paused ? 0 : currentTimeScale;
 	}
 
 	private void CheckSceneReload() {
