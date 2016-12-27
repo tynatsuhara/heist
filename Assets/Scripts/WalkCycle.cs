@@ -18,7 +18,7 @@ public class WalkCycle : MonoBehaviour {
 		get { return startFrame == walkingFirstFrame; }
 	}
 
-	void Start () {
+	void Awake () {
 		volume = GetComponent<PicaVoxel.Volume>();
 		StopWalk();
 	}
