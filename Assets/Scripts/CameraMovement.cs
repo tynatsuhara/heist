@@ -34,17 +34,24 @@ public class CameraMovement : MonoBehaviour {
 		UpdatePosition();
 	}
 
+	private int lastDpadValue;
 	private void UpdatePosition() {
 		transform.localPosition = diff;
 		transform.position = AveragePointBetweenPlayers();
 		Vector3 cameraLookAtPosition = transform.position;
 		cam.transform.LookAt(transform.position);
 
+		int newDpadValue = Input.GetAxis("DPX1") == 0 ? 0 : (int) Mathf.Sign(Input.GetAxis("DPX1"));
+		bool pressedDpad = newDpadValue != lastDpadValue;
+		lastDpadValue = newDpadValue;
+
 		// rotation
-		bool rotateButtonPress = Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.C);
+		bool rotateButtonPress = Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.C) || pressedDpad;
 		if (rotateButtonPress) {
 			startTime = Time.realtimeSinceStartup;
 			int dir = Input.GetKeyDown(KeyCode.Z) ? -1 : 1;
+			if (pressedDpad)
+				dir = newDpadValue;
 			Quaternion tempRot = transform.rotation;
 			transform.rotation = rotationGoal;
 			transform.RotateAround(cameraLookAtPosition, Vector3.up, -rotationAngle * dir);
