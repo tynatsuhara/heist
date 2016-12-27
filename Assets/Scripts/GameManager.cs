@@ -53,7 +53,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	private void CheckPause() {
-		if (Input.GetKeyDown(KeyCode.Escape)) {
+		if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown("joystick button 9")) {
 			SetPaused(!paused);
 		}
 	}
@@ -67,7 +67,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	private void CheckSceneReload() {
-		if (paused && Input.GetKeyDown(KeyCode.N)) {
+		if (paused && (Input.GetKeyDown(KeyCode.N) || Input.GetKeyDown("joystick button 8"))) {
 			SetPaused(false);			
 			Application.LoadLevel(Application.loadedLevel);
 		}
