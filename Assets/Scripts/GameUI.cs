@@ -42,8 +42,13 @@ public class GameUI : MonoBehaviour {
 		Cursor.visible = false;
 	}
 
-	public void MoveCursor(float dx, float dy) {
-
+	public void JoystickCursorMove(Transform player, float dx, float dy) {
+		if (dx == 0 && dy == 0)
+			return;
+		// TODO: make this distance configurable in settings
+		float mouseDist = 180f;
+		Vector3 playerPos = CameraMovement.instance.cam.WorldToScreenPoint(player.position);
+		mousePos = Vector3.Lerp(mousePos, playerPos + new Vector3(dx, dy, 0).normalized * mouseDist, .1f);
 	}
 
 	public void UpdateInventory(Dictionary<string, int> dict) {

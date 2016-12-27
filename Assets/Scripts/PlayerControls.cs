@@ -65,8 +65,6 @@ public class PlayerControls : Character {
 		if ((p1 && Input.GetKeyDown(KeyCode.R)) || Input.GetKeyDown("joystick " + id + " button 3")) {
 			Reload();
 		}
-
-		// GameUI.instance.MoveCursor(Input.GetAxis())
 	}
  
 	void FixedUpdate () {
@@ -77,6 +75,7 @@ public class PlayerControls : Character {
 		Walk();
 		Drag();
 		Rotate();
+		GameUI.instance.JoystickCursorMove(transform, Input.GetAxis("RSX" + id), Input.GetAxis("RSY" + id));		
     }
 
 	private void Walk() {
