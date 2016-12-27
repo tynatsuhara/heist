@@ -1,11 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 public class Pistol : Gun {
 
 	public float knockback;
 	public float shootSpeed;
-	private bool canShoot = true;
+	private bool shooting;
+	private bool reloading;
+	private bool meleeing;
 	public bool silenced;
 	public int clipSize = 15;
 	private int bulletsFired = 0;
@@ -19,15 +22,15 @@ public class Pistol : Gun {
 	private const int ANIM_START_FRAME = 2;
 
 	public override void Shoot() {
-		if (!canShoot || bulletsFired == clipSize)
+		if (shooting || reloading || bulletsFired == clipSize)
 			return;
 		
 		owner.KnockBack(knockback);
-		RaycastShoot(transform.root.position, transform.root.forward);
+		RaycastShoot(transform.root.position, -transform.forward);
 		// SetFrame before Play to avoid delay
 		volume.SetFrame(ANIM_START_FRAME);
 		anim.Shoot();
-		canShoot = false;
+		shooting = true;
 		bulletsFired++;
 		Invoke("ResetShoot", shootSpeed);
 		
@@ -50,14 +53,11 @@ public class Pistol : Gun {
 	}
 
 	public override void Reload() {
-		if (bulletsFired == 0)  // already reloading or no need to
+		if (reloading || meleeing || bulletsFired == 0)  // already reloading or no need to
 			return;
-		
-		CancelInvoke("ResetShoot");
-		bulletsFired = 0;
-		canShoot = false;
-		transform.Translate(Vector3.down * .1f);
-		transform.Translate(Vector3.forward * .1f);
+		CancelReload();
+		SetReloadPosition(true);
+		reloading = true;			
 		Invoke("ResetShoot", shootSpeed + reloadSpeed);
 	}
 
@@ -66,15 +66,27 @@ public class Pistol : Gun {
 	}
 
 	private void ResetShoot() {
-		canShoot = true;
-		if (bulletsFired == 0) {  // just finished reloading
-			bulletsFired = 0;
-			transform.Translate(Vector3.up * .1f);
-			transform.Translate(Vector3.back * .1f);
+		shooting = false;
+		if (reloading) {  // just finished reloading
+			reloading = false;
+			bulletsFired = 0;			
+			SetReloadPosition(false);
 			if (isPlayer) {
 				UpdateUI();
 			}
 		}
+	}
+
+	private void CancelReload() {
+		if (!reloading)
+			return;
+		SetReloadPosition(false);
+		CancelInvoke("ResetShoot");
+		reloading = false;
+	}
+
+	private void SetReloadPosition(bool reloading) {
+		transform.Translate((Vector3.down + Vector3.forward) * (reloading ? .1f : -.1f));		
 	}
 
 	public override void Drop(Vector3 force) {
@@ -93,13 +105,60 @@ public class Pistol : Gun {
 	}
 
 	public override void Melee() {
-		List<Character> chars = GameManager.instance.CharactersWithinDistance(owner.transform.position + owner.transform.forward * 1f, .5f);
+		if (shooting || meleeing)
+			return;
+		meleeing = true;
+		CancelReload();  // interrupt reloading to melee, if necessary
+		StartCoroutine("MeleeAnimation");
+		List<Character> chars = GameManager.instance.CharactersWithinDistance(owner.transform.position + 
+																			  owner.transform.forward * 1.1f, .6f);
 		foreach (Character c in chars) {
 			if (owner.CanSee(c.gameObject, 90)) {
 				c.Damage(c.transform.position, owner.transform.forward, 1f, melee: true);
 				break;
 			}
 		}
+	}
+	private IEnumerator MeleeAnimation() {
+		// int angle = 40;
+		// Quaternion initialRotation = transform.rotation;
+		// Vector3 initialPosition = transform.position;
+		// transform.RotateAround(transform.root.position, Vector3.up, -angle);
+		// int anglesRotated = 0;
+		// while (anglesRotated < angle * 2) {
+		// 	int a = 3;
+		// 	anglesRotated += a;
+		// 	transform.RotateAround(transform.root.position, Vector3.up, a);	
+		// 	yield return new WaitForSeconds(.01f);
+		// }
+		// transform.rotation = initialRotation;
+		// transform.position = initialPosition;
+
+		int angle = 40;
+		Quaternion initialRotation = transform.localRotation;
+		Vector3 initialPosition = transform.localPosition;
+		transform.RotateAround(transform.root.position, Vector3.up, angle);
+		Quaternion end = transform.localRotation;
+		transform.RotateAround(transform.root.position, Vector3.up, -2.4f * angle);
+		float diff = 100f;			
+		while (diff > .01f) {
+			Vector3 nextRot = Quaternion.Lerp(transform.localRotation, end, .3f).eulerAngles;
+			diff = (nextRot.y - transform.localRotation.eulerAngles.y);
+			transform.RotateAround(transform.root.position, Vector3.up, diff);
+			yield return new WaitForSeconds(.01f);
+		}
+		diff = 100f;
+		end = initialRotation;
+		while (diff > .05f) {
+			Vector3 nextRot = Quaternion.Lerp(transform.localRotation, end, .4f).eulerAngles;
+			diff = (transform.localRotation.eulerAngles.y - nextRot.y);
+			transform.RotateAround(transform.root.position, Vector3.up, -diff);
+			yield return new WaitForSeconds(.01f);
+		}
+		transform.localRotation = initialRotation;
+		transform.localPosition = initialPosition;
+
+		meleeing = false;
 	}
 
 	public override void Release() {}
