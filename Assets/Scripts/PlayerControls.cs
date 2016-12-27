@@ -80,15 +80,19 @@ public class PlayerControls : Character {
     }
 
 	private void Walk() {
+		float h = 0;
+		float v = 0;
 		if (id == 1) {  // player 1 can use keyboard
-			walking = Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0;
-			Move(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));			
+			h = Input.GetAxis("Horizontal");
+			v = Input.GetAxis("Vertical");
+			walking = h != 0 || v != 0;
 		}
 		if ((id == 1 && !walking) || id != 1) {
-			walking = Input.GetAxis("Horizontal" + id) != 0 || Input.GetAxis("Vertical" + id) != 0;
-			Move(Input.GetAxis("Horizontal" + id), Input.GetAxis("Vertical" + id));	
+			h = Input.GetAxis("Horizontal" + id);
+			v = Input.GetAxis("Vertical" + id);
+			walking = h != 0 || v != 0;
 		}
-		Debug.Log(walking);
+		Move(h, v);
 	}
 
 	private void Move(float x, float z) {
