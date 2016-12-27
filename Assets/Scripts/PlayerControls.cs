@@ -65,6 +65,8 @@ public class PlayerControls : Character {
 		if ((p1 && Input.GetKeyDown(KeyCode.R)) || Input.GetKeyDown("joystick " + id + " button 3")) {
 			Reload();
 		}
+
+		// GameUI.instance.MoveCursor(Input.GetAxis())
 	}
  
 	void FixedUpdate () {
@@ -72,8 +74,8 @@ public class PlayerControls : Character {
 			return;
 		
     	LookAtMouse();
-		Move(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-		walking = Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0;
+		Move(Input.GetAxis("Horizontal" + id), Input.GetAxis("Vertical" + id));
+		walking = Input.GetAxisRaw("Horizontal" + id) != 0 || Input.GetAxisRaw("Vertical" + id) != 0;
 		Drag();
 		Rotate();
     }
@@ -117,7 +119,6 @@ public class PlayerControls : Character {
 		// Generate a plane that intersects the transform's position with an upwards normal.
 		Plane playerPlane = new Plane(Vector3.up, transform.position);
 		Ray ray = Camera.main.ScreenPointToRay(GameUI.instance.mousePos);
-		Debug.Log(Input.mousePosition);
 		float hitdist = 0f;
 		// If the ray is parallel to the plane, Raycast will return false.
 		if (playerPlane.Raycast(ray, out hitdist)) {

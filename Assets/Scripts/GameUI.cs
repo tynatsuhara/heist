@@ -42,6 +42,10 @@ public class GameUI : MonoBehaviour {
 		Cursor.visible = false;
 	}
 
+	public void MoveCursor(float dx, float dy) {
+
+	}
+
 	public void UpdateInventory(Dictionary<string, int> dict) {
 		if (!displayedInventories.Contains(dict))
 			displayedInventories.Add(dict);
@@ -94,7 +98,7 @@ public class GameUI : MonoBehaviour {
 					hasObjectivesLeft = true;
 					res += "objectives:\n";
 				}
-				res += po.message + "\n";
+				res += po.message + (!po.isRequired ? "*" : "") + "\n";
 			}
 		}
 		objectivesText.Say(res, permanent: true);
