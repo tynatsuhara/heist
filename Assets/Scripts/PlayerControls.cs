@@ -33,7 +33,7 @@ public class PlayerControls : Character {
 
 		bool p1 = id == 1;
 
-		if ((p1 && Input.GetKeyDown(KeyCode.F)) || Input.GetKeyDown("joystick " + id + " button 0")) {
+		if ((p1 && Input.GetKeyDown(KeyCode.F)) || Input.GetKeyDown("joystick " + id + " button 3")) {
 			if (weaponDrawn) {
 				Shout();
 			}
@@ -62,9 +62,11 @@ public class PlayerControls : Character {
 			Melee();
 		}
 
-		if ((p1 && Input.GetKeyDown(KeyCode.R)) || Input.GetKeyDown("joystick " + id + " button 3")) {
+		if ((p1 && Input.GetKeyDown(KeyCode.R)) || Input.GetKeyDown("joystick " + id + " button 0")) {
 			Reload();
 		}
+
+		GameUI.instance.JoystickCursorMove(transform, Input.GetAxis("RSX" + id), Input.GetAxis("RSY" + id));		
 	}
  
 	void FixedUpdate () {
@@ -75,7 +77,6 @@ public class PlayerControls : Character {
 		Walk();
 		Drag();
 		Rotate();
-		GameUI.instance.JoystickCursorMove(transform, Input.GetAxis("RSX" + id), Input.GetAxis("RSY" + id));		
     }
 
 	private void Walk() {

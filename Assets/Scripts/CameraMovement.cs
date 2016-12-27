@@ -73,7 +73,8 @@ public class CameraMovement : MonoBehaviour {
 		}
 
 		// zoom in/out
-		cam.orthographicSize = Mathf.Min(Mathf.Max(minZoom, cam.orthographicSize - Input.GetAxis("Mouse ScrollWheel")), maxZoom);
+		float zoom = Input.GetAxis("Mouse ScrollWheel") != 0 ? Input.GetAxis("Mouse ScrollWheel") : Input.GetAxis("DPY1") * .5f;
+		cam.orthographicSize = Mathf.Min(Mathf.Max(minZoom, cam.orthographicSize - zoom), maxZoom);
 	}
 
 	public void Shake(float power, float duration) {
