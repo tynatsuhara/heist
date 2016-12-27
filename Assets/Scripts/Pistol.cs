@@ -141,7 +141,7 @@ public class Pistol : Gun {
 		Quaternion end = transform.localRotation;
 		transform.RotateAround(transform.root.position, Vector3.up, -2.4f * angle);
 		float diff = 100f;			
-		while (diff > .01f) {
+		while (diff > .03f) {
 			Vector3 nextRot = Quaternion.Lerp(transform.localRotation, end, .3f).eulerAngles;
 			diff = (nextRot.y - transform.localRotation.eulerAngles.y);
 			transform.RotateAround(transform.root.position, Vector3.up, diff);

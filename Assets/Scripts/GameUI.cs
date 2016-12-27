@@ -21,9 +21,14 @@ public class GameUI : MonoBehaviour {
 	public GameObject pauseMenu;
 	public Transform cursor;
 
+	private Vector3 lastMousePos;
+	public Vector3 mousePos;
+
 	private List<Dictionary<string, int>> displayedInventories;
 
 	void Awake () {
+		lastMousePos = mousePos = Input.mousePosition;
+
 		instance = this;
 		displayedInventories = new List<Dictionary<string, int>>();
 	}
@@ -31,7 +36,9 @@ public class GameUI : MonoBehaviour {
 	void Update() {
 		pauseMenu.SetActive(GameManager.paused);
 
-		cursor.transform.position = Input.mousePosition;
+		mousePos += Input.mousePosition - lastMousePos;
+		lastMousePos = Input.mousePosition;
+		cursor.transform.position = mousePos;
 		Cursor.visible = false;
 	}
 

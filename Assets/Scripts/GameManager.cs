@@ -120,7 +120,9 @@ public class GameManager : MonoBehaviour {
 		List<PlayerControls> result = new List<PlayerControls>();
 		for (int i = 0; i < amount; i++) {
 			GameObject p = Instantiate(playerPrefab, new Vector3(i, 1f, 1f), Quaternion.identity) as GameObject;
-			result.Add(p.GetComponent<PlayerControls>());
+			PlayerControls pc = p.GetComponent<PlayerControls>();
+			pc.id = i + 1;
+			result.Add(pc);
 		}
 		return result;
 	}

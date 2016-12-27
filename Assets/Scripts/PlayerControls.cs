@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public class PlayerControls : Character {
 
+	public int id;
+
 	private string[] outfit = {
 		"3 0-13 70-73; 0 14-69; 1 58-59 44-45 30-31 16-17",
 		"8 37 40; 7 26-33 44-51 60 62-69 71 78-89 96-119 91-94",
@@ -29,36 +31,38 @@ public class PlayerControls : Character {
 		if (!isAlive || GameManager.paused)
 			return;
 
-		if (Input.GetKeyDown(KeyCode.F)) {
+		bool p1 = id == 1;
+
+		if ((p1 && Input.GetKeyDown(KeyCode.F)) || Input.GetKeyDown("joystick " + id + " button 0")) {
 			if (weaponDrawn) {
 				Shout();
 			}
 			DrawWeapon();
 		}
 
-		if (Input.GetKeyDown(KeyCode.E)) {
+		if ((p1 && Input.GetKeyDown(KeyCode.E)) || Input.GetKeyDown("joystick " + id + " button 1")) {
 			Interact();
-		} else if (Input.GetKeyUp(KeyCode.E)) {
+		} else if ((p1 && Input.GetKeyUp(KeyCode.E)) || Input.GetKeyUp("joystick " + id + " button 1")) {
 			InteractCancel();
 		}
 
-		if (Input.GetKeyDown(KeyCode.G)) {
+		if ((p1 && Input.GetKeyDown(KeyCode.G)) || Input.GetKeyDown("joystick " + id + " button 2")) {
 			DropBag();
 		}
 
-		if (Input.GetKeyDown(KeyCode.Space)) {
+		if ((p1 && Input.GetKeyDown(KeyCode.Space)) || Input.GetKeyDown("joystick " + id + " button 5")) {
 			DragBody();
-		} else if (Input.GetKeyUp(KeyCode.Space)) {
+		} else if ((p1 && Input.GetKeyUp(KeyCode.Space)) || Input.GetKeyUp("joystick " + id + " button 5")) {
 			ReleaseBody();
 		}
 
-		if (Input.GetMouseButton(0)) {
+		if ((p1 && Input.GetMouseButton(0)) || Input.GetKey("joystick " + id + " button 7")) {
 			Shoot();
-		} else if (Input.GetMouseButtonDown(1)) {
+		} else if ((p1 && Input.GetMouseButtonDown(1)) || Input.GetKeyDown("joystick " + id + " button 6")) {
 			Melee();
 		}
 
-		if (Input.GetKeyDown(KeyCode.R)) {
+		if ((p1 && Input.GetKeyDown(KeyCode.R)) || Input.GetKeyDown("joystick " + id + " button 3")) {
 			Reload();
 		}
 	}
@@ -112,10 +116,11 @@ public class PlayerControls : Character {
 	void LookAtMouse() {
 		// Generate a plane that intersects the transform's position with an upwards normal.
 		Plane playerPlane = new Plane(Vector3.up, transform.position);
-     	Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-    	float hitdist = 0f;
-    	// If the ray is parallel to the plane, Raycast will return false.
-    	if (playerPlane.Raycast(ray, out hitdist)) {
+		Ray ray = Camera.main.ScreenPointToRay(GameUI.instance.mousePos);
+		Debug.Log(Input.mousePosition);
+		float hitdist = 0f;
+		// If the ray is parallel to the plane, Raycast will return false.
+		if (playerPlane.Raycast(ray, out hitdist)) {
 			LookAt(ray.GetPoint(hitdist));
 		}
 	}
