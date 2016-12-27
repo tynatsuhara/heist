@@ -74,15 +74,24 @@ public class PlayerControls : Character {
 			return;
 		
     	LookAtMouse();
-		Move(Input.GetAxis("Horizontal" + id), Input.GetAxis("Vertical" + id));
-		walking = Input.GetAxisRaw("Horizontal" + id) != 0 || Input.GetAxisRaw("Vertical" + id) != 0;
+		Walk();
 		Drag();
 		Rotate();
     }
 
+	private void Walk() {
+		if (id == 1) {  // player 1 can use keyboard
+			walking = Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0;
+			Move(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));			
+		}
+		if ((id == 1 && !walking) || id != 1) {
+			walking = Input.GetAxis("Horizontal" + id) != 0 || Input.GetAxis("Vertical" + id) != 0;
+			Move(Input.GetAxis("Horizontal" + id), Input.GetAxis("Vertical" + id));	
+		}
+		Debug.Log(walking);
+	}
 
-	// Returns true if the character moved 
-	public void Move(float x, float z) {
+	private void Move(float x, float z) {
 		float cameraRotation = CameraMovement.instance.transform.eulerAngles.y;
 
 		float speed = moveSpeed;
