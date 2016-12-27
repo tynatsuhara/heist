@@ -1,0 +1,12 @@
+VOXEL VALUES FOR CHARACTER MODELS
+
+BODY + HEAD
+255 = guts
+Other voxels have unique values
+
+ARMS
+0-4 = hands-shoulders
+
+LEGS
+0 = feet
+1 = legs
