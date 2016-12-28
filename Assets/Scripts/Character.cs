@@ -107,11 +107,14 @@ public abstract class Character : PossibleObjective, Damageable {
 		}
 	}
 		
-	public virtual bool Damage(Vector3 location, Vector3 angle, float damage, bool melee = false) {
+	public virtual bool Damage(Vector3 location, Vector3 angle, float damage, bool melee = false, bool playerAttacker = false) {
 		bool isPlayer = tag.Equals("Player");
 
 		if (!weaponDrawn)
 			damage *= 2f;
+
+		if (isPlayer && playerAttacker && !GameManager.instance.friendlyFireEnabled)
+			damage = 0f;
 
 		if (armor > 0) {
 			armor -= damage;

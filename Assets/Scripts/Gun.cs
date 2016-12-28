@@ -41,9 +41,9 @@ public abstract class Gun : MonoBehaviour {
 				break;
 			if (!hitEnemy) {
 				Character c = hits[i].transform.GetComponentInParent<Character>();
-				hitEnemy = c != null && c.isAlive;
+				hitEnemy = c != null && c.isAlive && !(c is PlayerControls);
 			}
-			keepGoing = damageScript.Damage(hits[i].point, direction.normalized, damage);
+			keepGoing = damageScript.Damage(hits[i].point, direction.normalized, damage, false, isPlayer);
 		}
 		if (hitEnemy && isPlayer) {
 			GameUI.instance.HitMarker();

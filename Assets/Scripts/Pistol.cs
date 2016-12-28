@@ -115,6 +115,7 @@ public class Pistol : Gun {
 		foreach (Character c in chars) {
 			if (owner.CanSee(c.gameObject, 90)) {
 				c.Damage(c.transform.position, owner.transform.forward, 1f, melee: true);
+				GameUI.instance.HitMarker();
 				break;
 			}
 		}

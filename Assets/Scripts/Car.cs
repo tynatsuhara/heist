@@ -71,7 +71,7 @@ public class Car : MonoBehaviour, Damageable, Interactable {
 		return false;
 	}
 
-	public bool Damage(Vector3 location, Vector3 angle, float damage, bool melee = false) {
+	public bool Damage(Vector3 location, Vector3 angle, float damage, bool melee = false, bool playerAttacker = false) {
 		Vector3 pos = location + angle * Random.Range(-.1f, .2f) + new Vector3(0, Random.Range(-.3f, 0), 0);;
 		exploder.transform.position = pos;
 		pos = exploder.transform.localPosition;

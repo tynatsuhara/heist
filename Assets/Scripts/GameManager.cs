@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour {
 
 	public bool alarmsRaised = false;
 	public bool gameOver = false;
+	public bool friendlyFireEnabled;
 
 	void Awake() {
 		instance = this;
@@ -31,7 +32,7 @@ public class GameManager : MonoBehaviour {
 
 		// 2. spawn characters?
 		characters = Object.FindObjectsOfType<Character>().Where(x => !(x is PlayerControls)).ToList();
-		players = SpawnPlayers(1);
+		players = SpawnPlayers(2);
 
 		// 3. get objectives
 		objectives = Object.FindObjectsOfType<PossibleObjective>().Where(x => x.isObjective && !x.isCompleted).ToList();
