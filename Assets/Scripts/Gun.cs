@@ -52,7 +52,7 @@ public abstract class Gun : MonoBehaviour {
 
 	public void PlayerEffects(float power, float duration) {
 		if (isPlayer) {
-			CameraMovement.instance.Shake(power, duration);
+			transform.root.GetComponent<PlayerControls>().playerCamera.Shake(power, duration);
 		}
 	}
 }

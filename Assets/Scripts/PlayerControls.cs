@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class PlayerControls : Character {
 
 	public int id;
+	public PlayerCamera playerCamera;
 
 	private string[] outfit = {
 		"3 0-13 70-73; 0 14-69; 1 58-59 44-45 30-31 16-17",
@@ -96,7 +97,7 @@ public class PlayerControls : Character {
 	}
 
 	private void Move(float x, float z) {
-		float cameraRotation = CameraMovement.instance.transform.eulerAngles.y;
+		float cameraRotation = playerCamera.transform.eulerAngles.y;
 
 		float speed = moveSpeed;
 		if (draggedBody != null)

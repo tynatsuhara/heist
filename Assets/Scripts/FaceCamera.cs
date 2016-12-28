@@ -5,6 +5,7 @@ public class FaceCamera : MonoBehaviour {
 
 	// Update is called once per frame
 	void LateUpdate () {
-		transform.rotation = CameraMovement.instance.cam.transform.rotation;
+		// transform.rotation = PlayerCamera.instance.cam.transform.rotation;
+		// TODO: FIX THIS
 	}
 }

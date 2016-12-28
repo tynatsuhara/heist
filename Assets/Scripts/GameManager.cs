@@ -10,6 +10,8 @@ public class GameManager : MonoBehaviour {
 
 	public GameObject[] enemyPrefabs;
 	public GameObject playerPrefab;
+	public GameObject playerCamPrefab;
+	
 	public Car getaway;
 	public bool objectivesComplete;
 
@@ -119,11 +121,30 @@ public class GameManager : MonoBehaviour {
 
 	private List<PlayerControls> SpawnPlayers(int amount) {
 		List<PlayerControls> result = new List<PlayerControls>();
+		List<Camera> cams = new List<Camera>();
 		for (int i = 0; i < amount; i++) {
 			GameObject p = Instantiate(playerPrefab, new Vector3(i, 1f, 1f), Quaternion.identity) as GameObject;
 			PlayerControls pc = p.GetComponent<PlayerControls>();
 			pc.id = i + 1;
 			result.Add(pc);
+
+			PlayerCamera cam = (Instantiate(playerCamPrefab) as GameObject).GetComponent<PlayerCamera>();
+			cam.player = pc;
+			pc.playerCamera = cam;
+			cams.Add(cam.cam);
+		}
+		if (cams.Count == 2) {
+			cams[0].rect = new Rect(0, .5f, 1, .5f);
+			cams[1].rect = new Rect(0, 0, 1, .5f);
+		} else if (cams.Count == 3) {
+			cams[0].rect = new Rect(0, .5f, 1, .5f);
+			cams[1].rect = new Rect(0, 0, .5f, .5f);
+			cams[2].rect = new Rect(.5f, 0, .5f, .5f);
+		} else if (cams.Count == 4) {
+			cams[0].rect = new Rect(0, .5f, .5f, .5f);
+			cams[1].rect = new Rect(.5f, .5f, .5f, .5f);
+			cams[2].rect = new Rect(0, 0, .5f, .5f);
+			cams[3].rect = new Rect(.5f, 0f, .5f, .5f);
 		}
 		return result;
 	}

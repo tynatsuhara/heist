@@ -1,16 +1,16 @@
 ﻿using UnityEngine;
 using System.Linq;
 
-public class CameraMovement : MonoBehaviour {
+public class PlayerCamera : MonoBehaviour {
 
-	public static CameraMovement instance;
+	public PlayerControls player;
 	public float minZoom;
 	public float maxZoom;
 	public float rotationAngle;
 	public float rotationSpeed;
 	public Camera cam;
 
-	private Transform[] players;
+	private Transform[] targets;
 
 	private float power;
 	private float duration;
@@ -22,31 +22,28 @@ public class CameraMovement : MonoBehaviour {
 	private float startTime;
 
 	void Start () {
-		instance = this;
 		rotationGoal = transform.rotation;
 		diff = transform.localPosition;
+		cam.GetComponent<AudioListener>().enabled = player.id == 1;
 	}
 	
 	void Update () {
-		Transform[] newPlayers = GameManager.players.Where(x => x.isAlive).Select(x => x.transform).ToArray();
-		if (newPlayers.Length > 0)		
-			players = newPlayers;
 		UpdatePosition();
 	}
 
 	private int lastDpadValue;
 	private void UpdatePosition() {
 		transform.localPosition = diff;
-		transform.position = AveragePointBetweenPlayers();
+		transform.position = AveragePointBetweenTargets();
 		Vector3 cameraLookAtPosition = transform.position;
 		cam.transform.LookAt(transform.position);
 
-		int newDpadValue = Input.GetAxis("DPX1") == 0 ? 0 : (int) Mathf.Sign(Input.GetAxis("DPX1"));
+		int newDpadValue = Input.GetAxis("DPX" + player.id) == 0 ? 0 : (int) Mathf.Sign(Input.GetAxis("DPX" + player.id));
 		bool pressedDpad = newDpadValue != lastDpadValue;
 		lastDpadValue = newDpadValue;
 
 		// rotation
-		bool rotateButtonPress = Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.C) || pressedDpad;
+		bool rotateButtonPress = (player.id == 1 && (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.C))) || pressedDpad;
 		if (rotateButtonPress) {
 			startTime = Time.realtimeSinceStartup;
 			int dir = Input.GetKeyDown(KeyCode.Z) ? -1 : 1;
@@ -73,7 +70,9 @@ public class CameraMovement : MonoBehaviour {
 		}
 
 		// zoom in/out
-		float zoom = Input.GetAxis("Mouse ScrollWheel") != 0 ? Input.GetAxis("Mouse ScrollWheel") : Input.GetAxis("DPY1") * .5f;
+		float zoom = player.id == 1 && Input.GetAxis("Mouse ScrollWheel") != 0 
+				? Input.GetAxis("Mouse ScrollWheel") 
+				: Input.GetAxis("DPY" + player.id) * .5f;
 		cam.orthographicSize = Mathf.Min(Mathf.Max(minZoom, cam.orthographicSize - zoom), maxZoom);
 	}
 
@@ -84,16 +83,21 @@ public class CameraMovement : MonoBehaviour {
 	}
 
 	// pre: at least one player in the players array
-	private Vector3 AveragePointBetweenPlayers() {
-		Vector3 minValues = new Vector3(players[0].position.x, players[0].position.y, players[0].position.z);
+	private Vector3 AveragePointBetweenTargets() {
+		if (player == null)
+			return transform.position;
+		if (targets == null || targets.Count() == 0)
+			return player.transform.position;
+
+		Vector3 minValues = player.transform.position;
 		Vector3 maxValues = minValues;
-		for (int i = 1; i < players.Length; i++) {
-			minValues.x = Mathf.Min(minValues.x, players[i].position.x);
-			minValues.y = Mathf.Min(minValues.y, players[i].position.y);
-			minValues.z = Mathf.Min(minValues.z, players[i].position.z);
-			maxValues.x = Mathf.Max(maxValues.x, players[i].position.x);
-			maxValues.y = Mathf.Max(maxValues.y, players[i].position.y);
-			maxValues.z = Mathf.Max(maxValues.z, players[i].position.z);
+		for (int i = 0; i < targets.Length; i++) {
+			minValues.x = Mathf.Min(minValues.x, targets[i].position.x);
+			minValues.y = Mathf.Min(minValues.y, targets[i].position.y);
+			minValues.z = Mathf.Min(minValues.z, targets[i].position.z);
+			maxValues.x = Mathf.Max(maxValues.x, targets[i].position.x);
+			maxValues.y = Mathf.Max(maxValues.y, targets[i].position.y);
+			maxValues.z = Mathf.Max(maxValues.z, targets[i].position.z);
 		}
 		return new Vector3(minValues.x + (maxValues.x - minValues.x) / 2,
 						   minValues.y + (maxValues.y - minValues.y) / 2,

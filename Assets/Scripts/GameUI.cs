@@ -47,8 +47,8 @@ public class GameUI : MonoBehaviour {
 			return;
 		// TODO: make this distance configurable in settings
 		float mouseDist = 180f;
-		Vector3 playerPos = CameraMovement.instance.cam.WorldToScreenPoint(player.position);
-		mousePos = Vector3.Lerp(mousePos, playerPos + new Vector3(dx, dy, 0).normalized * mouseDist, .1f);
+		// Vector3 playerPos = PlayerCamera.instance.cam.WorldToScreenPoint(player.position);
+		// mousePos = Vector3.Lerp(mousePos, playerPos + new Vector3(dx, dy, 0).normalized * mouseDist, .1f);
 	}
 
 	public void UpdateInventory(Dictionary<string, int> dict) {
