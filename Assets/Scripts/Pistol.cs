@@ -121,20 +121,6 @@ public class Pistol : Gun {
 		}
 	}
 	private IEnumerator MeleeAnimation() {
-		// int angle = 40;
-		// Quaternion initialRotation = transform.rotation;
-		// Vector3 initialPosition = transform.position;
-		// transform.RotateAround(transform.root.position, Vector3.up, -angle);
-		// int anglesRotated = 0;
-		// while (anglesRotated < angle * 2) {
-		// 	int a = 3;
-		// 	anglesRotated += a;
-		// 	transform.RotateAround(transform.root.position, Vector3.up, a);	
-		// 	yield return new WaitForSeconds(.01f);
-		// }
-		// transform.rotation = initialRotation;
-		// transform.position = initialPosition;
-
 		int angle = 40;
 		Quaternion initialRotation = transform.localRotation;
 		Vector3 initialPosition = transform.localPosition;
