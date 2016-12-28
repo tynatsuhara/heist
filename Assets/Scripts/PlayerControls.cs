@@ -6,6 +6,7 @@ public class PlayerControls : Character {
 
 	public int id;
 	public PlayerCamera playerCamera;
+	public PlayerUI playerUI;
 
 	private string[] outfit = {
 		"3 0-13 70-73; 0 14-69; 1 58-59 44-45 30-31 16-17",
@@ -19,13 +20,12 @@ public class PlayerControls : Character {
 		SpawnGun();
 		speech = GetComponentInChildren<TextObject>();
 		GetComponent<CharacterCustomization>().ColorCharacter(outfit, accessories:accessories);
-
 		gunScript.UpdateUI();
-		GameUI.instance.UpdateHealth(health, healthMax, armor, armorMax);
 	}
 
 	void Update() {
 		GetInput();
+		playerUI.UpdateHealth(health, healthMax, armor, armorMax);		
 	}
 
 	void GetInput() {
@@ -67,7 +67,7 @@ public class PlayerControls : Character {
 			Reload();
 		}
 
-		GameUI.instance.JoystickCursorMove(transform, Input.GetAxis("RSX" + id), Input.GetAxis("RSY" + id));		
+		playerUI.JoystickCursorMove(Input.GetAxis("RSX" + id), Input.GetAxis("RSY" + id));		
 	}
  
 	void FixedUpdate () {
@@ -132,7 +132,7 @@ public class PlayerControls : Character {
 	void LookAtMouse() {
 		// Generate a plane that intersects the transform's position with an upwards normal.
 		Plane playerPlane = new Plane(Vector3.up, transform.position);
-		Ray ray = Camera.main.ScreenPointToRay(GameUI.instance.mousePos);
+		Ray ray = playerCamera.cam.ScreenPointToRay(playerUI.mousePos);
 		float hitdist = 0f;
 		// If the ray is parallel to the plane, Raycast will return false.
 		if (playerPlane.Raycast(ray, out hitdist)) {
@@ -148,5 +148,4 @@ public class PlayerControls : Character {
 	}
 
 	public override void Alert(Character.Reaction importance, Vector3 position) {}
-	public void RemoveBody() {}
 }

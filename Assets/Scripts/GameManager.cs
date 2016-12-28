@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour {
 	public GameObject[] enemyPrefabs;
 	public GameObject playerPrefab;
 	public GameObject playerCamPrefab;
+	public GameObject playerUIPrefab;
 	
 	public Car getaway;
 	public bool objectivesComplete;
@@ -128,11 +129,16 @@ public class GameManager : MonoBehaviour {
 			pc.id = i + 1;
 			result.Add(pc);
 
-			PlayerCamera cam = (Instantiate(playerCamPrefab) as GameObject).GetComponent<PlayerCamera>();
-			cam.player = pc;
-			pc.playerCamera = cam;
-			cams.Add(cam.cam);
+			pc.playerCamera = (Instantiate(playerCamPrefab) as GameObject).GetComponent<PlayerCamera>();
+			pc.playerCamera.player = pc;
+			cams.Add(pc.playerCamera.cam);
+
+			pc.playerUI = (Instantiate(playerUIPrefab) as GameObject).GetComponent<PlayerUI>();
+			pc.playerUI.GetComponent<Canvas>().worldCamera = pc.playerCamera.cam;
+			pc.playerUI.player = pc;
 		}
+
+		// split screen dimensions
 		if (cams.Count == 2) {
 			cams[0].rect = new Rect(0, .5f, 1, .5f);
 			cams[1].rect = new Rect(0, 0, 1, .5f);

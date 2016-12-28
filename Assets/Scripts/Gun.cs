@@ -12,12 +12,12 @@ public abstract class Gun : MonoBehaviour {
 	public Vector3 inPlayerRot;
 
 	public bool isPlayer;
+	public PlayerControls player;
 
 	void Awake() {
 		owner = transform.root.GetComponent<Character>();
 		volume = GetComponent<PicaVoxel.Volume>();
 		anim = GetComponent<GunAnimation>();
-		isPlayer = transform.root.GetComponent<PlayerControls>() != null;
 	}
 
 	abstract public void Drop(Vector3 force);
@@ -46,7 +46,7 @@ public abstract class Gun : MonoBehaviour {
 			keepGoing = damageScript.Damage(hits[i].point, direction.normalized, damage, false, isPlayer);
 		}
 		if (hitEnemy && isPlayer) {
-			GameUI.instance.HitMarker();
+			player.playerUI.HitMarker();
 		}
 	}
 

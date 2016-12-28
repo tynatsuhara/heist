@@ -121,10 +121,6 @@ public abstract class Character : PossibleObjective, Damageable {
 			if (armor >= 0) {
 				if (!isPlayer)
 					rb.AddForce(300 * angle.normalized, ForceMode.Impulse);
-				
-				if (isPlayer)
-					GameUI.instance.UpdateHealth(health, healthMax, armor, armorMax);
-
 				return false;
 			}
 			damage = -armor;  // for applying leftover damage later
@@ -159,9 +155,6 @@ public abstract class Character : PossibleObjective, Damageable {
 								  melee ? transform.position + Vector3.up * Random.Range(-.4f, .3f) : exploder.transform.position,
 								  ForceMode.Impulse);
 		}
-
-		if (isPlayer)
-			GameUI.instance.UpdateHealth(health, healthMax, armor, armorMax);
 
 		return !wasAlive;
 	}
@@ -337,6 +330,9 @@ public abstract class Character : PossibleObjective, Damageable {
 		gun.transform.parent = transform;
 		gun.transform.localPosition = gunScript.inPlayerPos;
 		gun.transform.localRotation = Quaternion.Euler(gunScript.inPlayerRot);
+		gunScript.isPlayer = this is PlayerControls;
+		if (gunScript.isPlayer)
+			gunScript.player = (PlayerControls) this;
 	}
 
 	// Basically, they're not a civilian. Has a weapon/mask/whatever. Cops should attack!

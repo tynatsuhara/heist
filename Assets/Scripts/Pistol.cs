@@ -101,7 +101,7 @@ public class Pistol : Gun {
 	}
 
 	public override void UpdateUI() {
-		GameUI.instance.UpdateAmmo(clipSize - bulletsFired, clipSize);
+		player.playerUI.UpdateAmmo(clipSize - bulletsFired, clipSize);
 	}
 
 	public override void Melee() {
@@ -115,7 +115,7 @@ public class Pistol : Gun {
 		foreach (Character c in chars) {
 			if (owner.CanSee(c.gameObject, 90)) {
 				c.Damage(c.transform.position, owner.transform.forward, 1f, melee: true);
-				GameUI.instance.HitMarker();
+				player.playerUI.HitMarker();
 				break;
 			}
 		}
