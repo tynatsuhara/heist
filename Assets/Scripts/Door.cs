@@ -9,7 +9,6 @@ public class Door : MonoBehaviour, Interactable, Powerable {
 	private bool open;
 	public GameObject[] doorStates;
 	private TextObject text;
-	private int state;
 
 	public Teleporter openRightTeleporter;
 	public Teleporter openLeftTeleporter;
@@ -43,7 +42,6 @@ public class Door : MonoBehaviour, Interactable, Powerable {
 	}
 
 	private void SetState(int state) {
-		this.state = state;
 		for (int i = 0; i < doorStates.Length; i++) {
 			doorStates[i].SetActive(i == state);
 		}
