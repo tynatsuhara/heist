@@ -108,6 +108,8 @@ public class GameManager : MonoBehaviour {
 			return;
 
 		alarmsRaised = true;
+		foreach (PlayerControls pc in players)
+			pc.DrawWeapon();
 		InvokeRepeating("SpawnCop", 1f, 5f);
 	}
 

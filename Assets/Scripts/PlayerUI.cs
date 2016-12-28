@@ -25,8 +25,10 @@ public class PlayerUI : MonoBehaviour {
 	}
 
 	void Update() {
-		mousePos += Input.mousePosition - lastMousePos;
-		lastMousePos = Input.mousePosition;
+		if (player.id == 1) {
+			mousePos += Input.mousePosition - lastMousePos;
+			lastMousePos = Input.mousePosition;
+		}
 		cursor.transform.position = mousePos;
 		Cursor.visible = false;
 	}
