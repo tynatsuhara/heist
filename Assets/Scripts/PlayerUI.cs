@@ -20,7 +20,7 @@ public class PlayerUI : MonoBehaviour {
 	void Start() {
 		displayedInventories = new List<Dictionary<string, int>>();
 		lastMousePos = mousePos = player.id == 1 
-				? Input.mousePosition 
+				? Input.mousePosition
 				: player.playerCamera.cam.WorldToScreenPoint(player.transform.position);
 	}
 
@@ -29,7 +29,7 @@ public class PlayerUI : MonoBehaviour {
 			mousePos += Input.mousePosition - lastMousePos;
 			lastMousePos = Input.mousePosition;
 		}
-		cursor.transform.position = mousePos;
+		cursor.transform.position = player.playerCamera.cam.ScreenToWorldPoint(mousePos);
 		Cursor.visible = false;
 	}
 
