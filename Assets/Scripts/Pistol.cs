@@ -53,7 +53,7 @@ public class Pistol : Gun {
 	}
 
 	public override void Reload() {
-		if (reloading || meleeing || bulletsFired == 0)  // already reloading or no need to
+		if (shooting || reloading || meleeing || bulletsFired == 0)  // already reloading or no need to
 			return;
 		CancelReload();
 		SetReloadPosition(true);
