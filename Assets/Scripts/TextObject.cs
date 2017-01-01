@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class TextObject : MonoBehaviour {
 
-	private Text text;
+	private Text[] text;
 	private List<string> wordQueue;
 
 	private float flashSpeed = .1f;
@@ -19,11 +19,11 @@ public class TextObject : MonoBehaviour {
 
 	public bool pausable = true;
 	public bool currentlyDisplaying = false;
+	public bool ui = false;
 
 	void Awake() {
-		text = GetComponent<Text>();
+		text = GetComponentsInChildren<Text>();
 		wordQueue = new List<string>();
-		wordQueue.Add(text.text);
 	}
 
 	void Update() {
@@ -34,7 +34,15 @@ public class TextObject : MonoBehaviour {
 			lastSayTime += Time.unscaledDeltaTime;
 			return;
 		}
-		text.text = wordQueue.Count > 0 ? ParseString(wordQueue[0]) : "";
+		string s = wordQueue.Count > 0 ? ParseString(wordQueue[0]) : "";
+		if (ui) {
+			GetComponent<Text>().text = s;
+		} else {
+			for (int i = 0; i < GameManager.players.Count; i++) {
+				text[i].text = s;
+				text[i].transform.rotation = GameManager.players[i].playerCamera.cam.transform.rotation;
+			}
+		}
 		CheckLoopTime();	
 		CheckToggleTime();
 		CheckClearTime();
@@ -73,7 +81,8 @@ public class TextObject : MonoBehaviour {
 		if (elapsed > flashSpeed) {
 			togglesLeft--;
 			togglingStartTime += flashSpeed;
-			text.enabled = !text.enabled;
+			foreach (Text t in text)
+				t.enabled = !t.enabled;
 		}
 	}
 
@@ -84,7 +93,8 @@ public class TextObject : MonoBehaviour {
 		SetColor(color);
 		wordQueue.Clear();
 		wordQueue.Add(message);
-		text.enabled = true;
+		foreach (Text t in text)		
+			t.enabled = true;
 		int flashTimes = 6;
 		lastSayTime = Time.realtimeSinceStartup;
 		cycling = false;
@@ -106,7 +116,8 @@ public class TextObject : MonoBehaviour {
 		SetColor(color);
 		wordQueue.Clear();
 		wordQueue.AddRange(messages);
-		text.enabled = true;
+		foreach (Text t in text)
+			t.enabled = true;
 		shouldClear = false;
 		cycling = true;
 		cycleInterval = interval;
@@ -125,18 +136,21 @@ public class TextObject : MonoBehaviour {
 	}
 
 	private void SetColor(string color) {
+		Material m;
 		if (color == "red") {
-			text.material = GameUI.instance.textRed;
+			m = GameUI.instance.textRed;
 		} else if (color == "green") {
-			text.material = GameUI.instance.textGreen;
+			m = GameUI.instance.textGreen;
 		} else if (color == "blue") {
-			text.material = GameUI.instance.textBlue;
+			m = GameUI.instance.textBlue;
 		} else if (color == "orange") {
-			text.material = GameUI.instance.textOrange;
+			m = GameUI.instance.textOrange;
 		} else if (color == "yellow") {
-			text.material = GameUI.instance.textYellow;
+			m = GameUI.instance.textYellow;
 		} else {
-			text.material = GameUI.instance.textWhite;
+			m = GameUI.instance.textWhite;
 		}
+		foreach (Text t in text)
+			t.material = m;		
 	}
 }
