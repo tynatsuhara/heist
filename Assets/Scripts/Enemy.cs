@@ -1,35 +1,21 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 public class Enemy : Character {
 
-	private GameObject player;
-	private Character playerScript;
+	private static Dictionary<PlayerControls, Vector3> lastKnownLocations = new Dictionary<PlayerControls, Vector3>();
+
 	private NavMeshAgent agent;
 
-
-
-	// refactor AI to use these
 	private enum EnemyState {
 		PASSIVE,
-		SEARCHING,          // they know something is up, but don't know of the player
-		AGGRO_SEARCHING,    // they are aware of the player, but don't know location
-		AGGRO_ATTACKING
+		CURIOUS,          // they know something is up, but don't know of the player
+		SEARCHING,   	  // they are aware of the player, but don't know location
+		ATTACKING
 	}
-
-
-	// TODO: static lastPlayerLocation and lastSightingTime
-
-
-	// state booleans, in somewhat order of precedence
-	public bool alerted;
-	public bool suspicious;
-	public bool knowsPlayerLocation;
-	public static bool enemyIsKnown;  // the enemies know that the player is their target
-	public static Vector3 lastKnownPlayerLocation;
-	public Vector3 investigatePoint;
-	public float timeSpentWatchingPlayer;  // suspiciously watch the player for a while, then un-aggro
+	private EnemyState currentState;
 
 	public float walkingAnimationThreshold;
 	private bool invoked;
@@ -38,28 +24,23 @@ public class Enemy : Character {
 		"0 0-73; 1 57 60 44 45 31; 2 46; 6 58 59; 4 14-27; 3 17",
 		"8 37 40; 7 26-33 44-51 60 62-69 71 78-89 96-119 91-94",
 		"0 1; 5 0",
-		"done in Awake()"
+		"done in Start()"
 	};
 
 	void Awake () {
-		copUniform[3] = "0 " + Random.Range(1, 3) + "-3";  // sleeve length
-
 		rb = GetComponent<Rigidbody>();
-		SpawnGun();
-
-		player = GameObject.FindWithTag("Player");
-		playerScript = player.GetComponent<Character>();
 		agent = GetComponent<NavMeshAgent>();
 		speech = GetComponentInChildren<TextObject>();
+
+		SpawnGun();		
 	}
 
 	void Start() {
-		CheckForCameraComputer();
+		copUniform[3] = "0 " + Random.Range(1, 3) + "-3";  // sleeve length
 		GetComponent<CharacterCustomization>().ColorCharacter(copUniform, true);
 
 		if (GameManager.instance.alarmsRaised) {
 			Alert(Reaction.AGGRO);
-			knowsPlayerLocation = enemyIsKnown;
 		} else {
 			CheckForCameraComputer();
 		}
@@ -74,13 +55,22 @@ public class Enemy : Character {
 
 		LegAnimation();
 		walking = agent.enabled && agent.velocity != Vector3.zero;
+		
+		timeInCurrentState += Time.deltaTime;
 
-		if (alerted) {
-			AggroBehavior();
-		} else if (suspicious) {
-			SuspiciousBehavior();
-		} else {
-			PassiveBehavior();
+		switch (currentState) {
+			case EnemyState.PASSIVE:
+				StatePassive();
+				break;
+			case EnemyState.CURIOUS:
+				StateCurious();
+				break;
+			case EnemyState.SEARCHING:
+				StateSearching();
+				break;
+			case EnemyState.ATTACKING:
+				StateAttacking();
+				break;
 		}
 	}
 
@@ -88,11 +78,45 @@ public class Enemy : Character {
 		if (!isAlive || GameManager.paused)
 			return;
 
-		Drag();
+		// Drag();
 		Rotate();
 	}
 
-	private void GlimpsedPlayer() {
+	//=================== STATE FUNCTIONS ===================//
+
+	// EnemyState.PASSIVE
+	private void StatePassive() {}
+
+	// EnemyState.CURIOUS
+	private void StateCurious() {}
+
+	// EnemyState.SEARCHING
+	private void StateSearching() {}
+
+	// EnemyState.ATTACKING
+	private void StateAttacking() {}
+
+
+	private bool transitioningState;
+	private float timeInCurrentState;
+	private EnemyState stateToTransitionTo;
+	private void TransitionState(EnemyState newState, float time = 0f) {
+		stateToTransitionTo = newState;
+		transitioningState = true;
+		if (time <= 0f) {
+			CompleteTransition();
+		} else {
+			Invoke("CompleteTransition", time);
+		} 
+	}
+	private void CompleteTransition() {
+		if (currentState != stateToTransitionTo)
+			timeInCurrentState = 0f;
+		currentState = stateToTransitionTo;
+		transitioningState = false;
+	}
+
+	/*private void GlimpsedPlayer() {
 		CheckCanSeeEvidence();
 		if (!seesEvidence)
 			return;
@@ -101,31 +125,7 @@ public class Enemy : Character {
 		Alert(Reaction.AGGRO, player.transform.position);
 	}
 
-	public void Alert(Character.Reaction importance) {
-		Alert(importance, transform.position + transform.forward);
-	}
-
 	// TODO: being alerted without knowing location   <- could accomplish with global lastKnownLocation?
-	public override void Alert(Reaction importance, Vector3 position) {
-		if (!isAlive)
-			return;
-
-		if (!alerted || (alerted && importance == Reaction.AGGRO)) {
-			investigatePoint = position;			
-		}
-
-		if (importance == Reaction.AGGRO) {
-			alerted = true;
-			GameManager.instance.WereGoingLoudBoys();
-		} else if (importance == Reaction.SUSPICIOUS) {
-			timeSpentWatchingPlayer = 0f;
-			suspicious = true;
-		} else if (importance == Reaction.MILDLY_SUSPICIOUS) {
-
-		}
-	}
-
-
 
 	private void AggroBehavior() {
 		bool inRange = (player.transform.position - transform.position).magnitude < gunScript.range;
@@ -160,12 +160,6 @@ public class Enemy : Character {
 		}
 	}
 
-	public override void Shoot() {
-		base.Shoot();
-		if (gunScript.NeedsToReload())
-			Reload();
-	}
-
 	private void SuspiciousBehavior() {
 		float followDistance = 4f;
 		if (CanSee(player)) {
@@ -189,12 +183,20 @@ public class Enemy : Character {
 			agent.destination = investigatePoint;
 		}
 		CheckCanSeeEvidence();
+	}*/
+
+	public void Alert(Character.Reaction importance) {
+		Alert(importance, transform.position + transform.forward);
 	}
 
-	private void PassiveBehavior() {
-		// TODO: follow path if has one
-		
-		CheckCanSeeEvidence();
+	public override void Alert(Reaction importance, Vector3 position) {
+
+	}
+
+	public override void Shoot() {
+		base.Shoot();
+		if (gunScript.NeedsToReload())
+			Reload();
 	}
 
 	private void CheckCanSeeEvidence() {
@@ -227,9 +229,10 @@ public class Enemy : Character {
 	}
 
 	void OnCollisionEnter(Collision collision) {
-        if (collision.collider.transform.root.gameObject == player) {
+		PlayerControls pc =collision.collider.GetComponentInParent<PlayerControls>();
+		if (pc != null) {
 			Alert(Reaction.SUSPICIOUS);
-			LookAt(player.transform);			
+			LookAt(pc.transform);			
 		}
     }
 }

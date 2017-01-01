@@ -88,7 +88,6 @@ public class Civilian : Character, Interactable {
 	private void CompleteTransition() {
 		if (currentState != stateToTransitionTo)
 			timeInCurrentState = 0f;
-		
 		currentState = stateToTransitionTo;
 		transitioningState = false;
 	}
@@ -140,7 +139,8 @@ public class Civilian : Character, Interactable {
 		return false;
 	}
 
-	// any states that can come after CivilianState.HELD_HOSTAGE_UNTIED should call this	
+	// any states that can come after CivilianState.HELD_HOSTAGE_UNTIED should call this,
+	// since the civilian will be laying on the ground
 	private void ResetRB() {
 		if (rb.constraints == RigidbodyConstraints.None) {
 			rb.rotation = Quaternion.Euler(new Vector3(0, rb.rotation.y, 0));
