@@ -42,7 +42,6 @@ public class PlayerControls : Character {
 		}
 
 		if ((p1 && Input.GetKeyDown(KeyCode.E)) || Input.GetKeyDown("joystick " + id + " button 1")) {
-			Debug.Log("interact");
 			Interact();
 		} else if ((p1 && Input.GetKeyUp(KeyCode.E)) || Input.GetKeyUp("joystick " + id + " button 1")) {
 			InteractCancel();

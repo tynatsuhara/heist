@@ -23,8 +23,10 @@ public class TextObject : MonoBehaviour {
 
 	void Awake() {
 		text = GetComponentsInChildren<Text>();
-		for (int i = 0; i < text.Length; i++) {
-			text[i].gameObject.layer = LayerMask.NameToLayer("textCam" + i);
+		if (!ui) {
+			for (int i = 0; i < text.Length; i++) {
+				text[i].transform.parent.gameObject.layer = LayerMask.NameToLayer("textCam" + i);
+			}
 		}
 		wordQueue = new List<string>();
 	}
