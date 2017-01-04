@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour {
 
 	public static GameManager instance;
 	public static bool paused = false;
+	public int playerAmount;
 
 	public GameObject[] enemyPrefabs;
 	public GameObject playerPrefab;
@@ -35,7 +36,7 @@ public class GameManager : MonoBehaviour {
 
 		// 2. spawn characters?
 		characters = Object.FindObjectsOfType<Character>().Where(x => !(x is PlayerControls)).ToList();
-		players = SpawnPlayers(2);
+		players = SpawnPlayers(playerAmount);
 
 		// 3. get objectives
 		objectives = Object.FindObjectsOfType<PossibleObjective>().Where(x => x.isObjective && !x.isCompleted).ToList();
