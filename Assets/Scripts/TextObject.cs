@@ -39,6 +39,12 @@ public class TextObject : MonoBehaviour {
 			lastSayTime += Time.unscaledDeltaTime;
 			return;
 		}
+		CheckLoopTime();	
+		CheckToggleTime();
+		CheckClearTime();
+	}
+
+	void LateUpdate() {
 		string s = wordQueue.Count > 0 ? ParseString(wordQueue[0]) : "";
 		if (ui) {
 			GetComponent<Text>().text = s;
@@ -48,9 +54,6 @@ public class TextObject : MonoBehaviour {
 				text[i].transform.rotation = GameManager.players[i].playerCamera.cam.transform.rotation;
 			}
 		}
-		CheckLoopTime();	
-		CheckToggleTime();
-		CheckClearTime();
 	}
 
 	private string ParseString(string str) {
