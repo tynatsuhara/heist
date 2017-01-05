@@ -102,16 +102,18 @@ public class Car : MonoBehaviour, Damageable, Interactable {
 
 	public bool ContainsAllPlayers() {
 		foreach (PlayerControls pc in GameManager.players) {
-			if (!ContainsCharacter(pc))
+			if (!ContainsCharacter(pc)) {
 				return false;
+			}
 		}
-		return false;
+		return true;
 	}
 
 	public bool ContainsCharacter(Character c) {
 		foreach (Character ch in characters) {
-			if (ch == c)
+			if (ch == c) {
 				return true;
+			}
 		}
 		return false;
 	}
