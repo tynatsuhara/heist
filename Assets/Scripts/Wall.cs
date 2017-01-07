@@ -1,4 +1,4 @@
-using System;
+using System.Collections;
 using UnityEngine;
 
 public class Wall : MonoBehaviour, Damageable {
@@ -6,9 +6,25 @@ public class Wall : MonoBehaviour, Damageable {
 	public float damangeThreshold;
 	public bool canBeShotThrough;
 	public PicaVoxel.Exploder exploder;
+	public bool paintingNegativeWall;
+	public bool paintingPositiveWall;
+	public GameObject[] paintingPrefabs;
 
 	void Start() {
 		exploder.ValueFilter = canBeShotThrough ? 100 : 0;  // inner wall has val 100, outer has val 0
+
+		if (paintingPositiveWall)
+			SpawnPainting(1);
+		if (paintingNegativeWall)
+			SpawnPainting(-1);
+	}
+
+	private void SpawnPainting(int sign) {
+		GameObject painting = Instantiate(paintingPrefabs[Random.Range(0, paintingPrefabs.Length)]) as GameObject;
+		painting.transform.parent = transform;
+		painting.transform.localPosition = new Vector3(sign * .25f, -.1f, sign * painting.GetComponent<PicaVoxel.Volume>().ZSize/20f);
+		if (sign > 0)
+			painting.transform.eulerAngles = new Vector3(0, 180f, 0);
 	}
 
 	// The return value is used for projectile damage. If the bullet should go
