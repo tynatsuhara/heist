@@ -139,7 +139,7 @@ public class GameManager : MonoBehaviour {
 			pc.playerUI = (Instantiate(playerUIPrefab) as GameObject).GetComponent<PlayerUI>();
 			pc.playerUI.GetComponent<Canvas>().worldCamera = pc.playerCamera.cam;
 			pc.playerUI.player = pc;
-			pc.playerUI.transform.parent = pc.playerCamera.transform;
+			pc.playerUI.transform.SetParent(pc.playerCamera.transform, false);
 		}
 
 		// split screen dimensions
