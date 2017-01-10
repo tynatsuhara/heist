@@ -48,7 +48,7 @@ public class GameManager : MonoBehaviour {
 		getaway.locked = !objectivesComplete;
 
 		// WIN!
-		if (getaway.ContainsAllPlayers()) {
+		if (getaway.ContainsAllLivingPlayers()) {
 			GameOver(true);
 			getaway.destination = GameObject.Find("EscapePoint").transform;
 		}

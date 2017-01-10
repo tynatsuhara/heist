@@ -100,9 +100,9 @@ public class Car : MonoBehaviour, Damageable, Interactable {
 		}
 	}
 
-	public bool ContainsAllPlayers() {
+	public bool ContainsAllLivingPlayers() {
 		foreach (PlayerControls pc in GameManager.players) {
-			if (!ContainsCharacter(pc)) {
+			if (pc.isAlive && !ContainsCharacter(pc)) {
 				return false;
 			}
 		}
