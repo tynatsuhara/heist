@@ -13,4 +13,4 @@ Keyboard/PS4
 * MouseWheel/D-Pad Up+Down - Zoom
 * Z+C/D-Pad Left+Right - Rotate Camera
 * ESC/Options - Pause
-* N/Share on pause menu - Restart level
+* N/Share on pause menu or game over screen - Restart level
