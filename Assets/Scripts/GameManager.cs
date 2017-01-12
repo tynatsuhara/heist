@@ -48,13 +48,33 @@ public class GameManager : MonoBehaviour {
 		getaway.locked = !objectivesComplete;
 
 		// WIN!
-		if (getaway.ContainsAllLivingPlayers()) {
+		if (players.All(x => !x.isAlive)) {
+			GameOver(false);
+		} else if (getaway.ContainsAllLivingPlayers()) {
 			GameOver(true);
-			getaway.destination = GameObject.Find("EscapePoint").transform;
 		}
 
 		CheckPause();
 		CheckSceneReload();
+	}
+
+	public void GameOver(bool success) {
+		if (gameOver)
+			return;
+		
+		gameOver = true;
+		CancelInvoke("SpawnCop");
+		Debug.Log("game over! you " + (success ? "win!" : "lose!"));
+		GameUI.instance.objectivesText.gameObject.SetActive(false);
+		foreach (PlayerControls pc in players)
+			pc.playerUI.gameObject.SetActive(false);
+
+		if (success) {
+			getaway.destination = GameObject.Find("EscapePoint").transform;
+
+		} else {
+
+		}
 	}
 
 	private void CheckPause() {
@@ -72,8 +92,10 @@ public class GameManager : MonoBehaviour {
 	}
 
 	private void CheckSceneReload() {
-		if (paused && (Input.GetKeyDown(KeyCode.N) || Input.GetKeyDown("joystick button 8"))) {
-			SetPaused(false);			
+		bool pauseMenuReload = paused && (Input.GetKeyDown(KeyCode.N) || Input.GetKeyDown("joystick button 8"));
+		bool gameOverReload = gameOver && (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown("joystick button 9"));
+		if (pauseMenuReload || gameOverReload) {
+			SetPaused(false);
 			Application.LoadLevel(Application.loadedLevel);
 		}
 	}
@@ -112,15 +134,6 @@ public class GameManager : MonoBehaviour {
 		foreach (PlayerControls pc in players)
 			pc.DrawWeapon();
 		InvokeRepeating("SpawnCop", 1f, 5f);
-	}
-
-	public void GameOver(bool success) {
-		if (gameOver)
-			return;
-		
-		gameOver = true;
-		CancelInvoke("SpawnCop");
-		Debug.Log("game over! you " + (success ? "win!" : "lose!"));
 	}
 
 	private List<PlayerControls> SpawnPlayers(int amount) {
