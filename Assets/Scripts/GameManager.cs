@@ -71,7 +71,7 @@ public class GameManager : MonoBehaviour {
 
 		if (success) {
 			getaway.destination = GameObject.Find("EscapePoint").transform;
-
+			GameUI.instance.ShowWinScreen(lootAmounts);
 		} else {
 
 		}
@@ -189,16 +189,12 @@ public class GameManager : MonoBehaviour {
 		return objectives.All(x => !x.isRequired || x.isCompleted);
 	}
 
-	private Dictionary<string, List<int>> lootAmounts;
+	private Dictionary<string, List<int>> lootAmounts = new Dictionary<string, List<int>>();
 	public void AddLoot(string category, int dollarAmount) {
 		if (category == null || category.Length == 0)
 			return;
 		
 		category = category.ToUpper();
-		if (lootAmounts == null) {
-			lootAmounts = new Dictionary<string, List<int>>();
-		}
-
 		List<int> loots = lootAmounts.ContainsKey(category) ? lootAmounts[category] : new List<int>();
 		loots.Add(dollarAmount);
 		lootAmounts[category] = loots;
