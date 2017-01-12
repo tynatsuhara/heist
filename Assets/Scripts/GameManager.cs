@@ -203,6 +203,6 @@ public class GameManager : MonoBehaviour {
 		loots.Add(dollarAmount);
 		lootAmounts[category] = loots;
 
-		Debug.Log(category + " + $" + dollarAmount);
+		Debug.Log(category + " + $" + dollarAmount.ToString("#,##0"));
 	}
 }
