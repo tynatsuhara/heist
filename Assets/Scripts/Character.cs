@@ -479,7 +479,7 @@ public abstract class Character : PossibleObjective, Damageable {
 		bag.transform.parent = null;
 		if (launch) {
 			bag.transform.position = transform.position + transform.forward * 1f - transform.up * .6f;
-			bag.GetComponent<Rigidbody>().AddForce(transform.forward * (walking ? 2000 : 600f), ForceMode.Impulse);
+			bag.GetComponent<Rigidbody>().AddForce(transform.forward * (walking ? 800f : 400f), ForceMode.Impulse);
 		}
 		bag = null;
 	}

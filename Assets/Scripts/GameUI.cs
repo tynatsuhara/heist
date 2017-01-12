@@ -54,11 +54,11 @@ public class GameUI : MonoBehaviour {
 			foreach (int x in loot[s])
 				sum += x;
 			left += "\n";
-			right += "$" + sum + "\n";
+			right += "$" + sum.ToString("#,##0") + "\n";
 			bigSum += sum;
 		}
 		left += "TOTAL";
-		right += "$" + bigSum;
+		right += "$" + bigSum.ToString("#,##0");
 		Text textL = winScreen.GetComponentsInChildren<Text>().Where(x => x.name == "Loot left").First();
 		Text textR = winScreen.GetComponentsInChildren<Text>().Where(x => x.name == "Loot right").First();
 		textL.text = left;
