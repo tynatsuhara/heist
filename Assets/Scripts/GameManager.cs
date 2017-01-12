@@ -92,9 +92,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	private void CheckSceneReload() {
-		bool pauseMenuReload = paused && (Input.GetKeyDown(KeyCode.N) || Input.GetKeyDown("joystick button 8"));
-		bool gameOverReload = gameOver && (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown("joystick button 9"));
-		if (pauseMenuReload || gameOverReload) {
+		if ((gameOver || paused) && (Input.GetKeyDown(KeyCode.N) || Input.GetKeyDown("joystick button 8"))) {
 			SetPaused(false);
 			Application.LoadLevel(Application.loadedLevel);
 		}
