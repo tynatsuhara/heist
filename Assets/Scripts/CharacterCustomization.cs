@@ -66,15 +66,15 @@ public class CharacterCustomization : MonoBehaviour {
 			foreach (Accessory a in accessories) {
 				if (a.GetComponentInParent<PicaVoxel.Volume>() != null) {
 					volumez.Add(a.GetComponentInParent<PicaVoxel.Volume>());
-					
 				}
 			}
 		}
 
 		for (int i = 0; i < volumez.Count; i++) {
 			PicaVoxel.Volume volume = volumez[i];
-			// arms and guns use the same palette
 			Dictionary<byte, int> palette = palettes[i];
+			if (volume == null)
+				continue;
 
 			foreach (PicaVoxel.Frame frame in volume.Frames) {
 				for (int x = 0; x < frame.XSize; x++) {
@@ -113,6 +113,7 @@ public class CharacterCustomization : MonoBehaviour {
 
 	private static Dictionary<byte, int>[] Parse(string[] outfit, Accessory[] accessories) {
 		List<string> outfit_ = new List<string>(outfit);
+		// arms and guns use the same palette		
 		outfit_.Add(outfit[3]);
 
 		if (accessories != null) {
