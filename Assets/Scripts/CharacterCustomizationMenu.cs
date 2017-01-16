@@ -7,6 +7,7 @@ public class CharacterCustomizationMenu : MonoBehaviour {
 
 	public PlayerControls player;
 	public int playerId;
+	public float rotationSpeed;
 	public Accessory[] accessories;
 
 	void Start () {
@@ -15,7 +16,10 @@ public class CharacterCustomizationMenu : MonoBehaviour {
 	}
 	
 	void Update () {
-	
+		if (Input.GetMouseButton(0)) {
+			float dir = Input.GetAxis("Mouse X");
+			player.transform.RotateAround(player.transform.position, Vector3.up, dir * -rotationSpeed);
+		}
 	}
 
 
