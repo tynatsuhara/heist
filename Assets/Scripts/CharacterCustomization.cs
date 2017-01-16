@@ -46,6 +46,7 @@ public class CharacterCustomization : MonoBehaviour {
 		if (randomize && skinColors != null && skinColors.Length > 0) {
 			skinColor = skinColors[Random.Range(0, skinColors.Length)];
 		}
+		List<PicaVoxel.Volume> accs = SpawnAccessories(accessories);
 
 		var palettes = Parse(outfit, accessories);
 
@@ -62,13 +63,7 @@ public class CharacterCustomization : MonoBehaviour {
 		};
 
 		List<PicaVoxel.Volume> volumez = new List<PicaVoxel.Volume>(new PicaVoxel.Volume[] { body, head, legs, arms, gunz });
-		if (accessories != null) {
-			foreach (Accessory a in accessories) {
-				if (a.GetComponentInParent<PicaVoxel.Volume>() != null) {
-					volumez.Add(a.GetComponentInParent<PicaVoxel.Volume>());
-				}
-			}
-		}
+		volumez.AddRange(accs);
 
 		for (int i = 0; i < volumez.Count; i++) {
 			PicaVoxel.Volume volume = volumez[i];
@@ -104,6 +99,19 @@ public class CharacterCustomization : MonoBehaviour {
 				frame.UpdateChunks(true);
 			}
 		}
+	}
+
+	private List<PicaVoxel.Volume> SpawnAccessories(Accessory[] accs) {
+		List<PicaVoxel.Volume> res = new List<PicaVoxel.Volume>();
+		if (accs == null)
+			return res;
+		foreach (Accessory a in accs) {
+			GameObject go = Instantiate(a.gameObject) as GameObject;
+			go.transform.parent = transform.root;
+			go.transform.localPosition = a.positionOffset;
+			res.Add(go.GetComponentInParent<PicaVoxel.Volume>());
+		}
+		return res;
 	}
 
 	// Randomizes a byte and clamps it between 0 and 255
