@@ -9,6 +9,8 @@ public class CharacterCustomizationMenu : MonoBehaviour {
 	public int playerId;
 	public float rotationSpeed;
 	public Accessory[] accessories;
+	public GameObject[] weapons;
+	public GameObject[] sidearms;
 
 	void Start () {
 		instance = this;
