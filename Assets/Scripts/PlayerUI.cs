@@ -54,12 +54,10 @@ public class PlayerUI : MonoBehaviour {
 				mergedInventories[s] += d[s];
 			}
 		}
-
 		string result = "";
 		foreach (string s in mergedInventories.Keys) {
 			result += s + (mergedInventories[s] > 1 ? " × " + mergedInventories[s] + "\n" : "\n");
 		}
-
 		invText.Say(result, permanent: true);
 	}
 
@@ -68,7 +66,7 @@ public class PlayerUI : MonoBehaviour {
 	}
 
 	public void ShowReloading(string weaponName) {
-		ammoText.Say("reloading...", permanent: true);
+		ammoText.Say(weaponName + "\nreloading...", permanent: true);
 	}
 
 	public void UpdateHealth(float health, float healthMax, float armor, float armorMax) {

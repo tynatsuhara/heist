@@ -19,7 +19,6 @@ public class CharacterCustomizationMenu : MonoBehaviour {
 
 	void Start() {
 		ColorizeFromPrefs(player);
-		SpawnGuns();
 	}
 	
 	void Update() {
@@ -28,18 +27,6 @@ public class CharacterCustomizationMenu : MonoBehaviour {
 			player.transform.RotateAround(player.transform.position, Vector3.up, dir * -rotationSpeed);
 		}
 	}
-
-	private void SpawnGuns() {
-		for (int i = 0; i < weapons.Length; i++) {
-			weapons[i] = Instantiate(weapons[i]) as GameObject;
-			weapons[i].transform.position = new Vector3(3, 1, 0);
-		}
-		for (int i = 0; i < sidearms.Length; i++) {
-			sidearms[i] = Instantiate(sidearms[i]) as GameObject;
-			sidearms[i].transform.position = new Vector3(3, 0, 0);
-		}
-	}
-
 
 	// Instance functions for loading saved config
 
