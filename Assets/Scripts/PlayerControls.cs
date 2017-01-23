@@ -10,9 +10,10 @@ public class PlayerControls : Character {
 
 	void Start() {
 		rb = GetComponent<Rigidbody>();
+		CharacterCustomizationMenu.instance.LoadWeaponsFromPrefs(this);
 		SpawnGun();
 		speech = GetComponentInChildren<TextObject>();
-		CharacterCustomizationMenu.CustomizeFromPrefs(this);
+		CharacterCustomizationMenu.instance.ColorizeFromPrefs(this);
 	}
 
 	void Update() {

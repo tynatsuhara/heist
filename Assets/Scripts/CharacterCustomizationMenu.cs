@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 using System.Linq;
 
 public class CharacterCustomizationMenu : MonoBehaviour {
@@ -14,7 +15,7 @@ public class CharacterCustomizationMenu : MonoBehaviour {
 
 	void Start () {
 		instance = this;
-		CustomizeFromPrefs(player);
+		ColorizeFromPrefs(player);
 	}
 	
 	void Update () {
@@ -27,7 +28,14 @@ public class CharacterCustomizationMenu : MonoBehaviour {
 
 	// Static functions for loading data from prefs
 
-	public static void CustomizeFromPrefs(PlayerControls p) {
+	public void LoadWeaponsFromPrefs(PlayerControls p) {
+		p.guns = new GameObject[] {
+			weapons[PlayerPrefs.GetInt("p" + p.id + "_weapon1", 0)],
+			sidearms[PlayerPrefs.GetInt("p" + p.id + "_weapon2", 0)]
+		};
+	}
+
+	public void ColorizeFromPrefs(PlayerControls p) {
 		CharacterCustomization cc = p.GetComponent<CharacterCustomization>();
 		cc.shirtColor1 = LoadColor(p.id, "shirtColor1", cc.shirtColor1);
 		cc.shirtColor2 = LoadColor(p.id, "shirtColor2", cc.shirtColor2);
