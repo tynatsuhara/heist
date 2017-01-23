@@ -13,25 +13,40 @@ public class CharacterCustomizationMenu : MonoBehaviour {
 	public GameObject[] weapons;
 	public GameObject[] sidearms;
 
-	void Start () {
+	void Awake() {
 		instance = this;
+	}
+
+	void Start() {
 		ColorizeFromPrefs(player);
+		SpawnGuns();
 	}
 	
-	void Update () {
+	void Update() {
 		if (Input.GetMouseButton(0)) {
 			float dir = Input.GetAxis("Mouse X");
 			player.transform.RotateAround(player.transform.position, Vector3.up, dir * -rotationSpeed);
 		}
 	}
 
+	private void SpawnGuns() {
+		for (int i = 0; i < weapons.Length; i++) {
+			weapons[i] = Instantiate(weapons[i]) as GameObject;
+			weapons[i].transform.position = new Vector3(3, 1, 0);
+		}
+		for (int i = 0; i < sidearms.Length; i++) {
+			sidearms[i] = Instantiate(sidearms[i]) as GameObject;
+			sidearms[i].transform.position = new Vector3(3, 0, 0);
+		}
+	}
 
-	// Static functions for loading data from prefs
+
+	// Instance functions for loading saved config
 
 	public void LoadWeaponsFromPrefs(PlayerControls p) {
 		p.guns = new GameObject[] {
-			weapons[PlayerPrefs.GetInt("p" + p.id + "_weapon1", 0)],
-			sidearms[PlayerPrefs.GetInt("p" + p.id + "_weapon2", 0)]
+			sidearms[PlayerPrefs.GetInt("p" + p.id + "_sidearm", 0)],
+			weapons[PlayerPrefs.GetInt("p" + p.id + "_weapon", 0)]
 		};
 	}
 
