@@ -13,6 +13,7 @@ public class MenuNode : MonoBehaviour {
 	public bool carousel;
 	public Material defaultMaterial;
 	public Material selectedMaterial;
+	public Text text;
 
 	private bool selected;
 
@@ -22,6 +23,10 @@ public class MenuNode : MonoBehaviour {
 
 	public void Deselect() {
 		SetSelected(false);
+	}
+
+	public void SetText(string text) {
+		this.text.text = text;
 	}
 
 	private void SetSelected(bool newSelectedState) {

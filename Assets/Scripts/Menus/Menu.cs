@@ -9,7 +9,7 @@ public class Menu : MonoBehaviour {
 	public MenuNode selectedNode;
 	private MenuNode[] all;
 
-	void Start() {
+	void Awake() {
 		all = GetComponentsInChildren<MenuNode>();
 	}
 
@@ -26,31 +26,27 @@ public class Menu : MonoBehaviour {
 
 		selectedNode.Deselect();
 
-		if (Input.GetAxisRaw("Vertical") != 0) {
-			int dir = (int) Mathf.Sign(Input.GetAxisRaw("Vertical"));
-			if (dir == 1 && selectedNode.up != null) {
-				selectedNode = selectedNode.up;
-			} else if (dir == -1 && selectedNode.down != null) {
-				selectedNode = selectedNode.down;
-			}
-		} else if (Input.GetAxisRaw("Horizontal") != 0) {
-			int dir = (int) Mathf.Sign(Input.GetAxisRaw("Horizontal"));
+		if (Input.GetKeyDown(KeyCode.W) && selectedNode.up != null) {
+			selectedNode = selectedNode.up;
+		} else if (Input.GetKeyDown(KeyCode.S) && selectedNode.down != null) {
+			selectedNode = selectedNode.down;
+		} else if (Input.GetKeyDown(KeyCode.A)) {
 			if (selectedNode.carousel) {
-				Carousel(selectedNode.name, dir);
-				// this has options, cycle and do something based on that
-			} else {
-				// go to the left or right node
-				if (dir == 1 && selectedNode.right != null) {
-					selectedNode = selectedNode.right;
-				} else if (dir == -1 && selectedNode.left != null) {
-					selectedNode = selectedNode.left;
-				}
+				Carousel(selectedNode, -1);
+			} else if (selectedNode.left != null) {
+				selectedNode = selectedNode.left;
+			}
+		} else if (Input.GetKeyDown(KeyCode.D)) {
+			if (selectedNode.carousel) {
+				Carousel(selectedNode, 1);
+			} else if (selectedNode.right != null) {
+				selectedNode = selectedNode.right;
 			}
 		}
 
 		selectedNode.Select();
 	}
 
-	public virtual void Carousel(string key, int dir) {}
-	public virtual void Enter(string key) {}
+	public virtual void Carousel(MenuNode node, int dir) {}
+	public virtual void Enter(MenuNode node) {}
 }

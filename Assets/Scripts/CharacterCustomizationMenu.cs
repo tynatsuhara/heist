@@ -32,9 +32,15 @@ public class CharacterCustomizationMenu : MonoBehaviour {
 
 	public void LoadWeaponsFromPrefs(PlayerControls p) {
 		p.guns = new GameObject[] {
-			sidearms[PlayerPrefs.GetInt("p" + p.id + "_sidearm", 0)],
-			weapons[PlayerPrefs.GetInt("p" + p.id + "_weapon", 0)]
+			sidearms[CurrentSidearmId(p.id)],
+			weapons[CurrentWeaponId(p.id)]
 		};
+	}
+	public int CurrentWeaponId(int playerId) {
+		return PlayerPrefs.GetInt("p" + playerId + "_weapon", 0);
+	}
+	public int CurrentSidearmId(int playerId) {
+		return PlayerPrefs.GetInt("p" + playerId + "_sidearm", 0);
 	}
 
 	public void ColorizeFromPrefs(PlayerControls p) {
