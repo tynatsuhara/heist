@@ -63,11 +63,11 @@ public class PlayerUI : MonoBehaviour {
 		invText.Say(result, permanent: true);
 	}
 
-	public void UpdateAmmo(int ammo, int clipSize) {
-		ammoText.Say(ammo + "/" + clipSize, permanent: true);
+	public void UpdateAmmo(string weaponName, int ammo, int clipSize) {
+		ammoText.Say(weaponName + "\n" + ammo + "/" + clipSize, permanent: true);
 	}
 
-	public void ShowReloading() {
+	public void ShowReloading(string weaponName) {
 		ammoText.Say("reloading...", permanent: true);
 	}
 

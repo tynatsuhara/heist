@@ -105,9 +105,9 @@ public class Pistol : Gun {
 
 	public override void UpdateUI() {
 		if (reloading)
-			player.playerUI.ShowReloading();
+			player.playerUI.ShowReloading(name);
 		else
-			player.playerUI.UpdateAmmo(clipSize - bulletsFired, clipSize);
+			player.playerUI.UpdateAmmo(name, clipSize - bulletsFired, clipSize);
 	}
 
 	public override void Melee() {
