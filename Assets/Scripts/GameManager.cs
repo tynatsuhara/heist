@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour {
 
 	public static GameManager instance;
 	public static bool paused = false;
-	public int playerAmount;
+	public static int[] playersToSpawn;
 
 	public GameObject[] enemyPrefabs;
 	public GameObject playerPrefab;
@@ -36,7 +36,7 @@ public class GameManager : MonoBehaviour {
 
 		// 2. spawn characters?
 		characters = Object.FindObjectsOfType<Character>().Where(x => !(x is PlayerControls)).ToList();
-		players = SpawnPlayers(playerAmount);
+		players = SpawnPlayers(playersToSpawn);
 
 		// 3. get objectives
 		objectives = Object.FindObjectsOfType<PossibleObjective>().Where(x => x.isObjective && !x.isCompleted).ToList();
@@ -137,13 +137,14 @@ public class GameManager : MonoBehaviour {
 		InvokeRepeating("SpawnCop", 1f, 5f);
 	}
 
-	private List<PlayerControls> SpawnPlayers(int amount) {
+	private List<PlayerControls> SpawnPlayers(int[] playersToSpawn) {
+		playersToSpawn = playersToSpawn == null || playersToSpawn.Length == 0 ? new int[] { 1 } : playersToSpawn;
 		List<PlayerControls> result = new List<PlayerControls>();
 		List<Camera> cams = new List<Camera>();
-		for (int i = 0; i < amount; i++) {
+		for (int i = 0; i < playersToSpawn.Length; i++) {
 			GameObject p = Instantiate(playerPrefab, new Vector3(i, 1f, 1f), Quaternion.identity) as GameObject;
 			PlayerControls pc = p.GetComponent<PlayerControls>();
-			pc.id = i + 1;
+			pc.id = playersToSpawn[i];
 			result.Add(pc);
 
 			pc.playerCamera = (Instantiate(playerCamPrefab) as GameObject).GetComponent<PlayerCamera>();
