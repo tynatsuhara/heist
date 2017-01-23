@@ -36,6 +36,7 @@ public class Menu : MonoBehaviour {
 		} else if (Input.GetAxisRaw("Horizontal") != 0) {
 			int dir = (int) Mathf.Sign(Input.GetAxisRaw("Horizontal"));
 			if (selectedNode.carousel) {
+				Carousel(selectedNode.name, dir);
 				// this has options, cycle and do something based on that
 			} else {
 				// go to the left or right node
@@ -50,6 +51,6 @@ public class Menu : MonoBehaviour {
 		selectedNode.Select();
 	}
 
-	// public abstract void Carousel(string key, int dir);
-	// public abstract void Enter(string key);	
+	public virtual void Carousel(string key, int dir) {}
+	public virtual void Enter(string key) {}
 }
