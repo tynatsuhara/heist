@@ -25,7 +25,9 @@ public abstract class Gun : MonoBehaviour {
 	abstract public void Shoot();
 	abstract public void Release();
 	abstract public void Reload();
+	abstract public void CancelReload();
 	abstract public bool NeedsToReload();
+	abstract public void DelayAttack(float delay);
 	abstract public void UpdateUI();
 
 	public void RaycastShoot(Vector3 source, Vector3 direction) {

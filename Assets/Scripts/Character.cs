@@ -43,9 +43,10 @@ public abstract class Character : PossibleObjective, Damageable {
 	public float rotationSpeed;
 	public Vector3 lastMoveDirection;
 
-	public GameObject gun;
+	public GameObject[] guns;
+	protected Gun currentGun;
+	private int gunIndex = 0;
 	public PicaVoxel.Exploder exploder;
-	protected Gun gunScript;
 	protected bool weaponDrawn_;
 	public bool weaponDrawn {
 		get { return weaponDrawn_; }
@@ -252,13 +253,12 @@ public abstract class Character : PossibleObjective, Damageable {
 	}
 
 	public void DropWeapon(Vector3 force) {
-		if (gun == null || gunScript == null)
+		if (guns == null || currentGun == null)
 			return;
 		
 		SetWeaponDrawn(false, true);
-		gunScript.Drop(force);
-		gunScript = null;
-		gun = null;
+		currentGun.Drop(force);
+		currentGun = null;
 	}
 
 	protected void SetWeaponDrawn(bool drawn, bool weaponDropped = false) {
@@ -267,26 +267,27 @@ public abstract class Character : PossibleObjective, Damageable {
 
 		weaponDrawn_ = drawn;
 		arms.gameObject.SetActive(!drawn);
+		currentGun = drawn ? guns[gunIndex].GetComponent<Gun>() : null;
 
 		if (!weaponDropped)
-			gun.SetActive(drawn);
+			guns[gunIndex].SetActive(drawn);
 	}
 
 	public virtual void Shoot() {
-		if (weaponDrawn_ && gunScript != null && !isDragging && !isHacking) {
-			gunScript.Shoot();
+		if (weaponDrawn_ && currentGun != null && !isDragging && !isHacking) {
+			currentGun.Shoot();
 		} 
 	}
 
 	public void Reload() {
-		if (weaponDrawn_ && gunScript != null && !isDragging) {
-			gunScript.Reload();
+		if (weaponDrawn_ && currentGun != null && !isDragging) {
+			currentGun.Reload();
 		} 
 	}
 
 	public void Melee() {
-		if (weaponDrawn_ && gunScript != null && !isDragging) {
-			gunScript.Melee();
+		if (weaponDrawn_ && currentGun != null && !isDragging) {
+			currentGun.Melee();
 		}
 	}
 
@@ -321,18 +322,40 @@ public abstract class Character : PossibleObjective, Damageable {
 	}
 
 	public void SpawnGun() {
-		if (gun == null)
+		if (guns == null || guns.Length == 0)
 			return;
 		
-		gun = Instantiate(gun) as GameObject;
-		GetComponent<CharacterCustomization>().gunz = gun.GetComponent<PicaVoxel.Volume>();
-		gunScript = gun.GetComponent<Gun>();
-		gun.transform.parent = transform;
-		gun.transform.localPosition = gunScript.inPlayerPos;
-		gun.transform.localRotation = Quaternion.Euler(gunScript.inPlayerRot);
-		gunScript.isPlayer = this is PlayerControls;
-		if (gunScript.isPlayer)
-			gunScript.player = (PlayerControls) this;
+		for (int i = guns.Length - 1; i >= 0; i--) {
+			if (guns[i] == null)
+				continue;
+			guns[i].SetActive(false);
+			GameObject gun = guns[i] = Instantiate(guns[i]) as GameObject;
+			GetComponent<CharacterCustomization>().gunz = guns.Select(x => x.GetComponent<PicaVoxel.Volume>()).ToArray();
+			currentGun = gun.GetComponent<Gun>();
+			currentGun.isPlayer = this is PlayerControls;			
+			gun.transform.parent = transform;
+			gun.transform.localPosition = currentGun.inPlayerPos;
+			gun.transform.localRotation = Quaternion.Euler(currentGun.inPlayerRot);
+			if (currentGun.isPlayer)
+				currentGun.player = (PlayerControls) this;
+		}
+		currentGun = null;
+	}
+
+	public void SelectGun(int index) {
+		index = Mathf.Clamp(index, 0, guns.Length);
+		guns[index].GetComponent<Gun>().UpdateUI();
+		if (!weaponDrawn || gunIndex == index) {
+			gunIndex = index;
+			return;
+		}
+		currentGun.CancelReload();
+		foreach (GameObject g in guns)
+			g.SetActive(false);
+		gunIndex = index;
+		guns[gunIndex].SetActive(true);
+		currentGun = guns[index].GetComponent<Gun>();
+		currentGun.DelayAttack(.4f);
 	}
 
 	// Basically, they're not a civilian. Has a weapon/mask/whatever. Cops should attack!

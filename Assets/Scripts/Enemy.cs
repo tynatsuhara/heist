@@ -195,7 +195,7 @@ public class Enemy : Character {
 
 	public override void Shoot() {
 		base.Shoot();
-		if (gunScript.NeedsToReload())
+		if (currentGun.NeedsToReload())
 			Reload();
 	}
 

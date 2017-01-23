@@ -67,6 +67,10 @@ public class PlayerUI : MonoBehaviour {
 		ammoText.Say(ammo + "/" + clipSize, permanent: true);
 	}
 
+	public void ShowReloading() {
+		ammoText.Say("reloading...", permanent: true);
+	}
+
 	public void UpdateHealth(float health, float healthMax, float armor, float armorMax) {
 		if (armor <= 0) {
 			healthText.Say(health + " HP", permanent: true);

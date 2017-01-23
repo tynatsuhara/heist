@@ -22,7 +22,7 @@ public class Pistol : Gun {
 	private const int ANIM_START_FRAME = 2;
 
 	public override void Shoot() {
-		if (shooting || reloading || bulletsFired == clipSize)
+		if (delayed || shooting || reloading || bulletsFired == clipSize)
 			return;
 		
 		owner.KnockBack(knockback);
@@ -46,10 +46,6 @@ public class Pistol : Gun {
 			GameManager.instance.AlertInRange(Character.Reaction.AGGRO, 
 				transform.position, 15f, visual: (silenced ? transform.root.gameObject : null));
 		}
-
-		if (isPlayer) {
-			UpdateUI();
-		}
 	}
 
 	public override void Reload() {
@@ -71,13 +67,10 @@ public class Pistol : Gun {
 			reloading = false;
 			bulletsFired = 0;			
 			SetReloadPosition(false);
-			if (isPlayer) {
-				UpdateUI();
-			}
 		}
 	}
 
-	private void CancelReload() {
+	public override void CancelReload() {
 		if (!reloading)
 			return;
 		SetReloadPosition(false);
@@ -100,8 +93,21 @@ public class Pistol : Gun {
 		owner = null;
 	}
 
+	private bool delayed = false;
+	public override void DelayAttack(float delay) {
+		CancelInvoke("UnDelay");
+		delayed = true;
+		Invoke("UnDelay", delay);
+	}
+	private void UnDelay() {
+		delayed = false;
+	}
+
 	public override void UpdateUI() {
-		player.playerUI.UpdateAmmo(clipSize - bulletsFired, clipSize);
+		if (reloading)
+			player.playerUI.ShowReloading();
+		else
+			player.playerUI.UpdateAmmo(clipSize - bulletsFired, clipSize);
 	}
 
 	public override void Melee() {

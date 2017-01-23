@@ -13,12 +13,13 @@ public class PlayerControls : Character {
 		SpawnGun();
 		speech = GetComponentInChildren<TextObject>();
 		CharacterCustomizationMenu.CustomizeFromPrefs(this);
-		gunScript.UpdateUI();
 	}
 
 	void Update() {
 		GetInput();
-		playerUI.UpdateHealth(health, healthMax, armor, armorMax);		
+		playerUI.UpdateHealth(health, healthMax, armor, armorMax);
+		if (currentGun != null)
+			currentGun.UpdateUI();
 	}
 
 	void GetInput() {
@@ -58,6 +59,12 @@ public class PlayerControls : Character {
 
 		if ((p1 && Input.GetKeyDown(KeyCode.R)) || Input.GetKeyDown("joystick " + id + " button 0")) {
 			Reload();
+		}
+
+		if (Input.GetKeyDown(KeyCode.Alpha1)) {
+			SelectGun(0);
+		} else if (Input.GetKeyDown(KeyCode.Alpha2)) {
+			SelectGun(1);
 		}
 
 		playerUI.JoystickCursorMove(Input.GetAxis("RSX" + id), Input.GetAxis("RSY" + id));		

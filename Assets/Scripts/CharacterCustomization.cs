@@ -24,7 +24,7 @@ public class CharacterCustomization : MonoBehaviour {
 	public PicaVoxel.Volume body;
 	public PicaVoxel.Volume legs;
 	public PicaVoxel.Volume arms;
-	public PicaVoxel.Volume gunz;
+	public PicaVoxel.Volume[] gunz;
 
 	public Color32[] hairColors;
 	public Color32[] skinColors;
@@ -62,7 +62,8 @@ public class CharacterCustomization : MonoBehaviour {
 			eyeColor
 		};
 
-		List<PicaVoxel.Volume> volumez = new List<PicaVoxel.Volume>(new PicaVoxel.Volume[] { body, head, legs, arms, gunz });
+		List<PicaVoxel.Volume> volumez = new List<PicaVoxel.Volume>(new PicaVoxel.Volume[] { body, head, legs, arms });
+		volumez.AddRange(gunz);
 		volumez.AddRange(accs);
 
 		for (int i = 0; i < volumez.Count; i++) {
@@ -89,7 +90,7 @@ public class CharacterCustomization : MonoBehaviour {
 								// guts
 								vox.Color = WorldBlood.instance.BloodColor();
 							} else if (volume == head || volume == body || volume == legs ||
-								(volume == arms && vox.Value <= 4) || (volume == gunz && vox.Value <= 4)) {
+								(volume == arms && vox.Value <= 4) || (gunz.Contains(volume) && vox.Value <= 4)) {
 								vox.Color = skinColor;
 							}
 							frame.SetVoxelAtArrayPosition(new PicaVoxel.PicaVoxelPoint(new Vector3(x, y, z)), vox);
@@ -119,10 +120,11 @@ public class CharacterCustomization : MonoBehaviour {
 		return (byte)Mathf.Clamp(b + Random.Range(0, jiggleFactor + 1), 0, 255);
 	}
 
-	private static Dictionary<byte, int>[] Parse(string[] outfit, Accessory[] accessories) {
+	private Dictionary<byte, int>[] Parse(string[] outfit, Accessory[] accessories) {
 		List<string> outfit_ = new List<string>(outfit);
-		// arms and guns use the same palette		
-		outfit_.Add(outfit[3]);
+		// arms and guns use the same palette	
+		foreach (PicaVoxel.Volume g in gunz)
+			outfit_.Add(outfit[3]);
 
 		if (accessories != null) {
 			outfit_.AddRange(accessories.Select(i => i.colorString));
