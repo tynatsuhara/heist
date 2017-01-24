@@ -20,14 +20,6 @@ public class Menu : MonoBehaviour {
 			tint.sizeDelta = new Vector2(Screen.width, Screen.height);
 		GetInput();
 		selectedNode.Select();
-		if(GetUp())
-			Debug.Log("up");
-		if(GetDown())
-			Debug.Log("down");
-		if(GetLeft())
-			Debug.Log("left");
-		if(GetRight())
-			Debug.Log("right");
 		SaveDPad();
 	}
 
@@ -54,8 +46,10 @@ public class Menu : MonoBehaviour {
 				selectedNode = selectedNode.right;
 			}
 		}
-
 		selectedNode.Select();
+		if (GetEnter()) {
+			Enter(selectedNode);
+		}
 	}
 
 	private Vector2 lastDPad;
@@ -85,6 +79,11 @@ public class Menu : MonoBehaviour {
 		return ((Input.GetKeyDown(KeyCode.D) && (!perPerson || playerId == 1)) || 
 				(lastDPad.x == 0 && perPerson && Input.GetAxis("DPX" + playerId) > 0) || 
 				(lastDPad.x == 0 && !perPerson && Input.GetAxis("DPX") > 0));
+	}
+	private bool GetEnter() {
+		return (Input.GetKeyDown(KeyCode.Return) && (!perPerson || playerId == 1) || 
+			   (!perPerson && Input.GetKeyDown("joystick button 1")) || 
+			   (perPerson && Input.GetKeyDown("joystick " + playerId + " button 1")));
 	}
 
 	public virtual void Carousel(MenuNode node, int dir) {}

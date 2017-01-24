@@ -14,9 +14,9 @@ public class WeaponSelection : Menu {
 	}
 
 	public override void Carousel(MenuNode node, int dir) {
-		if (node.name == "Sidearm") {
+		if (node == sidearm) {
 			node.SetText(LoadWeapon(ccm.sidearms, ccm.CurrentSidearmId(playerId), dir, "_sidearm"));
-		} else if (node.name == "Weapon") {
+		} else if (node == weapon) {
 			node.SetText(LoadWeapon(ccm.weapons, ccm.CurrentWeaponId(playerId), dir, "_weapon"));
 		}
 	}
@@ -29,9 +29,13 @@ public class WeaponSelection : Menu {
 	}
 
 	public override void Enter(MenuNode node) {
-		switch (node.name) {
-			case "Ready":
-				break;
+		if (node.name == "Ready") {
+			bool nowReady = ccm.ToggleReady(playerId);
+			if (nowReady) {
+				node.SetText("READY");
+			} else {
+				node.SetText("READY?");
+			}
 		}
 	}
 }

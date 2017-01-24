@@ -9,7 +9,7 @@ public class CharacterCustomizationMenu : MonoBehaviour {
 	public PlayerControls[] players;
 	public Camera[] cams;
 	private List<int> playingPlayers;
-	public int playerId;
+	private bool[] readyPlayers;
 	public float rotationSpeed;
 	public Accessory[] accessories;
 	public GameObject[] weapons;
@@ -18,6 +18,7 @@ public class CharacterCustomizationMenu : MonoBehaviour {
 	void Awake() {
 		instance = this;
 		playingPlayers = new List<int>(new int[] { 1 });
+		readyPlayers = new bool[4];
 	}
 
 	void Start() {
@@ -55,6 +56,9 @@ public class CharacterCustomizationMenu : MonoBehaviour {
 				LobbyLeave(id);
 			}
 		}
+		if (!readyPlayers[0] && Input.GetKeyDown("joystick 1 button 2")) {
+			// TODO: close lobby
+		}
 	}
 
 	private void LobbyJoin(int id) {
@@ -65,6 +69,23 @@ public class CharacterCustomizationMenu : MonoBehaviour {
 	private void LobbyLeave(int id) {
 		playingPlayers.Remove(id);
 		UpdateCameras();
+	}
+
+	// Returns: new ready state
+	public bool ToggleReady(int id) {
+		readyPlayers[id - 1] = !readyPlayers[id - 1];
+		bool allReady = true;
+		foreach (int pid in playingPlayers)
+			if (!readyPlayers[pid-1])
+				allReady = false;
+		if (allReady)
+			StartGame();
+		return readyPlayers[id - 1];
+	}
+
+	private void StartGame() {
+		GameManager.playersToSpawn = playingPlayers.ToArray();
+		Debug.Log("STARTING");
 	}
 
 	private void UpdateCameras() {
