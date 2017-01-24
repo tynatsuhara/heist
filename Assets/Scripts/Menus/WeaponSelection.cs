@@ -3,26 +3,29 @@ using System.Collections;
 
 public class WeaponSelection : Menu {
 
-	public int playerId;
+	public MenuNode sidearm;
+	public MenuNode weapon;
+	private CharacterCustomizationMenu ccm;	
 
 	void Start() {
-
+		ccm = CharacterCustomizationMenu.instance;
+		sidearm.SetText(ccm.sidearms[PlayerPrefs.GetInt("p" + playerId + "_sidearm", 0)].name.ToUpper());		
+		weapon.SetText(ccm.weapons[PlayerPrefs.GetInt("p" + playerId + "_weapon", 0)].name.ToUpper());		
 	}
 
 	public override void Carousel(MenuNode node, int dir) {
-		CharacterCustomizationMenu ccm = CharacterCustomizationMenu.instance;
 		if (node.name == "Sidearm") {
-				int index = (ccm.sidearms.Length + ccm.CurrentSidearmId(playerId) + dir) % ccm.sidearms.Length;
-				GameObject gun = ccm.sidearms[index];
-				node.SetText(gun.name.ToUpper());
-				PlayerPrefs.SetInt("p" + playerId + "_sidearm", index);
+			node.SetText(LoadWeapon(ccm.sidearms, ccm.CurrentSidearmId(playerId), dir, "_sidearm"));
 		} else if (node.name == "Weapon") {
-				int index = (ccm.weapons.Length + ccm.CurrentWeaponId(playerId) + dir) % ccm.weapons.Length;
-				Debug.Log(index);
-				GameObject gun = ccm.weapons[index];
-				node.SetText(gun.name.ToUpper());
-				PlayerPrefs.SetInt("p" + playerId + "_weapon", index);
+			node.SetText(LoadWeapon(ccm.weapons, ccm.CurrentWeaponId(playerId), dir, "_weapon"));
 		}
+	}
+
+	private string LoadWeapon(GameObject[] arr, int currentIndex, int dir, string prefString) {
+		int index = (arr.Length + currentIndex + dir) % arr.Length;
+		GameObject gun = arr[index];
+		PlayerPrefs.SetInt("p" + playerId + prefString, index);
+		return gun.name.ToUpper();
 	}
 
 	public override void Enter(MenuNode node) {
