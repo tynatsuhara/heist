@@ -346,7 +346,8 @@ public abstract class Character : PossibleObjective, Damageable {
 
 	public void SelectGun(int index) {
 		index = Mathf.Clamp(index, 0, guns.Length);
-		guns[index].GetComponent<Gun>().UpdateUI();
+		if (this is PlayerControls)
+			guns[index].GetComponent<Gun>().UpdateUI();
 		if (!weaponDrawn || gunIndex == index) {
 			gunIndex = index;
 			return;
@@ -357,7 +358,7 @@ public abstract class Character : PossibleObjective, Damageable {
 		gunIndex = index;
 		guns[gunIndex].SetActive(true);
 		currentGun = guns[index].GetComponent<Gun>();
-		currentGun.DelayAttack(.4f);
+		currentGun.DelayAttack(.25f);
 	}
 
 	// Basically, they're not a civilian. Has a weapon/mask/whatever. Cops should attack!

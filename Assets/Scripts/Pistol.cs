@@ -97,9 +97,11 @@ public class Pistol : Gun {
 	public override void DelayAttack(float delay) {
 		CancelInvoke("UnDelay");
 		delayed = true;
+		SetReloadPosition(true);
 		Invoke("UnDelay", delay);
 	}
 	private void UnDelay() {
+		SetReloadPosition(false);		
 		delayed = false;
 	}
 
