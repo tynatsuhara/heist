@@ -19,7 +19,8 @@ public class Menu : MonoBehaviour {
 		if (tint != null)
 			tint.sizeDelta = new Vector2(Screen.width, Screen.height);
 		GetInput();
-		selectedNode.Select();
+		if (selectedNode != null)
+			selectedNode.Select();
 		SaveDPad();
 	}
 
