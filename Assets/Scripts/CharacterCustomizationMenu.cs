@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,6 +7,7 @@ public class CharacterCustomizationMenu : MonoBehaviour {
 
 	public static CharacterCustomizationMenu instance;
 
+	public string nextScene;
 	public PlayerControls[] players;
 	public Camera[] cams;
 	private List<int> playingPlayers;
@@ -85,6 +87,7 @@ public class CharacterCustomizationMenu : MonoBehaviour {
 
 	private void StartGame() {
 		GameManager.playersToSpawn = playingPlayers.ToArray();
+		SceneManager.LoadScene(nextScene);
 		Debug.Log("STARTING");
 	}
 
