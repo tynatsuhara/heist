@@ -29,26 +29,24 @@ public class CharacterCustomization : MonoBehaviour {
 	public Color32[] hairColors;
 	public Color32[] skinColors;
 
-	// outfit format: [body, head, legs, arms]
-	// string format:
-	//     "<color number> <number or inclusive range>(s); <etc>"
-	private string[] exampleOutfit = {
-		"3 0-13 70-73; 0 14-69; 1 58-59 44-45 30-31 16-17",
-		"8 37 40; 7 26-33 44-51 60 62-69 71",
-		"3 1; 5 0",
-		"0 1-3"
-	};
-
-	public void ColorCharacter(string[] outfit, bool randomize = false, Accessory[] accessories = null) {
+	private List<PicaVoxel.Volume> spawnedAccessories;
+	public void ColorCharacter(Outfits.Outfit outfit, bool randomize = false, Accessory[] accessories = null) {
+		if (spawnedAccessories != null) {
+			foreach (PicaVoxel.Volume vol in spawnedAccessories)
+				Destroy(vol.gameObject);
+		}
 		if (randomize && hairColors != null && hairColors.Length > 0) {
 			hairColor = hairColors[Random.Range(0, hairColors.Length)];
 		}
 		if (randomize && skinColors != null && skinColors.Length > 0) {
 			skinColor = skinColors[Random.Range(0, skinColors.Length)];
 		}
-		List<PicaVoxel.Volume> accs = SpawnAccessories(accessories);
+		List<Accessory> accPrefabs = new List<Accessory>(outfit.accessories);
+		if (accessories != null)
+			accPrefabs.AddRange(accessories);
+		spawnedAccessories = SpawnAccessories(accPrefabs);
 
-		var palettes = Parse(outfit, accessories);
+		var palettes = Parse(outfit.pattern, accessories);
 
 		Color32[] colors = {
 			shirtColor1,
@@ -64,7 +62,7 @@ public class CharacterCustomization : MonoBehaviour {
 
 		List<PicaVoxel.Volume> volumez = new List<PicaVoxel.Volume>(new PicaVoxel.Volume[] { body, head, legs, arms });
 		volumez.AddRange(gunz);
-		volumez.AddRange(accs);
+		volumez.AddRange(spawnedAccessories);
 
 		for (int i = 0; i < volumez.Count; i++) {
 			PicaVoxel.Volume volume = volumez[i];
@@ -102,10 +100,8 @@ public class CharacterCustomization : MonoBehaviour {
 		}
 	}
 
-	private List<PicaVoxel.Volume> SpawnAccessories(Accessory[] accs) {
+	private List<PicaVoxel.Volume> SpawnAccessories(List<Accessory> accs) {
 		List<PicaVoxel.Volume> res = new List<PicaVoxel.Volume>();
-		if (accs == null)
-			return res;
 		foreach (Accessory a in accs) {
 			GameObject go = Instantiate(a.gameObject) as GameObject;
 			go.transform.parent = transform.root;

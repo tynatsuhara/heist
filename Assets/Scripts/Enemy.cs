@@ -20,13 +20,6 @@ public class Enemy : Character {
 	public float walkingAnimationThreshold;
 	private bool invoked;
 
-	private string[] copUniform = {
-		"0 0-73; 1 57 60 44 45 31; 2 46; 6 58 59; 4 14-27; 3 17",
-		"8 37 40; 7 26-33 44-51 60 62-69 71 78-89 96-119 91-94",
-		"0 1; 5 0",
-		"done in Start()"
-	};
-
 	void Awake () {
 		rb = GetComponent<Rigidbody>();
 		agent = GetComponent<NavMeshAgent>();
@@ -36,8 +29,7 @@ public class Enemy : Character {
 	}
 
 	void Start() {
-		copUniform[3] = "0 " + Random.Range(1, 3) + "-3";  // sleeve length
-		GetComponent<CharacterCustomization>().ColorCharacter(copUniform, true);
+		GetComponent<CharacterCustomization>().ColorCharacter(Outfits.fits["cop1"], true);
 
 		if (GameManager.instance.alarmsRaised) {
 			Alert(Reaction.AGGRO);
