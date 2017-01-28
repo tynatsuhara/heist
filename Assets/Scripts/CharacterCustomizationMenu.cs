@@ -129,20 +129,23 @@ public class CharacterCustomizationMenu : MonoBehaviour {
 
 	public void ColorizeFromPrefs(PlayerControls p) {
 		CharacterCustomization cc = p.GetComponent<CharacterCustomization>();
-		cc.shirtColor1 = LoadColor(p.id, "shirtColor1", cc.shirtColor1);
-		cc.shirtColor2 = LoadColor(p.id, "shirtColor2", cc.shirtColor2);
-		cc.shirtColor3 = LoadColor(p.id, "shirtColor3", cc.shirtColor3);
-		cc.pantsColor1 = LoadColor(p.id, "pantsColor1", cc.pantsColor1);
-		cc.pantsColor2 = LoadColor(p.id, "pantsColor2", cc.pantsColor2);
-		cc.shoesColor = LoadColor(p.id, "shoesColor", cc.shoesColor);
 		cc.skinColor = LoadColor(p.id, "skinColor", cc.skinColor);
 		cc.hairColor = LoadColor(p.id, "hairColor", cc.hairColor);
 		cc.eyeColor = LoadColor(p.id, "eyeColor", cc.eyeColor);
 		cc.ColorCharacter(LoadOutfit(p.id), accessories:LoadAccessories(p.id));
 	}
 
-	private static Outfits.Outfit LoadOutfit(int id) {
-		return Outfits.fits[PlayerPrefs.GetString("p" + id + "_outfit", "default")];
+	private Outfits.Outfit LoadOutfit(int id) {
+		return Outfits.fits[LoadOutfitName(id)];
+	}
+	
+	public string LoadOutfitName(int id) {
+		return PlayerPrefs.GetString("p" + id + "_outfit", "default");
+	}
+
+	public void SetOutfit(int id, string name) {
+		PlayerPrefs.SetString("p" + id + "_outfit", name);
+		ColorizeFromPrefs(players[id - 1]);
 	}
 
 	private static Accessory[] LoadAccessories(int id) {

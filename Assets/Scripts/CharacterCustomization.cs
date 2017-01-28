@@ -49,12 +49,12 @@ public class CharacterCustomization : MonoBehaviour {
 		var palettes = Parse(outfit.pattern, accessories);
 
 		Color32[] colors = {
-			shirtColor1,
-			shirtColor2,
-			shirtColor3,
-			pantsColor1,
-			pantsColor2,
-			shoesColor,
+			outfit.colors[0],
+			outfit.colors[1],
+			outfit.colors[2],
+			outfit.colors[3],
+			outfit.colors[4],
+			outfit.colors[5],
 			skinColor,
 			hairColor,
 			eyeColor

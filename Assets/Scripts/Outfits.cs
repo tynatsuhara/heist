@@ -24,7 +24,8 @@ public class Outfits {
 				"8 37 40; 7 26-33 44-51 60 62-69 71 78-89 96-119 91-94",
 				"0 1; 5 0",
 				"0 1-3"
-			})
+			}, shirtColor1: "#3D5B8500", shirtColor2: "#2E415A00", shirtColor3: "#F9F79600",
+			   pantsColor1: "#ABABAB00", pantsColor2: "#22222200", shoesColor: "#17171700")
 		}
 	};
 

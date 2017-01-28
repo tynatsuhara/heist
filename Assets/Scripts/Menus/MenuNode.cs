@@ -3,8 +3,6 @@ using UnityEngine.UI;
 
 public class MenuNode : MonoBehaviour {
 
-	public string key;
-
 	public MenuNode up;
 	public MenuNode down;
 	public MenuNode left;
