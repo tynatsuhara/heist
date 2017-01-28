@@ -26,15 +26,14 @@ public class CharacterCustomization : MonoBehaviour {
 	public PicaVoxel.Volume arms;
 	public PicaVoxel.Volume[] gunz;
 
-	public Color32[] hairColors;
-	public Color32[] skinColors;
-
 	private List<PicaVoxel.Volume> spawnedAccessories;
 	public void ColorCharacter(Outfits.Outfit outfit, bool randomize = false, Accessory[] accessories = null) {
 		if (spawnedAccessories != null) {
 			foreach (PicaVoxel.Volume vol in spawnedAccessories)
 				Destroy(vol.gameObject);
 		}
+		Color32[] hairColors = CharacterCustomizationMenu.instance.hairColors;
+		Color32[] skinColors = CharacterCustomizationMenu.instance.skinColors;
 		if (randomize && hairColors != null && hairColors.Length > 0) {
 			hairColor = hairColors[Random.Range(0, hairColors.Length)];
 		}

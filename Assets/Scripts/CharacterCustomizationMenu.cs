@@ -16,6 +16,8 @@ public class CharacterCustomizationMenu : MonoBehaviour {
 	public Accessory[] accessories;
 	public GameObject[] weapons;
 	public GameObject[] sidearms;
+	public Color32[] skinColors;
+	public Color32[] hairColors;
 
 	void Awake() {
 		instance = this;
