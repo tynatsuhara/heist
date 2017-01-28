@@ -59,15 +59,15 @@ public class PlayerUI : MonoBehaviour {
 		foreach (string s in mergedInventories.Keys) {
 			result += s + (mergedInventories[s] > 1 ? " × " + mergedInventories[s] + "\n" : "\n");
 		}
-		invText.text = result;
+		invText.text = result.ToUpper();
 	}
 
 	public void UpdateAmmo(string weaponName, int ammo, int clipSize) {
-		ammoText.text = weaponName + "\n" + ammo + "/" + clipSize;
+		ammoText.text = (weaponName + "\n" + ammo + "/" + clipSize).ToUpper();
 	}
 
 	public void ShowReloading(string weaponName) {
-		ammoText.text = weaponName + "\nreloading...";
+		ammoText.text = weaponName + "\nRELOADING...";
 	}
 
 	public void UpdateHealth(float health, float healthMax, float armor, float armorMax) {
