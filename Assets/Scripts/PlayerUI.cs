@@ -7,9 +7,9 @@ public class PlayerUI : MonoBehaviour {
 
 	public PlayerControls player;
 
-	public TextObject invText;
-	public TextObject ammoText;
-	public TextObject healthText;
+	public Text invText;
+	public Text ammoText;
+	public Text healthText;
 
 	public Transform cursor;
 	private Vector3 lastMousePos;
@@ -58,23 +58,20 @@ public class PlayerUI : MonoBehaviour {
 		foreach (string s in mergedInventories.Keys) {
 			result += s + (mergedInventories[s] > 1 ? " × " + mergedInventories[s] + "\n" : "\n");
 		}
-		invText.Say(result, permanent: true);
+		invText.text = result;
 	}
 
 	public void UpdateAmmo(string weaponName, int ammo, int clipSize) {
-		ammoText.Say(weaponName + "\n" + ammo + "/" + clipSize, permanent: true);
+		ammoText.text = weaponName + "\n" + ammo + "/" + clipSize;
 	}
 
 	public void ShowReloading(string weaponName) {
-		ammoText.Say(weaponName + "\nreloading...", permanent: true);
+		ammoText.text = weaponName + "\nreloading...";
 	}
 
 	public void UpdateHealth(float health, float healthMax, float armor, float armorMax) {
-		if (armor <= 0) {
-			healthText.Say(health + " HP", permanent: true);
-		} else {
-			healthText.Say(health + " HP + " + armor + " ARMOR", permanent: true);
-		}
+		string s = "**************************************************".Substring(0, Mathf.CeilToInt(health));
+		healthText.text = s;
 	}
 
 	public void HitMarker() {
