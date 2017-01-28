@@ -132,11 +132,7 @@ public class CharacterCustomizationMenu : MonoBehaviour {
 		cc.skinColor = LoadColor(p.id, "skinColor", cc.skinColor);
 		cc.hairColor = LoadColor(p.id, "hairColor", cc.hairColor);
 		cc.eyeColor = LoadColor(p.id, "eyeColor", cc.eyeColor);
-		cc.ColorCharacter(LoadOutfit(p.id), accessories:LoadAccessories(p.id));
-	}
-
-	private Outfits.Outfit LoadOutfit(int id) {
-		return Outfits.fits[LoadOutfitName(id)];
+		cc.ColorCharacter(Outfits.fits[LoadOutfitName(p.id)], accessories:LoadAccessories(p.id));
 	}
 	
 	public string LoadOutfitName(int id) {
