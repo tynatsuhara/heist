@@ -88,7 +88,6 @@ public class CharacterCustomizationMenu : MonoBehaviour {
 	private void StartGame() {
 		GameManager.playersToSpawn = playingPlayers.ToArray();
 		SceneManager.LoadScene(nextScene);
-		Debug.Log("STARTING");
 	}
 
 	private void UpdateCameras() {
