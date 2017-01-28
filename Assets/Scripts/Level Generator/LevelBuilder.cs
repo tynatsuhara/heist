@@ -29,9 +29,13 @@ public class LevelBuilder : MonoBehaviour {
 	public void BuildLevel() {
 
 		// TEMP
+		GameObject floorHolder = new GameObject();
+		floorHolder.name = "Floor";
 		for (int i = 0; i < TILE_GRID_LENGTH; i++) {
 			for (var j = 0; j < TILE_GRID_LENGTH; j++) {
-				GameObject tile = Instantiate(floorPrefab, new Vector3(i * TILE_SIZE, -.2f, j * TILE_SIZE), Quaternion.identity) as GameObject;
+				GameObject tile = Instantiate(floorPrefab, new Vector3(i * TILE_SIZE, -.2f, j * TILE_SIZE), 
+											  Quaternion.identity) as GameObject;
+				tile.transform.parent = floorHolder.transform;
 				floorTiles[i, j] = tile.GetComponent<PicaVoxel.Volume>();
 			}
 		}
