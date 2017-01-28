@@ -157,9 +157,11 @@ public class Civilian : Character, Interactable {
 		ResetRB();
 		DrawWeapon();
 		PlayerControls pc = ClosestPlayerInSight();
-		LookAt(pc.transform);		
-		if (CanSee(pc.gameObject, fov:40f)) {
-			Shoot();
+		if (pc != null) {
+			LookAt(pc.transform);
+			if (CanSee(pc.gameObject, fov:40f)) {
+				Shoot();
+			}
 		}
 	}
 

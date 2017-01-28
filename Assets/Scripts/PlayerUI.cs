@@ -10,6 +10,7 @@ public class PlayerUI : MonoBehaviour {
 	public Text invText;
 	public Text ammoText;
 	public Text healthText;
+	public Text armorText;
 
 	public Transform cursor;
 	private Vector3 lastMousePos;
@@ -70,8 +71,8 @@ public class PlayerUI : MonoBehaviour {
 	}
 
 	public void UpdateHealth(float health, float healthMax, float armor, float armorMax) {
-		string s = "**************************************************".Substring(0, Mathf.CeilToInt(health));
-		healthText.text = s;
+		healthText.text = "**************************************************".Substring(0, Mathf.CeilToInt(health));
+		armorText.text = "**************************************************".Substring(0, Mathf.CeilToInt(armor));
 	}
 
 	public void HitMarker() {
