@@ -67,7 +67,7 @@ public class PlayerUI : MonoBehaviour {
 	}
 
 	public void ShowReloading(string weaponName) {
-		ammoText.text = weaponName + "\nRELOADING...";
+		ammoText.text = weaponName.ToUpper() + "\nRELOADING...";
 	}
 
 	public void UpdateHealth(float health, float healthMax, float armor, float armorMax) {
