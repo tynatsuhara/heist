@@ -79,7 +79,7 @@ public class Pistol : Gun {
 	}
 
 	private void SetReloadPosition(bool reloading) {
-		transform.Translate((Vector3.down + Vector3.forward) * (reloading ? .1f : -.1f));		
+		transform.localPosition = inPlayerPos + (Vector3.down + Vector3.back) * (reloading ? .1f : 0f);
 	}
 
 	public override void Drop(Vector3 force) {

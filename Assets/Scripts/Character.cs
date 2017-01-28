@@ -344,6 +344,7 @@ public abstract class Character : PossibleObjective, Damageable {
 		SelectGun(0);
 	}
 
+	private bool swapping;
 	public void SelectGun(int index) {
 		index = Mathf.Clamp(index, 0, guns.Length);
 		if (this is PlayerControls)
@@ -352,12 +353,17 @@ public abstract class Character : PossibleObjective, Damageable {
 			gunIndex = index;
 			return;
 		}
+		float totalSwapTime = .3f;
 		currentGun.CancelReload();
+		currentGun.DelayAttack(totalSwapTime / 2f);
+		gunIndex = index;
+		Invoke("SelectGunSwap", totalSwapTime / 2f);
+	}
+	private void SelectGunSwap() {
 		foreach (GameObject g in guns)
 			g.SetActive(false);
-		gunIndex = index;
 		guns[gunIndex].SetActive(true);
-		currentGun = guns[index].GetComponent<Gun>();
+		currentGun = guns[gunIndex].GetComponent<Gun>();
 		currentGun.DelayAttack(.25f);
 	}
 
