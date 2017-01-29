@@ -12,12 +12,12 @@ public class C4 : Explosive {
 		if (amount == 0)
 			return;
 		if (placed != null) {
-			Explode(placed);
+			Explode(placed, 2.5f);
 			placed = null;
 		} else {
 			amount--;
 			RaycastHit hit;
-			GameObject wall = GetComponent<PlayerControls>().FacingObstruction(out hit, 1f);
+			GameObject wall = GetComponent<PlayerControls>().FacingObstruction(out hit, .8f);
 			placed = Instantiate(prefab) as GameObject;			
 			if (wall == null || wall.GetComponentInParent<Character>() != null) {
 				Vector3 pos = transform.position + transform.forward * .5f;
