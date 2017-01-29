@@ -12,7 +12,7 @@ public class C4 : Explosive {
 		if (amount == 0)
 			return;
 		if (placed != null) {
-			Explode(placed, 2.5f);
+			Explode(placed, 2.5f, 50, 1f);
 			placed = null;
 		} else {
 			amount--;

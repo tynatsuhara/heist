@@ -6,8 +6,7 @@ public class Explosive : MonoBehaviour {
 	// Called when the user presses a button
 	public virtual void Trigger() {}
 
-	public void Explode(GameObject bomb, float radius) {
-		int rayAmount = 50;
+	public void Explode(GameObject bomb, float radius, int rayAmount, float damagePerRay) {
 		for (int i = 0; i < rayAmount; i++) {
 			float inc = Mathf.PI * (3 - Mathf.Sqrt(5));
 			var off = 2f / rayAmount;
