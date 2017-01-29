@@ -47,6 +47,7 @@ public abstract class Character : PossibleObjective, Damageable {
 	protected Gun currentGun;
 	private int gunIndex = 0;
 	public PicaVoxel.Exploder exploder;
+	public Explosive explosive;
 	protected bool weaponDrawn_;
 	public bool weaponDrawn {
 		get { return weaponDrawn_; }
@@ -291,6 +292,10 @@ public abstract class Character : PossibleObjective, Damageable {
 		}
 	}
 
+	public void Explosive() {
+		explosive.Trigger();
+	}
+
 	protected Interactable currentInteractScript;
 	public void Interact() {
 		if (currentInteractScript != null) {
@@ -412,7 +417,7 @@ public abstract class Character : PossibleObjective, Damageable {
 			return false;
 		}
 
-		RaycastHit hit;
+		RaycastHit hit;		
 		if (Physics.Raycast(transform.position, target.transform.position - transform.position, out hit, viewDist, sightLayers))
 			return hit.collider.transform.root.gameObject == target;
 
@@ -517,11 +522,14 @@ public abstract class Character : PossibleObjective, Damageable {
 	}
 
 	// Returns the gameObject the player is facing, or null if there isn't one
-	public GameObject FacingObstruction(float distance = 1f) {
-		RaycastHit hit;
+	public GameObject FacingObstruction(out RaycastHit hit, float distance = 1f) {
 		if (Physics.Raycast(transform.position, transform.forward, out hit, distance)) {
 			return hit.collider.gameObject;
 		}
 		return null;
+	}
+	public GameObject FacingObstruction(float distance = 1f) {
+		RaycastHit hit;
+		return FacingObstruction(out hit, distance);
 	}
 }

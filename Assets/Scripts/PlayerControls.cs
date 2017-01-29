@@ -9,6 +9,7 @@ public class PlayerControls : Character {
 	public PlayerUI playerUI;
 
 	void Start() {
+		explosive = GetComponent<Explosive>();
 		rb = GetComponent<Rigidbody>();
 		CharacterCustomizationMenu.instance.LoadWeaponsFromPrefs(this);
 		SpawnGun();
@@ -56,6 +57,8 @@ public class PlayerControls : Character {
 			Shoot();
 		} else if ((p1 && Input.GetMouseButtonDown(1)) || Input.GetKeyDown("joystick " + id + " button 6")) {
 			Melee();
+		} else if (Input.GetKeyDown(KeyCode.Alpha3)) {
+			Explosive();
 		}
 
 		if ((p1 && Input.GetKeyDown(KeyCode.R)) || Input.GetKeyDown("joystick " + id + " button 0")) {
