@@ -295,7 +295,7 @@ public abstract class Character : PossibleObjective, Damageable {
 	}
 
 	public void Explosive() {
-		if (weaponDrawn_ && currentGun != null && !isDragging && !isHacking) {		
+		if (weaponDrawn_ && currentGun != null && !isDragging && !isHacking && explosive != null) {		
 			explosive.Trigger();
 		}
 	}

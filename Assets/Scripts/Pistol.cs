@@ -16,6 +16,8 @@ public class Pistol : Gun {
 	public float shakePower = .3f;
 	public float shakeLength = .3f;
 	public Collider droppedCollider;
+	public bool shellDropOnFire;
+	public bool shellDropOnReload;
 
 	// Gun frames
 	private const int DROPPED_GUN_FRAME = 1;	 
@@ -34,11 +36,13 @@ public class Pistol : Gun {
 		bulletsFired++;
 		Invoke("ResetShoot", shootSpeed);
 		
-		byte[] bytes = new byte[6];
-		bytes[0] = (byte)PicaVoxel.VoxelState.Active;
-		PicaVoxel.Voxel vox = new PicaVoxel.Voxel(bytes);
-		PicaVoxel.VoxelParticleSystem.Instance.SpawnSingle(transform.root.position + transform.root.forward * .45f,
-			vox, .05f, (transform.up - transform.right) * 2.5f + Random.insideUnitSphere * .5f);
+		if (shellDropOnFire) {
+			byte[] bytes = new byte[6];
+			bytes[0] = (byte)PicaVoxel.VoxelState.Active;
+			PicaVoxel.Voxel vox = new PicaVoxel.Voxel(bytes);
+			PicaVoxel.VoxelParticleSystem.Instance.SpawnSingle(transform.root.position + transform.root.forward * .45f,
+				vox, .05f, (transform.up - transform.right) * 2.5f + Random.insideUnitSphere * .5f);
+		}
 		
 		PlayerEffects(shakePower, shakeLength);
 
@@ -64,6 +68,17 @@ public class Pistol : Gun {
 	private void ResetShoot() {
 		shooting = false;
 		if (reloading) {  // just finished reloading
+			if (shellDropOnReload) {
+				for (int i = 0; i < bulletsFired; i++) {
+					byte[] bytes = new byte[6];
+					bytes[0] = (byte)PicaVoxel.VoxelState.Active;
+					PicaVoxel.Voxel vox = new PicaVoxel.Voxel(bytes);
+					PicaVoxel.VoxelParticleSystem.Instance.SpawnSingle(transform.root.position + 
+							transform.root.forward * .45f + Vector3.down * .2f,
+							vox, .05f, Random.insideUnitSphere * .5f);
+				}
+			}
+
 			reloading = false;
 			bulletsFired = 0;			
 			SetReloadPosition(false);
