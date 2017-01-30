@@ -15,7 +15,8 @@ public class Outfits {
 				"8 37 40; 7 26-33 44-51 60 62-69 71 78-89 96-119 91-94",
 				"3 1; 5 0",
 				"0 1-3"
-			})
+			},  shirtColor1: "#3D5B8500", shirtColor2: "#2E415A00", shirtColor3: "#F9F79600",
+			    pantsColor1: "#ABABAB00", pantsColor2: "#22222200", shoesColor: "#17171700")
 		},
 		{
 			"cop1", 
@@ -52,6 +53,8 @@ public class Outfits {
 
 		private static Color32 HexParse(string hex) {
 			hex = hex.Replace("0x", "").Replace("#", "");
+			if (hex.Length > 6)
+				hex = hex.Substring(0, 6);
 			return new Color32((byte) int.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.AllowHexSpecifier),
 							   (byte) int.Parse(hex.Substring(2, 4), System.Globalization.NumberStyles.AllowHexSpecifier),
 							   (byte) int.Parse(hex.Substring(4), System.Globalization.NumberStyles.AllowHexSpecifier),
