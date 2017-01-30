@@ -53,11 +53,9 @@ public class Outfits {
 
 		private static Color32 HexParse(string hex) {
 			hex = hex.Replace("0x", "").Replace("#", "");
-			if (hex.Length > 6)
-				hex = hex.Substring(0, 6);
 			return new Color32((byte) int.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.AllowHexSpecifier),
-							   (byte) int.Parse(hex.Substring(2, 4), System.Globalization.NumberStyles.AllowHexSpecifier),
-							   (byte) int.Parse(hex.Substring(4), System.Globalization.NumberStyles.AllowHexSpecifier),
+							   (byte) int.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.AllowHexSpecifier),
+							   (byte) int.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.AllowHexSpecifier),
 							   (byte) 255);
 		}
 	}
