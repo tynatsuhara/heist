@@ -4,8 +4,8 @@ public class Painting : MonoBehaviour, Damageable {
 
 	public float health;
 
-	public bool Damage(Vector3 location, Vector3 angle, float damage, bool melee = false, bool playerAttacker = false) {
-		if (health == 0) {
+	public bool Damage(Vector3 location, Vector3 angle, float damage, bool melee = false, bool playerAttacker = false, bool explosive = false) {
+		if (health == 0 || explosive) {
 			Rigidbody rb = GetComponent<Rigidbody>();
 			rb.isKinematic = false;
 			enabled = false;

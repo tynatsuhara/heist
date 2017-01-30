@@ -109,7 +109,7 @@ public abstract class Character : PossibleObjective, Damageable {
 		}
 	}
 		
-	public virtual bool Damage(Vector3 location, Vector3 angle, float damage, bool melee = false, bool playerAttacker = false) {
+	public virtual bool Damage(Vector3 location, Vector3 angle, float damage, bool melee = false, bool playerAttacker = false, bool explosive = false) {
 		bool isPlayer = tag.Equals("Player");
 
 		if (!weaponDrawn)
@@ -293,7 +293,9 @@ public abstract class Character : PossibleObjective, Damageable {
 	}
 
 	public void Explosive() {
-		explosive.Trigger();
+		if (weaponDrawn_ && currentGun != null && !isDragging && !isHacking) {		
+			explosive.Trigger();
+		}
 	}
 
 	protected Interactable currentInteractScript;

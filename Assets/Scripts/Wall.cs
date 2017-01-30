@@ -29,22 +29,24 @@ public class Wall : MonoBehaviour, Damageable {
 
 	// The return value is used for projectile damage. If the bullet should go
 	// through the object and continue, return true. Otherwise return false.
-	public bool Damage(Vector3 location, Vector3 angle, float damage, bool melee = false, bool playerAttacker = false) {
+	public bool Damage(Vector3 location, Vector3 angle, float damage, bool melee = false, bool playerAttacker = false, bool explosive = false) {
 		if (damage >= damangeThreshold && exploder != null) {
-			exploder.ExplosionRadius = Random.Range(.05f, .25f);
-			exploder.transform.position = location + new Vector3(Random.Range(-.1f, .1f), 
-																 Random.Range(-.5f, 1f), 
-																 Random.Range(-.1f, .1f));
+			for (int i = 0; i < (explosive ? 10 : 1); i++) {
+				exploder.ExplosionRadius = Random.Range(.05f, .25f);
+				exploder.transform.position = location + new Vector3(Random.Range(-.1f, .1f), 
+																	Random.Range(-.5f, 1f), 
+																	Random.Range(-.1f, .1f));
 
-			// If the wall is penetrable, destroy more of the middle/other side
-			if (canBeShotThrough && Random.Range(0, 3) == 0) {
-				exploder.transform.localPosition = new Vector3(Random.Range(-.1f, .1f), 
-															   exploder.transform.localPosition.y, 
-															   exploder.transform.localPosition.z);
-				exploder.ExplosionRadius = Random.Range(0f, .1f);	
+				// If the wall is penetrable, destroy more of the middle/other side
+				if (canBeShotThrough && Random.Range(0, 3) == 0) {
+					exploder.transform.localPosition = new Vector3(Random.Range(-.1f, .1f), 
+																exploder.transform.localPosition.y, 
+																exploder.transform.localPosition.z);
+					exploder.ExplosionRadius = Random.Range(0f, .1f);	
+				}
+				float explosionScale = 3f;
+				exploder.Explode(angle * explosionScale);
 			}
-			float explosionScale = 3f;
-			exploder.Explode(angle * explosionScale);
 		}
 
 		return damage >= damangeThreshold && canBeShotThrough;
