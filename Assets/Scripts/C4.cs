@@ -9,10 +9,10 @@ public class C4 : Explosive {
 	private GameObject placed;
 
 	public override void Trigger() {
-		if (amount == 0)
+		if (amount == 0 && placed == null)
 			return;
 		if (placed != null) {
-			Explode(placed, 2.5f, 50, 1f);
+			Explode(placed, 3f, 100, 1f);
 			placed = null;
 		} else {
 			SpawnC4();

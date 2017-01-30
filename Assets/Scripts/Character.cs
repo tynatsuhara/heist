@@ -140,6 +140,8 @@ public abstract class Character : PossibleObjective, Damageable {
 		exploder.transform.position = location + angle * Random.Range(-.1f, .15f) + new Vector3(0, Random.Range(-.7f, .3f), 0);
 		if (!isAlive && wasAlive) {
 			Die(angle, !melee);
+		} else if (!isAlive && explosive) {
+			exploder.Explode(angle * 3);			
 		}
 
 		// regular knockback
