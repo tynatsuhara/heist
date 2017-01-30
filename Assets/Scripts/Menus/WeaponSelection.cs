@@ -24,7 +24,6 @@ public class WeaponSelection : Menu {
 			node.SetText(LoadWeapon(ccm.weapons, ccm.CurrentWeaponId(playerId), dir, "_weapon"));
 		} else if (node.name == "Outfit") {
 			int outfitIndex = (outfitNames.Count + outfitNames.IndexOf(ccm.LoadOutfitName(playerId)) + dir) % outfitNames.Count;
-			Debug.Log("new outfit: " + outfitNames[outfitIndex]);
 			ccm.SetOutfit(playerId, outfitNames[outfitIndex]);
 		}
 	}
