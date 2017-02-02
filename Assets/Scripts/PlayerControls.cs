@@ -9,6 +9,7 @@ public class PlayerControls : Character {
 	public PlayerUI playerUI;
 
 	void Start() {
+		name = "Player " + id;
 		explosive = GetComponent<Explosive>();
 		rb = GetComponent<Rigidbody>();
 		CharacterCustomizationMenu.instance.LoadWeaponsFromPrefs(this);
