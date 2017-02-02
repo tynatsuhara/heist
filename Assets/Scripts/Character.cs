@@ -340,7 +340,10 @@ public abstract class Character : PossibleObjective, Damageable {
 			guns[i].SetActive(false);
 			GameObject gun = guns[i] = Instantiate(guns[i]) as GameObject;
 			gun.name = gun.name.Replace("(Clone)", "");
-			GetComponent<CharacterCustomization>().gunz = guns.Select(x => x.GetComponent<PicaVoxel.Volume>()).ToArray();
+			List<PicaVoxel.Volume> gunVolumes = new List<PicaVoxel.Volume>();
+			foreach (GameObject g in guns)
+				gunVolumes.AddRange(g.GetComponentsInChildren<PicaVoxel.Volume>());
+			GetComponent<CharacterCustomization>().gunz = gunVolumes.ToArray();
 			currentGun = gun.GetComponent<Gun>();
 			currentGun.isPlayer = this is PlayerControls;			
 			gun.transform.parent = transform;

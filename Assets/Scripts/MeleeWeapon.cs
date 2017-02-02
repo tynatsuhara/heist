@@ -6,8 +6,10 @@ public class MeleeWeapon : Gun {
 	public float swingSpeed;
 	private bool canSwing;
 
-	public override void Shoot() {
+	public override bool Shoot() {
+		bool couldSwing = canSwing;
 		Melee();
+		return couldSwing;
 	}
 	private void ResetShoot() {
 		canSwing = true;

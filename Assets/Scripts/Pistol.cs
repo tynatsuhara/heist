@@ -17,9 +17,16 @@ public class Pistol : Gun {
 	public bool shellDropOnFire;
 	public bool shellDropOnReload;
 
-	public override void Shoot() {
+	protected Vector3 shellDropLocation;
+
+	public void Start() {
+		base.Start();
+		shellDropLocation = transform.root.position + transform.root.forward * .45f;
+	}
+
+	public override bool Shoot() {
 		if (delayed || shooting || reloading || bulletsFired == clipSize)
-			return;
+			return false;
 		
 		owner.KnockBack(knockback);
 		RaycastShoot(transform.root.position, -transform.forward);
@@ -34,7 +41,7 @@ public class Pistol : Gun {
 			byte[] bytes = new byte[6];
 			bytes[0] = (byte)PicaVoxel.VoxelState.Active;
 			PicaVoxel.Voxel vox = new PicaVoxel.Voxel(bytes);
-			PicaVoxel.VoxelParticleSystem.Instance.SpawnSingle(transform.root.position + transform.root.forward * .45f,
+			PicaVoxel.VoxelParticleSystem.Instance.SpawnSingle(shellDropLocation,
 				vox, .05f, (transform.up - transform.right) * 2.5f + Random.insideUnitSphere * .5f);
 		}
 		
@@ -44,6 +51,7 @@ public class Pistol : Gun {
 			GameManager.instance.AlertInRange(Character.Reaction.AGGRO, 
 				transform.position, 15f, visual: (silenced ? transform.root.gameObject : null));
 		}
+		return true;
 	}
 
 	public override void Reload() {

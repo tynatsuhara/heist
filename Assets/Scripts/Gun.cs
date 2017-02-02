@@ -10,6 +10,7 @@ public abstract class Gun : MonoBehaviour {
 	public GunAnimation anim;
 	public float damage;
 	public float range;
+	public int maxEnemiesMelee = 1;
 	public Vector3 inPlayerPos;
 	public Vector3 inPlayerRot;
 	public Collider droppedCollider;
@@ -21,13 +22,14 @@ public abstract class Gun : MonoBehaviour {
 	public bool isPlayer;
 	public PlayerControls player;
 
-	void Awake() {
+	public void Start() {
 		owner = transform.root.GetComponent<Character>();
 		volume = GetComponent<PicaVoxel.Volume>();
 		anim = GetComponent<GunAnimation>();
 	}
 
-	abstract public void Shoot();
+	// returns true if the attack executed that frame (ie gun fired)
+	abstract public bool Shoot();
 	abstract public void Release();
 	abstract public void Reload();
 	abstract public void CancelReload();
@@ -56,7 +58,7 @@ public abstract class Gun : MonoBehaviour {
 		}
 	}
 
-	public void Drop(Vector3 force) {
+	public virtual void Drop(Vector3 force) {
 		CancelInvoke();
 		volume.SetFrame(DROPPED_GUN_FRAME);
 		droppedCollider.enabled = true;
@@ -77,11 +79,14 @@ public abstract class Gun : MonoBehaviour {
 		StartCoroutine("MeleeAnimation");
 		List<Character> chars = GameManager.instance.CharactersWithinDistance(owner.transform.position + 
 																			  owner.transform.forward * 1.1f, .6f);
+		int hits = 0;
 		foreach (Character c in chars) {
 			if (owner.CanSee(c.gameObject, 90)) {
 				c.Damage(c.transform.position, owner.transform.forward, 1f, melee: true);
 				player.playerUI.HitMarker();
-				break;
+				hits++;
+				if (hits >= maxEnemiesMelee)
+					break;
 			}
 		}
 	}
