@@ -31,7 +31,7 @@ public class Explosive : MonoBehaviour {
 				Damageable damageScript = hits[i].transform.GetComponentInParent<Damageable>();
 				if (damageScript == null)
 					break;
-				keepGoing = damageScript.Damage(hits[i].point, new Vector3(x, y, z), damagePerRay, false, isPlayer, true);
+				keepGoing = damageScript.Damage(hits[i].point, new Vector3(x, y, z), damagePerRay, isPlayer, DamageType.EXPLOSIVE);
 			}
 		}
 	}

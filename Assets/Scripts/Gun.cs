@@ -51,7 +51,7 @@ public abstract class Gun : MonoBehaviour {
 				Character c = hits[i].transform.GetComponentInParent<Character>();
 				hitEnemy = c != null && c.isAlive && !(c is PlayerControls);
 			}
-			keepGoing = damageScript.Damage(hits[i].point, direction.normalized, damage, false, isPlayer);
+			keepGoing = damageScript.Damage(hits[i].point, direction.normalized, damage, isPlayer);
 		}
 		if (hitEnemy && isPlayer) {
 			player.playerUI.HitMarker();
@@ -82,7 +82,7 @@ public abstract class Gun : MonoBehaviour {
 		int hits = 0;
 		foreach (Character c in chars) {
 			if (owner.CanSee(c.gameObject, 90)) {
-				c.Damage(c.transform.position, owner.transform.forward, 1f, melee: true);
+				c.Damage(c.transform.position, owner.transform.forward, 1f, isPlayer, DamageType.MELEE);
 				player.playerUI.HitMarker();
 				hits++;
 				if (hits >= maxEnemiesMelee)

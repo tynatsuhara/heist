@@ -109,7 +109,7 @@ public abstract class Character : PossibleObjective, Damageable {
 		}
 	}
 		
-	public virtual bool Damage(Vector3 location, Vector3 angle, float damage, bool melee = false, bool playerAttacker = false, bool explosive = false) {
+	public virtual bool Damage(Vector3 location, Vector3 angle, float damage, bool playerAttacker = false, DamageType type = DamageType.BULLET) {
 		bool isPlayer = tag.Equals("Player");
 
 		if (!weaponDrawn)
@@ -139,7 +139,7 @@ public abstract class Character : PossibleObjective, Damageable {
 		health = Mathf.Max(0, health - damage);
 		exploder.transform.position = location + angle * Random.Range(-.1f, .15f) + new Vector3(0, Random.Range(-.7f, .3f), 0);
 		if (!isAlive && wasAlive) {
-			Die(angle, !melee);
+			Die(angle, type);
 		} else if (!isAlive && explosive) {
 			exploder.Explode(angle * 3);			
 		}
@@ -152,12 +152,12 @@ public abstract class Character : PossibleObjective, Damageable {
 			} else if (!isAlive) {
 				forceVal *= .5f;
 			}
-			if (melee) {
+			if (type == DamageType.MELEE) {
 				forceVal *= 2f;
 			}
-			rb.AddForceAtPosition(forceVal * angle.normalized, 
-								  melee ? transform.position + Vector3.up * Random.Range(-.4f, .3f) : exploder.transform.position,
-								  ForceMode.Impulse);
+			rb.AddForceAtPosition(forceVal * angle.normalized, type == DamageType.MELEE 
+									? transform.position + Vector3.up * Random.Range(-.4f, .3f) 
+									: exploder.transform.position, ForceMode.Impulse);
 		}
 
 		return !wasAlive;
@@ -167,7 +167,7 @@ public abstract class Character : PossibleObjective, Damageable {
 		Die(Vector3.one);
 	}
 
-	public virtual void Die(Vector3 angle, bool explode = false) {
+	public virtual void Die(Vector3 angle, DamageType type = DamageType.MELEE) {
 		InteractCancel();
 		NavMeshAgent agent = GetComponent<NavMeshAgent>();
 		if (agent != null)
@@ -182,8 +182,11 @@ public abstract class Character : PossibleObjective, Damageable {
 		if (weaponDrawn)
 			DropWeapon(angle * Random.Range(5, 10) + Vector3.up * Random.Range(2, 6));
 
-		if (explode)
+		if (type == DamageType.SLICE) {
+			
+		} else if (type != DamageType.MELEE) {
 			exploder.Explode(angle * 3);
+		}
 
 		if (isObjective && !isCompleted)
 			MarkCompleted();

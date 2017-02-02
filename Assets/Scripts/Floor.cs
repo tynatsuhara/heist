@@ -3,8 +3,7 @@ using System.Collections;
 
 public class Floor : MonoBehaviour, Damageable {
 
-		public bool Damage(Vector3 location, Vector3 angle, float damage, bool melee = false, 
-				bool playerAttacker = false, bool explosive = false) {
-			return true;
-		}
+	public bool Damage(Vector3 location, Vector3 angle, float damage, bool playerAttacker = false, DamageType type = DamageType.BULLET) {
+		return true;
+	}
 }

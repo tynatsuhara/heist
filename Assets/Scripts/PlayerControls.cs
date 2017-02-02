@@ -74,7 +74,7 @@ public class PlayerControls : Character {
 
 		// SUICIDE
 		if (Input.GetKeyDown(KeyCode.K)) {
-			Damage(transform.position, Random.insideUnitSphere, 5f);
+			Damage(transform.position, Random.insideUnitSphere, 1000f);
 		}
 
 		playerUI.JoystickCursorMove(Input.GetAxis("RSX" + id), Input.GetAxis("RSY" + id));		
@@ -132,10 +132,6 @@ public class PlayerControls : Character {
 		if (x != 0 || z != 0) {
 			lastMoveDirection = new Vector3(x, 0, z).normalized;
 		}
-	}
-
-	public override void Die(Vector3 angle, bool explode = false) {
-		base.Die(angle, explode);
 	}
 
 	void LookAtMouse() {

@@ -75,8 +75,12 @@ public class PlayerUI : MonoBehaviour {
 	}
 
 	public void UpdateHealth(float health, float healthMax, float armor, float armorMax) {
-		healthText.text = "**************************************************".Substring(0, Mathf.CeilToInt(health));
-		armorText.text = "**************************************************".Substring(0, Mathf.CeilToInt(armor));
+		if (health <= 0) {
+			healthText.text = armorText.text = "";
+		} else {
+			healthText.text = "**************************************************".Substring(0, Mathf.CeilToInt(health));
+			armorText.text = "**************************************************".Substring(0, Mathf.CeilToInt(armor));
+		}
 	}
 
 	public void HitMarker() {
