@@ -270,7 +270,7 @@ public abstract class Character : PossibleObjective, Damageable {
 
 		weaponDrawn_ = drawn;
 		arms.gameObject.SetActive(!drawn);
-		currentGun = drawn ? guns[gunIndex].GetComponent<Gun>() : null;
+		currentGun = guns[gunIndex].GetComponent<Gun>();
 
 		if (!weaponDropped)
 			guns[gunIndex].SetActive(drawn);

@@ -72,6 +72,11 @@ public class PlayerControls : Character {
 			SelectGun(1);
 		}
 
+		// SUICIDE
+		if (Input.GetKeyDown(KeyCode.K)) {
+			Damage(transform.position, Random.insideUnitSphere, 5f);
+		}
+
 		playerUI.JoystickCursorMove(Input.GetAxis("RSX" + id), Input.GetAxis("RSY" + id));		
 	}
  
