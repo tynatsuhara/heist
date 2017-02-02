@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
 
 public abstract class Gun : MonoBehaviour {
 
@@ -10,6 +12,11 @@ public abstract class Gun : MonoBehaviour {
 	public float range;
 	public Vector3 inPlayerPos;
 	public Vector3 inPlayerRot;
+	public Collider droppedCollider;
+
+	// Gun frames
+	public const int DROPPED_GUN_FRAME = 1;	 
+	public const int ANIM_START_FRAME = 2;
 
 	public bool isPlayer;
 	public PlayerControls player;
@@ -20,14 +27,11 @@ public abstract class Gun : MonoBehaviour {
 		anim = GetComponent<GunAnimation>();
 	}
 
-	abstract public void Drop(Vector3 force);
-	abstract public void Melee();
 	abstract public void Shoot();
 	abstract public void Release();
 	abstract public void Reload();
 	abstract public void CancelReload();
 	abstract public bool NeedsToReload();
-	abstract public void DelayAttack(float delay);
 	abstract public void UpdateUI();
 
 	public void RaycastShoot(Vector3 source, Vector3 direction) {
@@ -50,6 +54,80 @@ public abstract class Gun : MonoBehaviour {
 		if (hitEnemy && isPlayer) {
 			player.playerUI.HitMarker();
 		}
+	}
+
+	public void Drop(Vector3 force) {
+		CancelInvoke();
+		volume.SetFrame(DROPPED_GUN_FRAME);
+		droppedCollider.enabled = true;
+		transform.parent = null;
+		GetComponent<Rigidbody>().isKinematic = false;
+		GetComponent<Rigidbody>().AddForce(force, ForceMode.Impulse);
+		GetComponent<Rigidbody>().AddTorque(Random.insideUnitSphere * Random.Range(10f, 100f), ForceMode.Force);
+		owner = null;
+	}
+
+
+	protected bool meleeing;
+	public virtual void Melee() {
+		if (meleeing)
+			return;
+		meleeing = true;
+		CancelReload();  // interrupt reloading to melee, if necessary
+		StartCoroutine("MeleeAnimation");
+		List<Character> chars = GameManager.instance.CharactersWithinDistance(owner.transform.position + 
+																			  owner.transform.forward * 1.1f, .6f);
+		foreach (Character c in chars) {
+			if (owner.CanSee(c.gameObject, 90)) {
+				c.Damage(c.transform.position, owner.transform.forward, 1f, melee: true);
+				player.playerUI.HitMarker();
+				break;
+			}
+		}
+	}
+	private IEnumerator MeleeAnimation() {
+		int angle = 40;
+		Quaternion initialRotation = transform.localRotation;
+		Vector3 initialPosition = transform.localPosition;
+		transform.RotateAround(transform.root.position, Vector3.up, angle);
+		Quaternion end = transform.localRotation;
+		transform.RotateAround(transform.root.position, Vector3.up, -2.4f * angle);
+		float diff = 100f;			
+		while (diff > .03f) {
+			Vector3 nextRot = Quaternion.Lerp(transform.localRotation, end, .3f).eulerAngles;
+			diff = (nextRot.y - transform.localRotation.eulerAngles.y);
+			transform.RotateAround(transform.root.position, Vector3.up, diff);
+			yield return new WaitForSeconds(.01f);
+		}
+		diff = 100f;
+		end = initialRotation;
+		while (diff > .05f) {
+			Vector3 nextRot = Quaternion.Lerp(transform.localRotation, end, .4f).eulerAngles;
+			diff = (transform.localRotation.eulerAngles.y - nextRot.y);
+			transform.RotateAround(transform.root.position, Vector3.up, -diff);
+			yield return new WaitForSeconds(.01f);
+		}
+		transform.localRotation = initialRotation;
+		transform.localPosition = initialPosition;
+
+		meleeing = false;
+	}
+
+	public void SetLoweredPosition(bool lowered) {
+		transform.localPosition = inPlayerPos + (Vector3.down + Vector3.back) * (lowered ? .1f : 0f);
+	}
+
+	protected bool delayed = false;
+	public void DelayAttack(float delay) {
+		CancelInvoke("UnDelay");
+		delayed = true;
+		SetLoweredPosition(true);
+		Invoke("UnDelay", delay);
+	}
+	
+	private void UnDelay() {
+		SetLoweredPosition(false);		
+		delayed = false;
 	}
 
 	public void PlayerEffects(float power, float duration) {

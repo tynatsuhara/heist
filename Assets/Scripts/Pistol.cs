@@ -8,20 +8,14 @@ public class Pistol : Gun {
 	public float shootSpeed;
 	private bool shooting;
 	private bool reloading;
-	private bool meleeing;
 	public bool silenced;
 	public int clipSize = 15;
 	private int bulletsFired = 0;
 	public float reloadSpeed = 1f;
 	public float shakePower = .3f;
 	public float shakeLength = .3f;
-	public Collider droppedCollider;
 	public bool shellDropOnFire;
 	public bool shellDropOnReload;
-
-	// Gun frames
-	private const int DROPPED_GUN_FRAME = 1;	 
-	private const int ANIM_START_FRAME = 2;
 
 	public override void Shoot() {
 		if (delayed || shooting || reloading || bulletsFired == clipSize)
@@ -56,7 +50,7 @@ public class Pistol : Gun {
 		if (shooting || reloading || meleeing || bulletsFired == 0)  // already reloading or no need to
 			return;
 		CancelReload();
-		SetReloadPosition(true);
+		SetLoweredPosition(true);
 		reloading = true;			
 		Invoke("ResetShoot", shootSpeed + reloadSpeed);
 	}
@@ -81,43 +75,16 @@ public class Pistol : Gun {
 
 			reloading = false;
 			bulletsFired = 0;			
-			SetReloadPosition(false);
+			SetLoweredPosition(false);
 		}
 	}
 
 	public override void CancelReload() {
 		if (!reloading)
 			return;
-		SetReloadPosition(false);
+		SetLoweredPosition(false);
 		CancelInvoke("ResetShoot");
 		reloading = false;
-	}
-
-	private void SetReloadPosition(bool reloading) {
-		transform.localPosition = inPlayerPos + (Vector3.down + Vector3.back) * (reloading ? .1f : 0f);
-	}
-
-	public override void Drop(Vector3 force) {
-		CancelInvoke();
-		volume.SetFrame(DROPPED_GUN_FRAME);
-		droppedCollider.enabled = true;
-		transform.parent = null;
-		GetComponent<Rigidbody>().isKinematic = false;
-		GetComponent<Rigidbody>().AddForce(force, ForceMode.Impulse);
-		GetComponent<Rigidbody>().AddTorque(Random.insideUnitSphere * Random.Range(10f, 100f), ForceMode.Force);
-		owner = null;
-	}
-
-	private bool delayed = false;
-	public override void DelayAttack(float delay) {
-		CancelInvoke("UnDelay");
-		delayed = true;
-		SetReloadPosition(true);
-		Invoke("UnDelay", delay);
-	}
-	private void UnDelay() {
-		SetReloadPosition(false);		
-		delayed = false;
 	}
 
 	public override void UpdateUI() {
@@ -128,47 +95,9 @@ public class Pistol : Gun {
 	}
 
 	public override void Melee() {
-		if (shooting || meleeing)
+		if (shooting)
 			return;
-		meleeing = true;
-		CancelReload();  // interrupt reloading to melee, if necessary
-		StartCoroutine("MeleeAnimation");
-		List<Character> chars = GameManager.instance.CharactersWithinDistance(owner.transform.position + 
-																			  owner.transform.forward * 1.1f, .6f);
-		foreach (Character c in chars) {
-			if (owner.CanSee(c.gameObject, 90)) {
-				c.Damage(c.transform.position, owner.transform.forward, 1f, melee: true);
-				player.playerUI.HitMarker();
-				break;
-			}
-		}
-	}
-	private IEnumerator MeleeAnimation() {
-		int angle = 40;
-		Quaternion initialRotation = transform.localRotation;
-		Vector3 initialPosition = transform.localPosition;
-		transform.RotateAround(transform.root.position, Vector3.up, angle);
-		Quaternion end = transform.localRotation;
-		transform.RotateAround(transform.root.position, Vector3.up, -2.4f * angle);
-		float diff = 100f;			
-		while (diff > .03f) {
-			Vector3 nextRot = Quaternion.Lerp(transform.localRotation, end, .3f).eulerAngles;
-			diff = (nextRot.y - transform.localRotation.eulerAngles.y);
-			transform.RotateAround(transform.root.position, Vector3.up, diff);
-			yield return new WaitForSeconds(.01f);
-		}
-		diff = 100f;
-		end = initialRotation;
-		while (diff > .05f) {
-			Vector3 nextRot = Quaternion.Lerp(transform.localRotation, end, .4f).eulerAngles;
-			diff = (transform.localRotation.eulerAngles.y - nextRot.y);
-			transform.RotateAround(transform.root.position, Vector3.up, -diff);
-			yield return new WaitForSeconds(.01f);
-		}
-		transform.localRotation = initialRotation;
-		transform.localPosition = initialPosition;
-
-		meleeing = false;
+		base.Melee();
 	}
 
 	public override void Release() {}

@@ -66,6 +66,10 @@ public class PlayerUI : MonoBehaviour {
 		ammoText.text = (weaponName + "\n" + ammo + "/" + clipSize).ToUpper();
 	}
 
+	public void UpdateAmmo(string weaponName) {
+		ammoText.text = weaponName.ToUpper();
+	}
+
 	public void ShowReloading(string weaponName) {
 		ammoText.text = weaponName.ToUpper() + "\nRELOADING...";
 	}
