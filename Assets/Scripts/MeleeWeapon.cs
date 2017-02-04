@@ -5,6 +5,7 @@ public class MeleeWeapon : Gun {
 
 	public float swingSpeed;
 	private bool canSwing;
+	public int swingDirection;
 
 	public override bool Shoot() {
 		bool couldSwing = canSwing;
@@ -21,7 +22,7 @@ public class MeleeWeapon : Gun {
 			return;
 		canSwing = false;
 		volume.SetFrame(ANIM_START_FRAME);
-		base.Melee(-1);
+		base.Melee(swingDirection);
 		Invoke("ResetShoot", swingSpeed);		
 	}
 
