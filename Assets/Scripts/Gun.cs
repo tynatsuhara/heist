@@ -69,7 +69,6 @@ public abstract class Gun : MonoBehaviour {
 		owner = null;
 	}
 
-
 	public bool meleeing;
 	private float meleeDirection;
 	public virtual void Melee(int dir = 0) {
