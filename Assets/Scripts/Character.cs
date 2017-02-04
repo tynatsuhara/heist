@@ -189,7 +189,7 @@ public abstract class Character : PossibleObjective, Damageable {
 			DropWeapon(angle * Random.Range(5, 10) + Vector3.up * Random.Range(2, 6));
 
 		if (type == DamageType.SLICE) {
-			Decapitate(angle);
+			Decapitate();
 		} else if (type != DamageType.MELEE) {
 			exploder.Explode(angle * 3);
 		}
@@ -206,7 +206,7 @@ public abstract class Character : PossibleObjective, Damageable {
 //		Invoke("RemoveBody", 60f);
 	}
 
-	private void Decapitate(Vector3 angle) {
+	private void Decapitate() {
 		head.transform.parent = null;
 		head.GetComponentInChildren<Collider>().isTrigger = false;
 		Rigidbody b = head.gameObject.AddComponent<Rigidbody>() as Rigidbody;
