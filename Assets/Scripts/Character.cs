@@ -351,7 +351,7 @@ public abstract class Character : PossibleObjective, Damageable {
 			currentGun.isPlayer = this is PlayerControls;			
 			gun.transform.parent = transform;
 			gun.transform.localPosition = currentGun.inPlayerPos;
-			gun.transform.localRotation = Quaternion.Euler(currentGun.inPlayerRot);
+			gun.transform.localRotation = Quaternion.Euler(new Vector3(0, 180, 0));
 			if (currentGun.isPlayer)
 				currentGun.player = (PlayerControls) this;
 		}

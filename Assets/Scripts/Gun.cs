@@ -12,7 +12,6 @@ public abstract class Gun : MonoBehaviour {
 	public float range;
 	public int maxEnemiesMelee = 1;
 	public Vector3 inPlayerPos;
-	public Vector3 inPlayerRot;
 	public Collider droppedCollider;
 
 	// Gun frames
