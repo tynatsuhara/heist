@@ -108,7 +108,8 @@ public abstract class Character : PossibleObjective, Damageable {
 			transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed);
 		}
 	}
-		
+
+	private List<Rigidbody> dismemberedBodyParts = new List<Rigidbody>();	
 	public virtual bool Damage(Vector3 location, Vector3 angle, float damage, bool playerAttacker = false, DamageType type = DamageType.BULLET) {
 		bool isPlayer = tag.Equals("Player");
 
@@ -155,9 +156,14 @@ public abstract class Character : PossibleObjective, Damageable {
 			if (type == DamageType.MELEE) {
 				forceVal *= 2f;
 			}
-			rb.AddForceAtPosition(forceVal * angle.normalized, type == DamageType.MELEE 
+			if (!dismemberedBodyParts.Contains(rb)) {
+				dismemberedBodyParts.Add(rb);
+			}
+			foreach (Rigidbody body in dismemberedBodyParts) {
+				body.AddForceAtPosition(forceVal * angle.normalized, type == DamageType.MELEE 
 									? transform.position + Vector3.up * Random.Range(-.4f, .3f) 
 									: exploder.transform.position, ForceMode.Impulse);
+			}
 		}
 
 		return !wasAlive;
@@ -203,8 +209,9 @@ public abstract class Character : PossibleObjective, Damageable {
 	private void Decapitate(Vector3 angle) {
 		head.transform.parent = null;
 		head.GetComponentInChildren<Collider>().isTrigger = false;
-		Rigidbody rb = head.gameObject.AddComponent<Rigidbody>() as Rigidbody;
-		rb.AddForce(angle * 10f);
+		Rigidbody b = head.gameObject.AddComponent<Rigidbody>() as Rigidbody;
+		b.mass = rb.mass;
+		dismemberedBodyParts.Add(b);
 	}
 
 	public void RemoveBody() {
