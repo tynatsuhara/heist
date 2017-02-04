@@ -364,7 +364,9 @@ public abstract class Character : PossibleObjective, Damageable {
 		index = Mathf.Clamp(index, 0, guns.Length);
 		if (this is PlayerControls)
 			guns[index].GetComponent<Gun>().UpdateUI();
-		if (!weaponDrawn || gunIndex == index) {
+		if (gunIndex == index || guns[gunIndex].GetComponent<Gun>().meleeing) {
+			return;
+		} else if (!weaponDrawn) {
 			gunIndex = index;
 			return;
 		}

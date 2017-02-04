@@ -13,13 +13,15 @@ public class MeleeWeapon : Gun {
 	}
 	private void ResetShoot() {
 		canSwing = true;
+		volume.SetFrame(GUN_BASE_FRAME);
 	}
 
-	public override void Melee() {
+	public override void Melee(int dir = 0) {
 		if (!canSwing)
 			return;
 		canSwing = false;
 		volume.SetFrame(ANIM_START_FRAME);
+		base.Melee(-1);
 		Invoke("ResetShoot", swingSpeed);		
 	}
 

@@ -16,6 +16,7 @@ public abstract class Gun : MonoBehaviour {
 	public Collider droppedCollider;
 
 	// Gun frames
+	public const int GUN_BASE_FRAME = 0;
 	public const int DROPPED_GUN_FRAME = 1;	 
 	public const int ANIM_START_FRAME = 2;
 
@@ -70,10 +71,12 @@ public abstract class Gun : MonoBehaviour {
 	}
 
 
-	protected bool meleeing;
-	public virtual void Melee() {
+	public bool meleeing;
+	private float meleeDirection;
+	public virtual void Melee(int dir = 0) {
 		if (meleeing)
 			return;
+		meleeDirection = dir != 0 ? Mathf.Clamp(dir, -1, 1) : Random.Range(0, 2) * 2 - 1;
 		meleeing = true;
 		CancelReload();  // interrupt reloading to melee, if necessary
 		StartCoroutine("MeleeAnimation");
@@ -94,22 +97,22 @@ public abstract class Gun : MonoBehaviour {
 		int angle = 40;
 		Quaternion initialRotation = transform.localRotation;
 		Vector3 initialPosition = transform.localPosition;
-		transform.RotateAround(transform.root.position, Vector3.up, angle);
+		transform.RotateAround(transform.root.position, Vector3.up, angle * meleeDirection);
 		Quaternion end = transform.localRotation;
-		transform.RotateAround(transform.root.position, Vector3.up, -2.4f * angle);
+		transform.RotateAround(transform.root.position, Vector3.up, -2.4f * angle * meleeDirection);
 		float diff = 100f;			
 		while (diff > .03f) {
 			Vector3 nextRot = Quaternion.Lerp(transform.localRotation, end, .3f).eulerAngles;
-			diff = (nextRot.y - transform.localRotation.eulerAngles.y);
-			transform.RotateAround(transform.root.position, Vector3.up, diff);
+			diff = Mathf.Abs(nextRot.y - transform.localRotation.eulerAngles.y);
+			transform.RotateAround(transform.root.position, Vector3.up, diff * meleeDirection);
 			yield return new WaitForSeconds(.01f);
 		}
 		diff = 100f;
 		end = initialRotation;
 		while (diff > .05f) {
 			Vector3 nextRot = Quaternion.Lerp(transform.localRotation, end, .4f).eulerAngles;
-			diff = (transform.localRotation.eulerAngles.y - nextRot.y);
-			transform.RotateAround(transform.root.position, Vector3.up, -diff);
+			diff = Mathf.Abs(transform.localRotation.eulerAngles.y - nextRot.y);
+			transform.RotateAround(transform.root.position, Vector3.up, -diff * meleeDirection);
 			yield return new WaitForSeconds(.01f);
 		}
 		transform.localRotation = initialRotation;
