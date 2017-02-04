@@ -4,7 +4,7 @@ using System.Collections;
 public class MeleeWeapon : Gun {
 
 	public float swingSpeed;
-	private bool canSwing;
+	private bool canSwing = true;
 	public int swingDirection;
 
 	public override bool Shoot() {
