@@ -203,7 +203,8 @@ public abstract class Character : PossibleObjective, Damageable {
 	private void Decapitate(Vector3 angle) {
 		head.transform.parent = null;
 		head.GetComponentInChildren<Collider>().isTrigger = false;
-		head.gameObject.AddComponent<Rigidbody>();
+		Rigidbody rb = head.gameObject.AddComponent<Rigidbody>() as Rigidbody;
+		rb.AddForce(angle * 10f);
 	}
 
 	public void RemoveBody() {

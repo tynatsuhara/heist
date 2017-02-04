@@ -102,10 +102,10 @@ public class Pistol : Gun {
 			player.playerUI.UpdateAmmo(name, clipSize - bulletsFired, clipSize);
 	}
 
-	public override void Melee(int dir = 0) {
+	public override void Melee(DamageType type = DamageType.MELEE, int dir = 0) {
 		if (shooting)
 			return;
-		base.Melee(dir);
+		base.Melee(type, dir);
 	}
 
 	public override void Release() {}

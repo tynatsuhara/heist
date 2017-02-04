@@ -71,7 +71,7 @@ public abstract class Gun : MonoBehaviour {
 
 	public bool meleeing;
 	private float meleeDirection;
-	public virtual void Melee(int dir = 0) {
+	public virtual void Melee(DamageType type = DamageType.MELEE, int dir = 0) {
 		if (meleeing)
 			return;
 		meleeDirection = dir != 0 ? Mathf.Clamp(dir, -1, 1) : Random.Range(0, 2) * 2 - 1;
@@ -83,7 +83,7 @@ public abstract class Gun : MonoBehaviour {
 		int hits = 0;
 		foreach (Character c in chars) {
 			if (owner.CanSee(c.gameObject, 90)) {
-				c.Damage(c.transform.position, owner.transform.forward, 1f, isPlayer, DamageType.MELEE);
+				c.Damage(c.transform.position, owner.transform.forward, 1f, isPlayer, type);
 				player.playerUI.HitMarker();
 				hits++;
 				if (hits >= maxEnemiesMelee)

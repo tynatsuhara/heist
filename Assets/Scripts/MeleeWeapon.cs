@@ -6,10 +6,11 @@ public class MeleeWeapon : Gun {
 	public float swingSpeed;
 	private bool canSwing = true;
 	public int swingDirection;
+	public DamageType damageType;
 
 	public override bool Shoot() {
 		bool couldSwing = canSwing;
-		Melee();
+		Melee(DamageType.SLICE, swingDirection);
 		return couldSwing;
 	}
 	private void ResetShoot() {
@@ -17,12 +18,12 @@ public class MeleeWeapon : Gun {
 		volume.SetFrame(GUN_BASE_FRAME);
 	}
 
-	public override void Melee(int dir = 0) {
+	public override void Melee(DamageType type = DamageType.MELEE, int dir = 0) {
 		if (!canSwing)
 			return;
 		canSwing = false;
 		volume.SetFrame(ANIM_START_FRAME);
-		base.Melee(swingDirection);
+		base.Melee(type, swingDirection);
 		Invoke("ResetShoot", swingSpeed);		
 	}
 
