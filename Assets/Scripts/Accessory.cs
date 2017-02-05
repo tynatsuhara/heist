@@ -8,4 +8,7 @@ public class Accessory : MonoBehaviour {
 	
 	public string headString;
 	public string bodyString;
+
+	public bool headParent;
+	public bool bodyParent;
 }

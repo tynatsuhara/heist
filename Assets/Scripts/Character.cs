@@ -189,7 +189,8 @@ public abstract class Character : PossibleObjective, Damageable {
 			DropWeapon(angle * Random.Range(5, 10) + Vector3.up * Random.Range(2, 6));
 
 		if (type == DamageType.SLICE) {
-			Decapitate();
+			if (Random.Range(0, 2) == 0)
+				Decapitate();
 		} else if (type != DamageType.MELEE) {
 			exploder.Explode(angle * 3);
 		}
@@ -203,7 +204,7 @@ public abstract class Character : PossibleObjective, Damageable {
 			speech.SayRandom(Speech.DEATH_QUOTES, showFlash: true);
 		}
 
-//		Invoke("RemoveBody", 60f);
+		// Invoke("RemoveBody", 60f);
 	}
 
 	private void Decapitate() {
@@ -213,6 +214,19 @@ public abstract class Character : PossibleObjective, Damageable {
 		b.mass = rb.mass;
 		dismemberedBodyParts.Add(b);
 	}
+	// private void SliceHead() {
+	// 	GameObject top = Instantiate(head.gameObject, head.transform.position, head.transform.rotation) as GameObject;
+	// 	HideVoxelsVertical(top.GetComponent<PicaVoxel.Volume>(), 2, 4);
+	// }
+	// private void HideVoxelsVertical(PicaVoxel.Volume vol, int lo, int hi) {
+	// 	for (int y = lo; y < hi; y++) {
+	// 		for (int x = 0; x < vol.XSize; x++) {
+	// 			for (int z = 0; z < vol.ZSize; z++) {
+	// 				vol.SetVoxelStateAtArrayPosition(x, y, z, PicaVoxel.VoxelState.Inactive);
+	// 			}
+	// 		}
+	// 	}
+	// }
 
 	public void RemoveBody() {
 		Destroy(gameObject);
