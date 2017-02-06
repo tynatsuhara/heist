@@ -85,11 +85,10 @@ public abstract class Gun : MonoBehaviour {
 			// 		owner.transform.position + owner.transform.forward * 1.3f + meleeDirection * i * owner.transform.right / 5f, 
 			// 		Color.red, 5f);
 			RaycastHit[] rhits = Physics.RaycastAll(owner.transform.position, owner.transform.forward * 1.3f + meleeDirection * i * owner.transform.right / 5f, 1.5f)
-					.Where(h => h.transform.root != transform.root && !hits.Contains(h.collider.GetComponentInParent<Damageable>()))
+					.Where(h => h.transform.root != transform.root && h.collider.GetComponentInParent<Damageable>() != null && !hits.Contains(h.collider.GetComponentInParent<Damageable>()))
 					.OrderBy(h => h.distance)
 					.ToArray();
 			if (rhits.Length > 0) {
-				Debug.Log("hit");
 				Damageable d = rhits[0].collider.GetComponentInParent<Damageable>();
 				d.Damage(rhits[0].collider.transform.root.position, owner.transform.forward, 1f, isPlayer, type);
 				hits.Add(d);
