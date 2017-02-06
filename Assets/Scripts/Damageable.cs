@@ -12,5 +12,6 @@ public enum DamageType {
 	BULLET,
 	MELEE,
 	EXPLOSIVE,
-	SLICE
+	SLICE,
+	NONLETHAL
 }

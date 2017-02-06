@@ -78,17 +78,24 @@ public abstract class Gun : MonoBehaviour {
 		meleeing = true;
 		CancelReload();  // interrupt reloading to melee, if necessary
 		StartCoroutine("MeleeAnimation");
-		List<Character> chars = GameManager.instance.CharactersWithinDistance(owner.transform.position + 
-																			  owner.transform.forward * 1.1f, .6f);
-		int hits = 0;
-		foreach (Character c in chars) {
-			if (owner.CanSee(c.gameObject, 90)) {
-				c.Damage(c.transform.position, owner.transform.forward, 1f, isPlayer, type);
-				player.playerUI.HitMarker();
-				hits++;
-				if (hits >= maxEnemiesMelee)
-					break;
+		int range = 8;
+		List<Damageable> hits = new List<Damageable>();
+		for (int i = -range/2; i <= range/2; i++) {
+			// Debug.DrawLine(owner.transform.position, 
+			// 		owner.transform.position + owner.transform.forward * 1.3f + meleeDirection * i * owner.transform.right / 5f, 
+			// 		Color.red, 5f);
+			RaycastHit[] rhits = Physics.RaycastAll(owner.transform.position, owner.transform.forward * 1.3f + meleeDirection * i * owner.transform.right / 5f, 1.5f)
+					.Where(h => h.transform.root != transform.root && !hits.Contains(h.collider.GetComponentInParent<Damageable>()))
+					.OrderBy(h => h.distance)
+					.ToArray();
+			if (rhits.Length > 0) {
+				Debug.Log("hit");
+				Damageable d = rhits[0].collider.GetComponentInParent<Damageable>();
+				d.Damage(rhits[0].collider.transform.root.position, owner.transform.forward, 1f, isPlayer, type);
+				hits.Add(d);
 			}
+			if (hits.Count == maxEnemiesMelee)
+				break;
 		}
 	}
 	private IEnumerator MeleeAnimation() {
