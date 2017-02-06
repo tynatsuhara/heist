@@ -243,8 +243,10 @@ public abstract class Character : PossibleObjective, Damageable {
 
 	private void PuddleBlood() {
 		int times = Random.Range(1, 5);
-		for (int i = 0; i < times; i++)
-			WorldBlood.instance.BleedFrom(gameObject, transform.position);
+		for (int i = 0; i < times; i++) {
+			Vector3 pos = dismemberedBodyParts[Random.Range(0, dismemberedBodyParts.Count)].transform.position;		
+			WorldBlood.instance.BleedFrom(gameObject, pos);
+		}
 	}
 
 	private void CancelPuddling() {
@@ -252,7 +254,8 @@ public abstract class Character : PossibleObjective, Damageable {
 	}
 
 	private void SpurtBlood() {
-		Bleed(Random.Range(5, 10), transform.position + Vector3.up * .3f, Vector3.up);
+		Vector3 pos = dismemberedBodyParts[Random.Range(0, dismemberedBodyParts.Count)].transform.position;
+		Bleed(Random.Range(5, 10), pos + Vector3.up * .3f, Vector3.up);
 	}
 
 	public void Bleed(int amount, Vector3 position, Vector3 velocity) {
