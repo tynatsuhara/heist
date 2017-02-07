@@ -8,14 +8,12 @@ public class PlayerControls : Character {
 	public PlayerCamera playerCamera;
 	public PlayerUI playerUI;
 
-	void Start() {
-		name = "Player " + id;
-		explosive = GetComponent<Explosive>();
-		rb = GetComponent<Rigidbody>();
+	public override void Start() {
 		CharacterCustomizationMenu.instance.LoadWeaponsFromPrefs(this);
-		SpawnGun();
-		speech = GetComponentInChildren<TextObject>();
-		CharacterCustomizationMenu.instance.ColorizeFromPrefs(this);
+		base.Start();
+		CharacterCustomizationMenu.instance.ColorizeFromPrefs(this);	
+		name = "Player " + id;
+		explosive = GetComponent<Explosive>();	
 	}
 
 	void Update() {

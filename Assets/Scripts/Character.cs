@@ -61,11 +61,17 @@ public abstract class Character : PossibleObjective, Damageable {
 		get { return health > 0; }
 	}
 
-	public GameObject draggedBody;
+	public Rigidbody draggedBody;
 	public bool isDragging {
 		get { return draggedBody != null; }
 	}
-	public bool beingDragged;
+
+	public virtual void Start() {
+		rb = GetComponent<Rigidbody>();
+		separateBodyParts.Add(rb);
+		SpawnGun();
+		speech = GetComponentInChildren<TextObject>();
+	}
 
 	public abstract void Alert(Character.Reaction importance, Vector3 position);
 	public void Alert() {
@@ -109,7 +115,7 @@ public abstract class Character : PossibleObjective, Damageable {
 		}
 	}
 
-	private List<Rigidbody> dismemberedBodyParts = new List<Rigidbody>();	
+	protected List<Rigidbody> separateBodyParts = new List<Rigidbody>();	
 	public virtual bool Damage(Vector3 location, Vector3 angle, float damage, bool playerAttacker = false, DamageType type = DamageType.BULLET) {
 		bool isPlayer = tag.Equals("Player");
 
@@ -156,10 +162,7 @@ public abstract class Character : PossibleObjective, Damageable {
 			if (type == DamageType.MELEE) {
 				forceVal *= 2f;
 			}
-			if (!dismemberedBodyParts.Contains(rb)) {
-				dismemberedBodyParts.Add(rb);
-			}
-			foreach (Rigidbody body in dismemberedBodyParts) {
+			foreach (Rigidbody body in separateBodyParts) {
 				body.AddForceAtPosition(forceVal * angle.normalized, type == DamageType.MELEE 
 									? transform.position + Vector3.up * Random.Range(-.4f, .3f) 
 									: exploder.transform.position, ForceMode.Impulse);
@@ -209,10 +212,9 @@ public abstract class Character : PossibleObjective, Damageable {
 
 	private void Decapitate() {
 		head.transform.parent = null;
-		head.GetComponentInChildren<Collider>().isTrigger = false;
 		Rigidbody b = head.gameObject.AddComponent<Rigidbody>() as Rigidbody;
 		b.mass = rb.mass;
-		dismemberedBodyParts.Add(b);
+		separateBodyParts.Add(b);
 	}
 	// private void SliceHead() {
 	// 	GameObject top = Instantiate(head.gameObject, head.transform.position, head.transform.rotation) as GameObject;
@@ -244,7 +246,7 @@ public abstract class Character : PossibleObjective, Damageable {
 	private void PuddleBlood() {
 		int times = Random.Range(1, 5);
 		for (int i = 0; i < times; i++) {
-			Vector3 pos = dismemberedBodyParts[Random.Range(0, dismemberedBodyParts.Count)].transform.position;		
+			Vector3 pos = separateBodyParts[Random.Range(0, separateBodyParts.Count)].transform.position;		
 			WorldBlood.instance.BleedFrom(gameObject, pos);
 		}
 	}
@@ -254,7 +256,7 @@ public abstract class Character : PossibleObjective, Damageable {
 	}
 
 	private void SpurtBlood() {
-		Vector3 pos = dismemberedBodyParts[Random.Range(0, dismemberedBodyParts.Count)].transform.position;
+		Vector3 pos = separateBodyParts[Random.Range(0, separateBodyParts.Count)].transform.position;
 		Bleed(Random.Range(5, 10), pos + Vector3.up * .3f, Vector3.up);
 	}
 
@@ -450,20 +452,29 @@ public abstract class Character : PossibleObjective, Damageable {
 	}
 
 	public bool CanSee(GameObject target, float fov = 130f, float viewDist = 20f) {
-		Vector3 diff = transform.position - target.transform.position;
-		if (diff.magnitude > viewDist)
-			return false;
-		
-		float angle = Vector3.Dot(Vector3.Normalize(transform.position - target.transform.position), transform.forward);
+		Vector3 targetPos = target.transform.position;
+		targetPos.y = transform.position.y;
+		float angle = Vector3.Dot(Vector3.Normalize(transform.position - targetPos), transform.forward);
 		float angleDegrees = 90 + Mathf.Asin(angle) * Mathf.Rad2Deg;
 		if (angleDegrees > fov / 2f) {
+			Debug.Log(target.name + " " + angle);
 			return false;
 		}
 
-		RaycastHit hit;		
-		if (Physics.Raycast(transform.position, target.transform.position - transform.position, out hit, viewDist, sightLayers))
-			return hit.collider.transform.root.gameObject == target;
+		RaycastHit[] hits;		
+		hits = Physics.RaycastAll(transform.position, target.transform.position - transform.position, viewDist, sightLayers)
+					  .Where(x => x.transform.root != transform.root)
+					  .OrderBy(x => (x.point - transform.position).magnitude).ToArray();
+		if (hits.Length > 0) {
+			// return target.GetComponentsInChildren<Collider>().Contains(hit.collider);
+			if (hits[0].collider.transform.root != target.transform.root)
+				Debug.Log("hit " + hits[0].collider.transform.root.name + " instead");
+			else
+				Debug.Log("hit " + hits[0].collider.transform.root.name + " as intended");			
+			return hits[0].collider.transform.root == target.transform.root;
+		}
 
+		Debug.Log(target.name + " not hit");
 		return false;
 	}
 
@@ -497,7 +508,7 @@ public abstract class Character : PossibleObjective, Damageable {
 		if (draggedBody != null)
 			return;
 		
-		List<Character> draggableChars = CharactersInFront().Where(x => {
+		List<Character> draggableChars = GameManager.allCharacters.Where(x => {
 			if (x is Civilian) {
 				Civilian z = (Civilian) x;
 				return !x.isAlive || z.currentState == Civilian.CivilianState.HELD_HOSTAGE_TIED;
@@ -505,20 +516,21 @@ public abstract class Character : PossibleObjective, Damageable {
 			return !x.isAlive;
 		}).ToList();
 
-		// must have line of sight
+		List<Rigidbody> rbs = new List<Rigidbody>();
 		foreach (Character c in draggableChars) {
-			Vector3 dir = c.transform.position - transform.position;
-			RaycastHit hit;
-			if (!Physics.Raycast(transform.position, dir, out hit)) {
-				continue;
+			rbs.AddRange(c.separateBodyParts);
+		}
+
+		float grabRange = 1.5f;
+		rbs = rbs.Where(x => (x.transform.position - transform.position).magnitude < grabRange)
+				 .OrderBy(x => (x.transform.position - transform.position).magnitude).ToList();
+		foreach (Rigidbody limb in rbs) {
+			if (CanSee(limb.gameObject, 100f, grabRange)) {
+				draggedBody = limb;
+				break;
+			} else {
+				Debug.Log("couldn't see " + limb.name);
 			}
-			if (hit.collider.GetComponentInParent<Character>() != c) {
-				continue;
-			}
-			draggedBody = c.gameObject;
-			Character bodyChar = draggedBody.GetComponent<Character>();
-			bodyChar.beingDragged = true;
-			break;
 		}
 	}
 
@@ -528,14 +540,13 @@ public abstract class Character : PossibleObjective, Damageable {
 			// add a bit of a buffer between the floor and character to avoid friction
 			dragPos.y = Mathf.Max(draggedBody.transform.position.y, .4f);
 			Vector3 force = (dragPos - draggedBody.transform.position).normalized;
-			draggedBody.GetComponent<Rigidbody>().AddForce(force * 10000f, ForceMode.Force);
+			draggedBody.AddForce(force * 10000f, ForceMode.Force);
 		}
 	}
 
 	public void ReleaseBody() {
 		if (draggedBody == null)
 			return;
-		draggedBody.GetComponent<Character>().beingDragged = false;
 		draggedBody = null;
 	}
 

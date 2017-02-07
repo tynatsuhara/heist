@@ -96,7 +96,9 @@ public class Pistol : Gun {
 	}
 
 	public override void UpdateUI() {
-		if (reloading)
+		if (player.playerUI == null)
+			return;
+		else if (reloading)
 			player.playerUI.ShowReloading(name);
 		else
 			player.playerUI.UpdateAmmo(name, clipSize - bulletsFired, clipSize);

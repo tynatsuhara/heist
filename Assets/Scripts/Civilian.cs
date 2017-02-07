@@ -15,14 +15,9 @@ public class Civilian : Character, Interactable {
 	public CivilianState currentState;
 	public bool braveCitizen;  // can enter attacking state	
 
-	void Awake() {
-		rb = GetComponent<Rigidbody>();
-		SpawnGun();
-		speech = GetComponentInChildren<TextObject>();
-		InvokeRepeating("CheckForEvidence", 0f, .5f);
-	}
-
-	void Start () {
+	public override void Start() {
+		base.Start();
+		// InvokeRepeating("CheckForEvidence", 0f, .5f);
 		GetComponent<CharacterCustomization>().ColorCharacter(Outfits.fits["cop1"], true);
 		currentState = CivilianState.PASSIVE;
 		braveCitizen = Random.Range(0, 100) < 10;

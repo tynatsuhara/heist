@@ -18,8 +18,15 @@ public class GameManager : MonoBehaviour {
 	public bool objectivesComplete;
 
 	private List<PossibleObjective> objectives;
-	public static List<Character> characters;
-	public static List<PlayerControls> players;
+	public static List<Character> characters;  // NPCs
+	public static List<PlayerControls> players;	
+	public static List<Character> allCharacters {
+		get { 
+			List<Character> lst = characters.ToList();
+			lst.AddRange(players.Select(x => (Character) x));
+			return lst;
+		}
+	}
 
 	public bool alarmsRaised = false;
 	public bool gameOver = false;

@@ -20,15 +20,9 @@ public class Enemy : Character {
 	public float walkingAnimationThreshold;
 	private bool invoked;
 
-	void Awake () {
-		rb = GetComponent<Rigidbody>();
+	public override void Start() {
+		base.Start();
 		agent = GetComponent<NavMeshAgent>();
-		speech = GetComponentInChildren<TextObject>();
-
-		SpawnGun();		
-	}
-
-	void Start() {
 		GetComponent<CharacterCustomization>().ColorCharacter(Outfits.fits["cop1"], true);
 
 		if (GameManager.instance.alarmsRaised) {
@@ -37,7 +31,7 @@ public class Enemy : Character {
 			CheckForCameraComputer();
 		}
 
-		InvokeRepeating("CheckForEvidence", 0f, .5f);
+		// InvokeRepeating("CheckForEvidence", 0f, .5f);
 	}
 	
 	// Update is called once per frame
