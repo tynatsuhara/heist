@@ -467,14 +467,14 @@ public abstract class Character : PossibleObjective, Damageable {
 					  .OrderBy(x => (x.point - transform.position).magnitude).ToArray();
 		if (hits.Length > 0) {
 			// return target.GetComponentsInChildren<Collider>().Contains(hit.collider);
-			if (hits[0].collider.transform.root != target.transform.root)
-				Debug.Log("hit " + hits[0].collider.transform.root.name + " instead");
-			else
-				Debug.Log("hit " + hits[0].collider.transform.root.name + " as intended");			
+			// if (hits[0].collider.transform.root != target.transform.root)
+			// 	Debug.Log("hit " + hits[0].collider.transform.root.name + " instead");
+			// else
+			// 	Debug.Log("hit " + hits[0].collider.transform.root.name + " as intended");			
 			return hits[0].collider.transform.root == target.transform.root;
 		}
 
-		Debug.Log(target.name + " not hit");
+		// Debug.Log(target.name + " not hit");
 		return false;
 	}
 
@@ -529,7 +529,7 @@ public abstract class Character : PossibleObjective, Damageable {
 				draggedBody = limb;
 				break;
 			} else {
-				Debug.Log("couldn't see " + limb.name);
+				// Debug.Log("couldn't see " + limb.name);
 			}
 		}
 	}

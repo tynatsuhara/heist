@@ -13,6 +13,13 @@ public class MenuNode : MonoBehaviour {
 	public Material selectedMaterial;
 	public Text text;
 
+	public void Start() {
+		if (down != null)
+			down.up = this;
+		if (right != null)
+			right.left = this;
+	}
+
 	private bool selected;
 
 	public void Select() {
