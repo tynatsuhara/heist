@@ -125,8 +125,8 @@ public class CharacterCustomizationMenu : MonoBehaviour {
 
 	public void LoadWeaponsFromPrefs(PlayerControls p) {
 		p.guns = new GameObject[] {
-			sidearms[CurrentSidearmId(p.id)],
-			weapons[CurrentWeaponId(p.id)]
+			weapons[CurrentWeaponId(p.id)],
+			sidearms[CurrentSidearmId(p.id)]
 		};
 	}
 	public int CurrentWeaponId(int playerId) {

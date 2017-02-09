@@ -48,6 +48,7 @@ public abstract class Character : PossibleObjective, Damageable {
 	private int gunIndex = 0;
 	public PicaVoxel.Exploder exploder;
 	public Explosive explosive;
+	public int zipties;
 	protected bool weaponDrawn_;
 	public bool weaponDrawn {
 		get { return weaponDrawn_; }

@@ -203,7 +203,9 @@ public class Civilian : Character, Interactable {
 	}
 
 	public void Interact(Character character) {
-		if (currentState == CivilianState.HELD_HOSTAGE_UNTIED || currentState == CivilianState.HELD_HOSTAGE_CALLING) {
+		if (character.zipties > 0 && (currentState == CivilianState.HELD_HOSTAGE_UNTIED || 
+				currentState == CivilianState.HELD_HOSTAGE_CALLING)) {
+			character.zipties--;
 			TransitionState(CivilianState.HELD_HOSTAGE_TIED);
 		}
 	}
