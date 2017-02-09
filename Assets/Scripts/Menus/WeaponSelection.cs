@@ -3,6 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+/*
+	The menu for weapon selection and character customization.
+*/
+
 public class WeaponSelection : Menu {
 
 	public MenuNode sidearm;
