@@ -3,6 +3,12 @@ using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using System.Linq;
 
+/*
+	This name is kind of misleading. This class represents all
+	the saving/loading functions for character options, as well
+	as storing prefabs for spawning weapons in.
+*/
+
 public class CharacterCustomizationMenu : MonoBehaviour {
 
 	public static CharacterCustomizationMenu instance;

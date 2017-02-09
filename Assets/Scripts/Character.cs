@@ -457,7 +457,7 @@ public abstract class Character : PossibleObjective, Damageable {
 		float angle = Vector3.Dot(Vector3.Normalize(transform.position - targetPos), transform.forward);
 		float angleDegrees = 90 + Mathf.Asin(angle) * Mathf.Rad2Deg;
 		if (angleDegrees > fov / 2f) {
-			Debug.Log(target.name + " " + angle);
+			// Debug.Log(target.name + " " + angle);
 			return false;
 		}
 
