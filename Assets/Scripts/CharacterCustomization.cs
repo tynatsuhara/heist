@@ -110,6 +110,7 @@ public class CharacterCustomization : MonoBehaviour {
 			GameObject go = Instantiate(a.gameObject) as GameObject;
 			go.transform.parent = transform.root;
 			go.transform.localPosition = a.positionOffset;
+			go.transform.localEulerAngles = Vector3.up * 180;
 			res.Add(go.GetComponentInParent<PicaVoxel.Volume>());
 		}
 		return res;
