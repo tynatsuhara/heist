@@ -99,6 +99,10 @@ public class CharacterCustomization : MonoBehaviour {
 			go.transform.parent = transform.root;
 			go.transform.localPosition = a.positionOffset;
 			go.transform.localEulerAngles = Vector3.up * 180;
+			if (a.headParent)
+				go.transform.parent = GetComponentInParent<Character>().head.transform;
+			else if (a.bodyParent)
+				go.transform.parent = GetComponentInParent<Character>().body.transform;
 			res.Add(go.GetComponentInParent<PicaVoxel.Volume>());
 		}
 		return res;
