@@ -387,7 +387,7 @@ public abstract class Character : PossibleObjective, Damageable {
 				currentGun.player = (PlayerControls) this;
 		}
 		currentGun = null;
-		SelectGun(0);
+		SelectGun(guns.Length > 1 ? 1 : 0);
 	}
 
 	private bool swapping;

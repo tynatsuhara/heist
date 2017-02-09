@@ -59,10 +59,10 @@ public class GameManager : MonoBehaviour {
 			GameOver(false);
 		} else if (getaway.ContainsAllLivingPlayers()) {
 			GameOver(true);
+		} else {
+			CheckPause();
+			CheckSceneReload();
 		}
-
-		CheckPause();
-		CheckSceneReload();
 	}
 
 	public void GameOver(bool success) {
