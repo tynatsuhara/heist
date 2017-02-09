@@ -30,6 +30,14 @@ public class Outfits {
 		}
 	};
 
+	public static Color32 HexParse(string hex) {
+		hex = hex.Replace("0x", "").Replace("#", "");
+		return new Color32((byte) int.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.AllowHexSpecifier),
+							(byte) int.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.AllowHexSpecifier),
+							(byte) int.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.AllowHexSpecifier),
+							(byte) 255);
+	}
+
 	public class Outfit {
 		public string[] pattern;
 		public Color32[] colors;
@@ -49,14 +57,6 @@ public class Outfits {
 				HexParse(pantsColor2),
 				HexParse(shoesColor)
 			};
-		}
-
-		private static Color32 HexParse(string hex) {
-			hex = hex.Replace("0x", "").Replace("#", "");
-			return new Color32((byte) int.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.AllowHexSpecifier),
-							   (byte) int.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.AllowHexSpecifier),
-							   (byte) int.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.AllowHexSpecifier),
-							   (byte) 255);
 		}
 	}
 }

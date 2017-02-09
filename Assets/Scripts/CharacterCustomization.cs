@@ -48,19 +48,7 @@ public class CharacterCustomization : MonoBehaviour {
 			accPrefabs.AddRange(accessories);
 		spawnedAccessories = SpawnAccessories(accPrefabs);
 
-		var palettes = Parse(outfit.pattern, accessories);
-
-		Color32[] colors = {
-			outfit.colors[0],
-			outfit.colors[1],
-			outfit.colors[2],
-			outfit.colors[3],
-			outfit.colors[4],
-			outfit.colors[5],
-			skinColor,
-			hairColor,
-			eyeColor
-		};
+		var palettes = Parse(outfit, accessories);
 
 		List<PicaVoxel.Volume> volumez = new List<PicaVoxel.Volume>(new PicaVoxel.Volume[] { body, head, legs, arms });
 		volumez.AddRange(gunz);
@@ -68,7 +56,7 @@ public class CharacterCustomization : MonoBehaviour {
 
 		for (int i = 0; i < volumez.Count; i++) {
 			PicaVoxel.Volume volume = volumez[i];
-			Dictionary<byte, int> palette = palettes[i];
+			Dictionary<byte, Color32> palette = palettes[i];
 			if (volume == null)
 				continue;
 
@@ -82,7 +70,7 @@ public class CharacterCustomization : MonoBehaviour {
 								continue;
 
 							if (palette != null && palette.ContainsKey(vox.Value)) {
-								Color32 c = colors[palette[vox.Value]];
+								Color32 c = palette[vox.Value];
 								// DISCOLORATION FACTOR (maybe disable this randomness for later optimization)
 								int r = 8;
 								vox.Color = new Color32(JiggleByte(c.r, r), JiggleByte(c.g, r), JiggleByte(c.b, r), (byte)0);
@@ -121,11 +109,23 @@ public class CharacterCustomization : MonoBehaviour {
 		return (byte)Mathf.Clamp(b + Random.Range(0, jiggleFactor + 1), 0, 255);
 	}
 
-	private Dictionary<byte, int>[] Parse(string[] outfit, Accessory[] accessories) {
-		List<string> outfit_ = new List<string>(outfit);
+	private Dictionary<byte, Color32>[] Parse(Outfits.Outfit outfit, Accessory[] accessories) {
+		Color32[] colors = {
+			outfit.colors[0],
+			outfit.colors[1],
+			outfit.colors[2],
+			outfit.colors[3],
+			outfit.colors[4],
+			outfit.colors[5],
+			skinColor,
+			hairColor,
+			eyeColor
+		};
+
+		List<string> outfit_ = new List<string>(outfit.pattern);
 		// arms and guns use the same palette	
 		foreach (PicaVoxel.Volume g in gunz)
-			outfit_.Add(outfit[3]);
+			outfit_.Add(outfit.pattern[3]);
 
 		if (accessories != null) {
 			outfit_.AddRange(accessories.Where(i => i != null).Select(i => i.colorString));
@@ -142,15 +142,17 @@ public class CharacterCustomization : MonoBehaviour {
 			}
 		}
 
-		Dictionary<byte, int>[] res = new Dictionary<byte, int>[outfit_.Count];
+		Dictionary<byte, Color32>[] res = new Dictionary<byte, Color32>[outfit_.Count];
 
 		for (int j = 0; j < outfit_.Count; j++) {
 			var palette = outfit_[j];
-			Dictionary<int, byte[]> dict = new Dictionary<int, byte[]>();
+			Dictionary<Color32, byte[]> dict = new Dictionary<Color32, byte[]>();
 			List<string> strings = palette.Split(';').Where(x => x.Length > 0).ToList();
 			foreach (string s in strings) {
 				string[] ranges = s.Trim().Split(' ');
-				int color = int.Parse(ranges[0]);
+
+				Color32 color = ranges[0].Length > 1 ? Outfits.HexParse(ranges[0]) : colors[int.Parse(ranges[0])];
+
 				if (!dict.ContainsKey(color))
 					dict.Add(color, new byte[0]);
 				for (int i = 1; i < ranges.Length; i++) {
@@ -173,9 +175,9 @@ public class CharacterCustomization : MonoBehaviour {
 
 	// Takes a dict from ints to byte[] and returns a dict
 	// mapping bytes to ints
-	private static Dictionary<byte, int> ByteKeyMap(Dictionary<int, byte[]> dict) {
-		Dictionary<byte, int> res = new Dictionary<byte, int>();
-		foreach (int color in dict.Keys) {
+	private static Dictionary<byte, Color32> ByteKeyMap(Dictionary<Color32, byte[]> dict) {
+		Dictionary<byte, Color32> res = new Dictionary<byte, Color32>();
+		foreach (Color32 color in dict.Keys) {
 			foreach (byte b in dict[color]) {
 				if (!res.ContainsKey(b))
 					res.Add(b, color);
