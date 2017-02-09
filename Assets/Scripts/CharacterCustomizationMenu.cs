@@ -152,6 +152,26 @@ public class CharacterCustomizationMenu : MonoBehaviour {
 		ColorizeFromPrefs(players[id - 1]);
 	}
 
+	public void SetSkinColor(int id, int color) {
+
+		ColorizeFromPrefs(players[id - 1]);
+	}
+
+	public void SetHairColor(int id, int color) {
+
+		ColorizeFromPrefs(players[id - 1]);
+	}
+
+	public void SetHairstyle(int id, int style) {
+
+		ColorizeFromPrefs(players[id - 1]);
+	}
+
+	public void SetAccessory(int id, int acc) {
+
+		ColorizeFromPrefs(players[id - 1]);
+	}
+
 	private static Accessory[] LoadAccessories(int id) {
 		return PlayerPrefs.GetString("p" + id + "_accessories")
 						  .Split('$')

@@ -29,6 +29,14 @@ public class WeaponSelection : Menu {
 		} else if (node.name == "Outfit") {
 			int outfitIndex = (outfitNames.Count + outfitNames.IndexOf(ccm.LoadOutfitName(playerId)) + dir) % outfitNames.Count;
 			ccm.SetOutfit(playerId, outfitNames[outfitIndex]);
+		} else if (node.name == "Hair") {
+
+		} else if (node.name == "Hair Color") {
+
+		} else if (node.name == "Skin Color") {
+
+		} else if (node.name == "Accessory") {
+
 		}
 	}
 
