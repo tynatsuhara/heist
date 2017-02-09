@@ -29,8 +29,11 @@ public class CharacterCustomization : MonoBehaviour {
 	private List<PicaVoxel.Volume> spawnedAccessories;
 	public void ColorCharacter(Outfits.Outfit outfit, bool randomize = false, Accessory[] accessories = null) {
 		if (spawnedAccessories != null) {
-			foreach (PicaVoxel.Volume vol in spawnedAccessories)
+			foreach (PicaVoxel.Volume vol in spawnedAccessories) {
+				if (vol == null)
+					continue;
 				Destroy(vol.gameObject);
+			}
 		}
 		Color32[] hairColors = CharacterCustomizationMenu.instance.hairColors;
 		Color32[] skinColors = CharacterCustomizationMenu.instance.skinColors;
@@ -102,6 +105,8 @@ public class CharacterCustomization : MonoBehaviour {
 	private List<PicaVoxel.Volume> SpawnAccessories(List<Accessory> accs) {
 		List<PicaVoxel.Volume> res = new List<PicaVoxel.Volume>();
 		foreach (Accessory a in accs) {
+			if (a == null)
+				continue;
 			GameObject go = Instantiate(a.gameObject) as GameObject;
 			go.transform.parent = transform.root;
 			go.transform.localPosition = a.positionOffset;
@@ -122,8 +127,10 @@ public class CharacterCustomization : MonoBehaviour {
 			outfit_.Add(outfit[3]);
 
 		if (accessories != null) {
-			outfit_.AddRange(accessories.Select(i => i.colorString));
+			outfit_.AddRange(accessories.Where(i => i != null).Select(i => i.colorString));
 			foreach (Accessory a in accessories) {
+				if (a == null)
+					continue;
 				// apply accessory coloring to the head and body
 				if (a.bodyString != null && a.bodyString.Length > 0) {
 					outfit_[0] += ';' + a.bodyString;

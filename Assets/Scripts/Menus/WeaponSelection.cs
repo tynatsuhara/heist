@@ -30,13 +30,13 @@ public class WeaponSelection : Menu {
 			int outfitIndex = (outfitNames.Count + outfitNames.IndexOf(ccm.LoadOutfitName(playerId)) + dir) % outfitNames.Count;
 			ccm.SetOutfit(playerId, outfitNames[outfitIndex]);
 		} else if (node.name == "Hair") {
-
+			ccm.SetHairstyle(playerId, ccm.LoadHairstyle(playerId) + dir);
 		} else if (node.name == "Hair Color") {
-
+			ccm.SetHairColor(playerId, ccm.LoadHairColor(playerId) + dir);
 		} else if (node.name == "Skin Color") {
-
+			ccm.SetSkinColor(playerId, ccm.LoadSkinColor(playerId) + dir);
 		} else if (node.name == "Accessory") {
-
+			ccm.SetAccessory(playerId, ccm.LoadAccessory(playerId) + dir);
 		}
 	}
 

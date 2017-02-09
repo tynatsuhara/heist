@@ -24,6 +24,7 @@ public class CharacterCustomizationMenu : MonoBehaviour {
 	public GameObject[] sidearms;
 	public Color32[] skinColors;
 	public Color32[] hairColors;
+	public Accessory[] hairstyles;
 
 	void Awake() {
 		instance = this;
@@ -137,10 +138,11 @@ public class CharacterCustomizationMenu : MonoBehaviour {
 
 	public void ColorizeFromPrefs(PlayerControls p) {
 		CharacterCustomization cc = p.GetComponent<CharacterCustomization>();
-		cc.skinColor = LoadColor(p.id, "skinColor", cc.skinColor);
-		cc.hairColor = LoadColor(p.id, "hairColor", cc.hairColor);
+		cc.skinColor = skinColors[LoadSkinColor(p.id)];
+		cc.hairColor = hairColors[LoadHairColor(p.id)];
 		cc.eyeColor = LoadColor(p.id, "eyeColor", cc.eyeColor);
-		cc.ColorCharacter(Outfits.fits[LoadOutfitName(p.id)], accessories:LoadAccessories(p.id));
+		Accessory[] accs = new Accessory[] { hairstyles[LoadHairstyle(p.id)], accessories[LoadAccessory(p.id)] };
+		cc.ColorCharacter(Outfits.fits[LoadOutfitName(p.id)], accessories: accs);
 	}
 	
 	public string LoadOutfitName(int id) {
@@ -153,31 +155,40 @@ public class CharacterCustomizationMenu : MonoBehaviour {
 	}
 
 	public void SetSkinColor(int id, int color) {
-
+		PlayerPrefs.SetInt("p" + id + "_skincolor", (skinColors.Length + color) % skinColors.Length);
 		ColorizeFromPrefs(players[id - 1]);
+	}
+
+	public int LoadSkinColor(int id) {
+		// Debug.Log("loaded" + PlayerPrefs.GetInt("p" + id + "_skincolor"));
+		return PlayerPrefs.GetInt("p" + id + "_skincolor");
 	}
 
 	public void SetHairColor(int id, int color) {
-
+		PlayerPrefs.SetInt("p" + id + "_haircolor", (hairColors.Length + color) % hairColors.Length);
 		ColorizeFromPrefs(players[id - 1]);
+	}
+
+	public int LoadHairColor(int id) {
+		return PlayerPrefs.GetInt("p" + id + "_haircolor");
 	}
 
 	public void SetHairstyle(int id, int style) {
-
+		PlayerPrefs.SetInt("p" + id + "_style", (hairstyles.Length + style) % hairstyles.Length);
 		ColorizeFromPrefs(players[id - 1]);
+	}
+
+	public int LoadHairstyle(int id) {
+		return PlayerPrefs.GetInt("p" + id + "_style");
 	}
 
 	public void SetAccessory(int id, int acc) {
-
+		PlayerPrefs.SetInt("p" + id + "_accessory", (accessories.Length + acc) % accessories.Length);
 		ColorizeFromPrefs(players[id - 1]);
 	}
 
-	private static Accessory[] LoadAccessories(int id) {
-		return PlayerPrefs.GetString("p" + id + "_accessories")
-						  .Split('$')
-						  .Where(x => x.Length > 0)
-						  .Select(x => instance.accessories[int.Parse(x)])
-						  .ToArray();
+	public int LoadAccessory(int id) {
+		return PlayerPrefs.GetInt("p" + id + "_accessory", 0);
 	}
 
 	private static Color32 LoadColor(int id, string name, Color32 defaultColor) {

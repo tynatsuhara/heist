@@ -46,7 +46,6 @@ public class SecurityCamera : MonoBehaviour, Damageable {
 		if (changeDirectionInvoked) {
 			return;
 		}
-		float y = cameraTop.transform.rotation.eulerAngles.y % 360;
 		if (rotatedDist > rotationRange) {
 			SwapDir();
 		} else {
