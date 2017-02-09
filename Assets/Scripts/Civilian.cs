@@ -18,7 +18,7 @@ public class Civilian : Character, Interactable {
 	public override void Start() {
 		base.Start();
 		// InvokeRepeating("CheckForEvidence", 0f, .5f);
-		GetComponent<CharacterCustomization>().ColorCharacter(Outfits.fits["cop1"], true);
+		GetComponent<CharacterCustomization>().ColorCharacter(Outfits.fits["cop1"], true, accessories);
 		currentState = CivilianState.PASSIVE;
 		braveCitizen = Random.Range(0, 100) < 10;
 	}
