@@ -52,6 +52,7 @@ public class MeleeWeapon : Gun {
 		PaintBlood();
 	}
 
+	private List<byte> bytesToRecolor = new List<byte>();
 	private void PaintBlood() {
 		if (bloodyVoxelMax <= bloodyVoxelMin)
 			return;
@@ -61,6 +62,8 @@ public class MeleeWeapon : Gun {
 			if (Random.Range(0, 3) == 0 || !originalColors.ContainsKey(i) || !locations.ContainsKey(i))
 				continue;
 			PicaVoxel.Volume v = GetComponent<PicaVoxel.Volume>();
+			bytesToRecolor.Add(i);
+			Invoke("RemoveBlood", Random.Range(10, 45));
 			for (int frame = 0; frame < v.NumFrames; frame++) {
 				Vector3 pos = locations[i][frame];
 				PicaVoxel.Voxel? voxel = v.Frames[frame].GetVoxelAtArrayPosition((int) pos.x, (int) pos.y, (int) pos.z);
@@ -69,6 +72,22 @@ public class MeleeWeapon : Gun {
 				v.Frames[frame].SetVoxelAtArrayPosition((int)pos.x, (int)pos.y, (int)pos.z, vv);
 				v.UpdateChunks(true);				
 			}
+		}
+	}
+
+	private void RemoveBlood() {
+		byte b = bytesToRecolor[0];
+		bytesToRecolor.RemoveAt(0);
+		if (bytesToRecolor.Contains(b))
+			return;
+		PicaVoxel.Volume v = GetComponent<PicaVoxel.Volume>();			
+		for (int frame = 0; frame < v.NumFrames; frame++) {
+			Vector3 pos = locations[b][frame];
+			PicaVoxel.Voxel? voxel = v.Frames[frame].GetVoxelAtArrayPosition((int) pos.x, (int) pos.y, (int) pos.z);
+			PicaVoxel.Voxel vv = voxel.Value;
+			vv.Color = originalColors[b];
+			v.Frames[frame].SetVoxelAtArrayPosition((int)pos.x, (int)pos.y, (int)pos.z, vv);
+			v.UpdateChunks(true);				
 		}
 	}
 
