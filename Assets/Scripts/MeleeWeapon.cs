@@ -56,7 +56,8 @@ public class MeleeWeapon : Gun {
 	private void PaintBlood() {
 		if (bloodyVoxelMax <= bloodyVoxelMin)
 			return;
-		int bloodTimes = Random.Range(2, 7);
+		int bloodTimes = Random.Range(3, bloodyVoxelMax - bloodyVoxelMin);
+		Debug.Log(bloodTimes);
 		byte index = (byte) Random.Range(bloodyVoxelMin, bloodyVoxelMax - bloodTimes);		
 		for (byte i = index; i < index + bloodTimes; i++) {
 			if (Random.Range(0, 3) == 0 || !originalColors.ContainsKey(i) || !locations.ContainsKey(i))
