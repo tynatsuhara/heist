@@ -29,7 +29,7 @@ public class OutfitModel : MonoBehaviour {
 			for (int y = 0; y < v.YSize; y++) {
 				for (int z = 0; z < v.ZSize; z++) {
 					PicaVoxel.Voxel? vox = v.Frames[1].GetVoxelAtArrayPosition(x, y, z);
-					if (!vox.HasValue || !vox.Value.Active)
+					if (!vox.HasValue || !vox.Value.Active || vox.Value.Value == 255)  // invisible, or blood
 						continue;
 					Color32 c = v.Frames[0].GetVoxelAtArrayPosition(x, y, z).Value.Color;
 					if (!map.ContainsKey(c))
