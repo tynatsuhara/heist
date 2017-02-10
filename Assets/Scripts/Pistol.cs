@@ -19,7 +19,7 @@ public class Pistol : Gun {
 
 	protected Vector3 shellDropLocation;
 
-	public void Start() {
+	public override void Start() {
 		base.Start();
 		shellDropLocation = transform.root.position + transform.root.forward * .45f;
 	}

@@ -24,7 +24,7 @@ public abstract class Gun : MonoBehaviour {
 	public bool isPlayer;
 	public PlayerControls player;
 
-	public void Start() {
+	public virtual void Start() {
 		owner = transform.root.GetComponent<Character>();
 		volume = GetComponent<PicaVoxel.Volume>();
 		anim = GetComponent<GunAnimation>();
@@ -93,6 +93,8 @@ public abstract class Gun : MonoBehaviour {
 			if (rhits.Length > 0) {
 				Damageable d = rhits[0].collider.GetComponentInParent<Damageable>();
 				d.Damage(rhits[0].collider.transform.root.position, owner.transform.forward, 1f, isPlayer, type);
+				if (rhits[0].collider.GetComponentInParent<Character>() != null)
+					MeleeHitPlayerCallback();
 				hits.Add(d);
 			}
 			if (hits.Count == maxEnemiesMelee)
@@ -129,6 +131,7 @@ public abstract class Gun : MonoBehaviour {
 			Reload();
 		}
 	}
+	protected virtual void MeleeHitPlayerCallback() {}
 
 	public void SetLoweredPosition(bool lowered) {
 		transform.localPosition = inPlayerPos + (Vector3.down + Vector3.back) * (lowered ? .1f : 0f);
