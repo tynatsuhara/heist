@@ -114,6 +114,8 @@ public class CharacterCustomization : MonoBehaviour {
 	}
 
 	private Dictionary<byte, Color32>[] Parse(Outfits.Outfit outfit, Accessory[] accessories) {
+
+		// Old obsolete trash. Mostly, you can just ignore this. Clean up when you're feeling less lazy ;)
 		Color32[] colors = {
 			outfit.colors[0],
 			outfit.colors[1],
