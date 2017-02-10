@@ -142,7 +142,8 @@ public class CharacterCustomizationMenu : MonoBehaviour {
 		cc.hairColor = hairColors[LoadHairColor(p.id)];
 		cc.eyeColor = LoadColor(p.id, "eyeColor", cc.eyeColor);
 		Accessory[] accs = new Accessory[] { hairstyles[LoadHairstyle(p.id)], accessories[LoadAccessory(p.id)] };
-		cc.ColorCharacter(Outfits.fits[LoadOutfitName(p.id)], accessories: accs);
+		string outfit = LoadOutfitName(p.id);
+		cc.ColorCharacter(Outfits.fits.ContainsKey(outfit) ? Outfits.fits[outfit] : Outfits.fits["default"], accessories: accs);
 	}
 	
 	public string LoadOutfitName(int id) {
