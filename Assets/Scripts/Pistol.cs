@@ -55,8 +55,12 @@ public class Pistol : Gun {
 	}
 
 	public override void Reload() {
-		if (shooting || reloading || meleeing || bulletsFired == 0)  // already reloading or no need to
+		if (reloading || bulletsFired == 0)  // already reloading or no need to
 			return;
+		if (meleeing || shooting) {  // reload ASAP
+			enqueuedReload = true;
+			return;
+		}
 		CancelReload();
 		SetLoweredPosition(true);
 		reloading = true;			
@@ -84,6 +88,9 @@ public class Pistol : Gun {
 			reloading = false;
 			bulletsFired = 0;			
 			SetLoweredPosition(false);
+		} else if (enqueuedReload) {
+			enqueuedReload = false;
+			Reload();
 		}
 	}
 

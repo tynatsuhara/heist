@@ -14,6 +14,8 @@ public abstract class Gun : MonoBehaviour {
 	public Vector3 inPlayerPos;
 	public Collider droppedCollider;
 
+	protected bool enqueuedReload = false;
+
 	// Gun frames
 	public const int GUN_BASE_FRAME = 0;
 	public const int DROPPED_GUN_FRAME = 1;	 
@@ -123,6 +125,9 @@ public abstract class Gun : MonoBehaviour {
 		transform.localPosition = initialPosition;
 
 		meleeing = false;
+		if (enqueuedReload) {
+			Reload();
+		}
 	}
 
 	public void SetLoweredPosition(bool lowered) {
