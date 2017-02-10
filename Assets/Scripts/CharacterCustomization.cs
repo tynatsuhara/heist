@@ -48,7 +48,7 @@ public class CharacterCustomization : MonoBehaviour {
 			accPrefabs.AddRange(accessories);
 		spawnedAccessories = SpawnAccessories(accPrefabs);
 
-		var palettes = Parse(outfit, accessories);
+		var palettes = Parse(outfit, accPrefabs.ToArray());
 
 		List<PicaVoxel.Volume> volumez = new List<PicaVoxel.Volume>(new PicaVoxel.Volume[] { body, head, legs, arms });
 		volumez.AddRange(gunz);

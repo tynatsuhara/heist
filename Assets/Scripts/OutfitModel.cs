@@ -28,10 +28,10 @@ public class OutfitModel : MonoBehaviour {
 		for (int x = 0; x < v.XSize; x++) {
 			for (int y = 0; y < v.YSize; y++) {
 				for (int z = 0; z < v.ZSize; z++) {
-					PicaVoxel.Voxel? vox = v.GetVoxelAtArrayPosition(x, y, z);
+					PicaVoxel.Voxel? vox = v.Frames[1].GetVoxelAtArrayPosition(x, y, z);
 					if (!vox.HasValue || !vox.Value.Active)
 						continue;
-					Color32 c = vox.Value.Color;
+					Color32 c = v.Frames[0].GetVoxelAtArrayPosition(x, y, z).Value.Color;
 					if (!map.ContainsKey(c))
 						map[c] = new List<byte>();
 					map[c].Add(vox.Value.Value);
@@ -40,7 +40,13 @@ public class OutfitModel : MonoBehaviour {
 		}
 		string res = "";
 		foreach (Color32 c in map.Keys) {
-			res += GetHex(c) + " ";
+			if (c.Equals(skinPlaceholder)) {
+				res += "6 ";
+			} else if (c.Equals(hairPlaceholder)) {
+				res += "7 ";
+			} else {
+				res += GetHex(c) + " ";
+			}
 			foreach (byte b in map[c]) {
 				res += b + " ";
 			}
