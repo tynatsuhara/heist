@@ -13,14 +13,15 @@ public class Civilian : Character, Interactable {
 		HELD_HOSTAGE_CALLING
 	}
 	public CivilianState currentState;
-	public bool braveCitizen;  // can enter attacking state	
+	public bool braveCitizen;  // can enter attacking states
+	public bool teller;
 
 	public override void Start() {
 		base.Start();
 		// InvokeRepeating("CheckForEvidence", 0f, .5f);
 		GetComponent<CharacterCustomization>().ColorCharacter(Outfits.fits["cop1"], true, accessories);
 		currentState = CivilianState.PASSIVE;
-		braveCitizen = Random.Range(0, 100) < 10;
+		braveCitizen = !teller && Random.Range(0, 100) < 10;
 	}
 	
 	void Update () {
@@ -111,7 +112,9 @@ public class Civilian : Character, Interactable {
 
 		if (braveCitizen && !checkDrawWeaponInvoked && playerScript.IsEquipped() && playerScript.isAlive) {
 			// switch to attacking
-			bool canSeePlayer = currentState == CivilianState.PASSIVE ? CanSee(playerScript.gameObject) : ClearShot(playerScript.gameObject);
+			bool canSeePlayer = currentState == CivilianState.PASSIVE 
+					? CanSee(playerScript.gameObject) 
+					: ClearShot(playerScript.gameObject);
 			if (canSeePlayer && !playerScript.CanSee(gameObject)) {
 				Invoke("CheckDrawWeapon", Random.Range(.3f, 3f));
 				checkDrawWeaponInvoked = true;				

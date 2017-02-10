@@ -154,11 +154,9 @@ public abstract class Character : PossibleObjective, Damageable {
 
 		// regular knockback
 		if (!isPlayer || !isAlive) {
-			float forceVal = Random.Range(400, 500);
+			float forceVal = Random.Range(400, 800);
 			if ((wasAlive && !isAlive) || type == DamageType.MELEE || type == DamageType.SLICE) {
 				forceVal *= 1.5f;
-			} else if (!isAlive) {
-				forceVal *= .7f;
 			}
 			foreach (Rigidbody body in separateBodyParts) {
 				body.AddForceAtPosition(forceVal * angle.normalized, type == DamageType.MELEE 

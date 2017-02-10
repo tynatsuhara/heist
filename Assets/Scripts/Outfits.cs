@@ -11,7 +11,7 @@ public class Outfits {
 			//     "<color number> <number or inclusive range>(s); <etc>"
 			"default", 
 			new Outfit(new string[] {
-				"3 0-13 70-73; 0 14-69; 1 58-59 44-45 30-31 16-17",
+				"3 0-13 70-73; 0 14-69; 1 44-45 30-31 16-17; 6 58-59",
 				"8 37 40",
 				"3 1; 5 0",
 				"0 1-3"

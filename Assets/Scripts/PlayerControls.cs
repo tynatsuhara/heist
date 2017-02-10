@@ -70,9 +70,9 @@ public class PlayerControls : Character {
 			SelectGun(1);
 		}
 
-		// SUICIDE
 		if (Input.GetKeyDown(KeyCode.K)) {
-			Damage(transform.position, Random.insideUnitSphere, 1000f, type: DamageType.SLICE);
+			Vector3 damageDir = Random.insideUnitSphere;
+			Damage(transform.position - damageDir * .5f, damageDir, 1000f, type: DamageType.EXPLOSIVE);
 		}
 
 		playerUI.JoystickCursorMove(Input.GetAxis("RSX" + id), Input.GetAxis("RSY" + id));		

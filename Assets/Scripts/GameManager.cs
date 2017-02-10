@@ -80,7 +80,7 @@ public class GameManager : MonoBehaviour {
 			getaway.destination = GameObject.Find("EscapePoint").transform;
 			GameUI.instance.ShowWinScreen(lootAmounts);
 		} else {
-
+			SetTimeScale(.2f);
 		}
 	}
 
@@ -99,6 +99,12 @@ public class GameManager : MonoBehaviour {
 			currentTimeScale = Time.timeScale;
 		GameManager.paused = paused;
 		Time.timeScale = paused ? 0 : currentTimeScale;
+	}
+
+	public void SetTimeScale(float timeScale) {
+		currentTimeScale = timeScale;
+		if (!paused)
+			Time.timeScale = timeScale;
 	}
 
 	private void CheckSceneReload() {
