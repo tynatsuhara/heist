@@ -158,7 +158,7 @@ public abstract class Character : PossibleObjective, Damageable {
 			if ((wasAlive && !isAlive) || type == DamageType.MELEE || type == DamageType.SLICE) {
 				forceVal *= 1.5f;
 			} else if (!isAlive) {
-				forceVal *= .5f;
+				forceVal *= .7f;
 			}
 			foreach (Rigidbody body in separateBodyParts) {
 				body.AddForceAtPosition(forceVal * angle.normalized, type == DamageType.MELEE 
