@@ -147,9 +147,9 @@ public abstract class Character : PossibleObjective, Damageable {
 		health = Mathf.Max(0, health - damage);
 		exploder.transform.position = location + angle * Random.Range(-.1f, .15f) + new Vector3(0, Random.Range(-.7f, .3f), 0);
 		if (!isAlive && wasAlive) {
-			Die(angle, type);
+			Die(location, angle, type);
 		} else if (!isAlive && explosive) {
-			exploder.Explode(angle * 3);			
+			exploder.Explode(angle * 3);
 		}
 
 		// regular knockback
@@ -171,10 +171,10 @@ public abstract class Character : PossibleObjective, Damageable {
 	}
 
 	public void Die() {		
-		Die(Vector3.one);
+		Die(transform.position, Vector3.one);
 	}
 
-	public virtual void Die(Vector3 angle, DamageType type = DamageType.MELEE) {
+	public virtual void Die(Vector3 location, Vector3 angle, DamageType type = DamageType.MELEE) {
 		InteractCancel();
 		NavMeshAgent agent = GetComponent<NavMeshAgent>();
 		if (agent != null)
@@ -194,6 +194,7 @@ public abstract class Character : PossibleObjective, Damageable {
 				Decapitate();
 		} else if (type != DamageType.MELEE) {
 			exploder.Explode(angle * 3);
+			// BloodSplatter(location);
 		}
 
 		if (isObjective && !isCompleted)
@@ -214,23 +215,13 @@ public abstract class Character : PossibleObjective, Damageable {
 		b.mass = rb.mass;
 		separateBodyParts.Add(b);
 	}
-	// private void SliceHead() {
-	// 	GameObject top = Instantiate(head.gameObject, head.transform.position, head.transform.rotation) as GameObject;
-	// 	HideVoxelsVertical(top.GetComponent<PicaVoxel.Volume>(), 2, 4);
-	// }
-	// private void HideVoxelsVertical(PicaVoxel.Volume vol, int lo, int hi) {
-	// 	for (int y = lo; y < hi; y++) {
-	// 		for (int x = 0; x < vol.XSize; x++) {
-	// 			for (int z = 0; z < vol.ZSize; z++) {
-	// 				vol.SetVoxelStateAtArrayPosition(x, y, z, PicaVoxel.VoxelState.Inactive);
-	// 			}
-	// 		}
-	// 	}
-	// }
 
 	public void RemoveBody() {
 		Destroy(gameObject);
 	}
+
+
+	// GORE GORE GORE
 
 	private void BleedEverywhere() {
 		int bloodSpurtAmount = Random.Range(3, 15);
@@ -280,6 +271,46 @@ public abstract class Character : PossibleObjective, Damageable {
 			}
 		}
 	}
+
+	// TODO: Revisit this?
+	public void BloodSplatter(Vector3 pos, float radius = 2f, int rayAmount = 30) {
+		for (int k = 0; k < rayAmount; k++) {
+			float inc = Mathf.PI * (3 - Mathf.Sqrt(5));
+			var off = 2f / rayAmount;
+			var y = k * off - 1 + (off / 2);
+			var r = Mathf.Sqrt(1 - y * y);
+			var phi = k * inc;
+			var x = (float)(Mathf.Cos(phi) * r);
+			var z = (float)(Mathf.Sin(phi) * r);
+			Debug.DrawRay(pos, new Vector3(x, y, z) * radius, Color.red, 5f);
+			
+			RaycastHit[] hits = Physics.RaycastAll(pos, new Vector3(x, y, z), radius)
+				.Where(h => h.transform.root != transform.root && 
+						h.transform.GetComponentInParent<PicaVoxel.Volume>() != null &&
+						h.transform.GetComponentInParent<Damageable>() != null &&
+						h.transform.GetComponentInParent<Wall>() == null)
+				.OrderBy(h => h.distance)
+				.ToArray();
+			if (hits.Length > 0) {
+				int splatSize = Random.Range(2, 70);
+				for (int i = 0; i < splatSize; i++) {
+					Vector3 splatRange = Random.insideUnitSphere * .3f;
+					Vector3 point = hits[0].point + new Vector3(x, y, z).normalized * .1f + splatRange;
+					PicaVoxel.Volume vol = hits[0].transform.GetComponentInParent<PicaVoxel.Volume>();
+					PicaVoxel.Voxel? voxq = vol.GetVoxelAtWorldPosition(point);
+					if (voxq == null || !voxq.Value.Active) {
+						// Debug.Log("Couldn't paint!");
+					} else {
+						PicaVoxel.Voxel vox = (PicaVoxel.Voxel)voxq;
+						vox.Color = WorldBlood.instance.BloodColor();
+						vol.SetVoxelAtWorldPosition(point, vox);
+					}
+				}
+			}
+		}
+	}
+
+
 
 	public void DrawWeapon() {
 		SetWeaponDrawn(true);
