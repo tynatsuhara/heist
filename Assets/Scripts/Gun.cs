@@ -95,6 +95,8 @@ public abstract class Gun : MonoBehaviour {
 				d.Damage(rhits[0].collider.transform.root.position, owner.transform.forward, 1f, isPlayer, type);
 				if (rhits[0].collider.GetComponentInParent<Character>() != null)
 					MeleeHitPlayerCallback();
+				GameManager.instance.AlertInRange(Character.Reaction.AGGRO, 
+						transform.position, 5f, visual: transform.root.gameObject);
 				hits.Add(d);
 			}
 			if (hits.Count == maxEnemiesMelee)
