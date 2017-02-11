@@ -66,5 +66,11 @@ public class GameUI : MonoBehaviour {
 		textL.GetComponent<RectTransform>().position 
 				= textR.GetComponent<RectTransform>().position 
 				= new Vector3(Screen.width, Screen.height, 0) * .5f + new Vector3(0, 14 + 20 * loot.Keys.Count, 0);
+
+		PlayerPrefs.SetFloat("totalEarned", PlayerPrefs.GetFloat("totalEarned", 0) + bigSum);				
+	}
+
+	public void ShowLoseScreen() {
+
 	}
 }

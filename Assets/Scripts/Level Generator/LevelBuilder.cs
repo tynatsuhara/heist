@@ -62,6 +62,11 @@ public class LevelBuilder : MonoBehaviour {
 		return floorTiles[x, z];
 	}
 
+	public Floor FloorAt(Vector3 pos) {
+		PicaVoxel.Volume f = FloorTileAt(pos);
+		return f == null ? null : f.GetComponent<Floor>();
+	}
+
 	private List<Room> spawnRoomsFromArrayCounts() {
 		List<Room> rooms = new List<Room>();
 		for (int i = 0; i < roomSpawnAmount.Length; i++) {

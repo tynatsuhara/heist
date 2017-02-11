@@ -154,7 +154,7 @@ public abstract class Character : PossibleObjective, Damageable {
 
 		// regular knockback
 		if (!isPlayer || !isAlive) {
-			float forceVal = Random.Range(400, 800);
+			float forceVal = Random.Range(500, 900);
 			if ((wasAlive && !isAlive) || type == DamageType.MELEE || type == DamageType.SLICE) {
 				forceVal *= 1.5f;
 			}
@@ -446,7 +446,9 @@ public abstract class Character : PossibleObjective, Damageable {
 
 	// Basically, they're not a civilian. Has a weapon/mask/whatever. Cops should attack!
 	public bool IsEquipped() {
-		return weaponDrawn || hasBag || isHacking;
+		Floor f = LevelBuilder.instance.FloorAt(transform.position);
+		bool inRestrictedArea = f != null && f.restricted;
+		return weaponDrawn || hasBag || isHacking || inRestrictedArea;
 	}
 
 	public bool seesEvidence;
