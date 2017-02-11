@@ -149,7 +149,7 @@ public class Civilian : Character, Interactable {
 	private void StateFleeing() {
 		if (timeInCurrentState == 0) {
 			ResetRB();
-			Vector3 destPos = Random.insideUnitCircle * 100f;
+			Vector3 destPos = Random.insideUnitCircle * 400f;
 			destPos.z = destPos.y;
 			destPos.y = transform.position.y;
 			GetComponent<NavMeshAgent>().destination = destPos;
