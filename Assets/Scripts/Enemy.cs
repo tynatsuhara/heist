@@ -5,7 +5,7 @@ using System.Linq;
 
 public class Enemy : Character {
 
-	private static Dictionary<PlayerControls, Vector3> lastKnownLocations = new Dictionary<PlayerControls, Vector3>();
+	private static Dictionary<PlayerControls, Vector3?> lastKnownLocations = new Dictionary<PlayerControls, Vector3?>();
 
 	private NavMeshAgent agent;
 
@@ -29,7 +29,6 @@ public class Enemy : Character {
 			currentState = EnemyState.SEARCHING;
 		} else {
 			currentState = EnemyState.PASSIVE;			
-			CheckForCameraComputer();
 		}
 
 		// InvokeRepeating("CheckForEvidence", 0f, .5f);
@@ -72,7 +71,12 @@ public class Enemy : Character {
 	//=================== STATE FUNCTIONS ===================//
 
 	// EnemyState.PASSIVE
-	private void StatePassive() {}
+	private void StatePassive() {
+		/*
+		patrol
+		
+		*/
+	}
 
 	// EnemyState.CURIOUS
 	private void StateCurious() {}
@@ -191,13 +195,6 @@ public class Enemy : Character {
 			float reactionTime = (Random.Range(.2f, 1f));
 			Invoke("GlimpsedPlayer", reactionTime);
 			invoked = true;
-		}
-	}
-
-	private void CheckForCameraComputer() {
-		RaycastHit hit;
-		if (Physics.Raycast(transform.position, transform.forward, out hit, 2f)) {
-			cameraScreen = hit.collider.GetComponentInParent<Computer>();
 		}
 	}
 

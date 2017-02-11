@@ -455,8 +455,8 @@ public abstract class Character : PossibleObjective, Damageable {
 		seesEvidence = CanSeeEvidence();
 	}
 
-	public Computer cameraScreen;
 	private bool CanSeeEvidence() {
+		Computer cameraScreen = CheckForCameraComputer();
 		bool canSeeOnCameras = cameraScreen != null && cameraScreen.PlayerInSight();
 		List<PlayerControls> seenPlayers = GameManager.players.Where(x => CanSee(x.gameObject) && x.IsEquipped()).ToList();
 		if (seenPlayers.Count > 0 || canSeeOnCameras)
@@ -477,6 +477,13 @@ public abstract class Character : PossibleObjective, Damageable {
 		}
 
 		return false;
+	}
+	private Computer CheckForCameraComputer() {
+		RaycastHit hit;
+		if (Physics.Raycast(transform.position, transform.forward, out hit, 2f)) {
+			return hit.collider.GetComponentInParent<Computer>();
+		}
+		return null;
 	}
 
 	public bool CanSee(GameObject target, float fov = 130f, float viewDist = 20f) {
