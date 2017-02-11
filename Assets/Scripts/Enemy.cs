@@ -26,8 +26,9 @@ public class Enemy : Character {
 		GetComponent<CharacterCustomization>().ColorCharacter(Outfits.fits["cop1"], true);
 
 		if (GameManager.instance.alarmsRaised) {
-			Alert(Reaction.AGGRO);
+			currentState = EnemyState.SEARCHING;
 		} else {
+			currentState = EnemyState.PASSIVE;			
 			CheckForCameraComputer();
 		}
 

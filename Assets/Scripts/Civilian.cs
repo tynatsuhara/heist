@@ -27,8 +27,6 @@ public class Civilian : Character, Interactable {
 	void Update () {
 		if (!isAlive || GameManager.paused)
 			return;
-		
-		timeInCurrentState += Time.deltaTime;
 
 		switch (currentState) {
 			case CivilianState.PASSIVE:
@@ -53,6 +51,8 @@ public class Civilian : Character, Interactable {
 				StateHeldHostageCalling();
 				break;
 		}
+
+		timeInCurrentState += Time.deltaTime;		
 	}
 
 	void FixedUpdate () {
@@ -147,7 +147,13 @@ public class Civilian : Character, Interactable {
 
 	// CivilianState.FLEEING
 	private void StateFleeing() {
-		ResetRB();
+		if (timeInCurrentState == 0) {
+			ResetRB();
+			Vector3 destPos = Random.insideUnitCircle * 100f;
+			destPos.z = destPos.y;
+			destPos.y = transform.position.y;
+			GetComponent<NavMeshAgent>().destination = destPos;
+		}
 	}
 
 	// CivilianState.ATTACKING
@@ -201,8 +207,12 @@ public class Civilian : Character, Interactable {
 			return;
 		}
 
-		arms.SetFrame(1);  // hands up
-		TransitionState(CivilianState.HELD_HOSTAGE_UNTIED, Random.Range(.3f, 1f));
+		if (Random.Range(0, 2) == 0) {
+			TransitionState(CivilianState.FLEEING, Random.Range(.3f, 1f));
+		} else {
+			arms.SetFrame(1);  // hands up
+			TransitionState(CivilianState.HELD_HOSTAGE_UNTIED, Random.Range(.3f, 1f));
+		}
 	}
 
 	public void Interact(Character character) {

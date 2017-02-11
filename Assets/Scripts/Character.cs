@@ -6,7 +6,6 @@ public abstract class Character : PossibleObjective, Damageable {
 
 	// Ranked in order of ascending priority
 	public enum Reaction : int {
-		MILDLY_SUSPICIOUS,
 		SUSPICIOUS,
 		AGGRO
 	};
