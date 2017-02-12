@@ -51,7 +51,9 @@ public class TextObject : MonoBehaviour {
 		} else {
 			for (int i = 0; i < GameManager.players.Count; i++) {
 				text[i].text = s;
-				text[i].transform.rotation = GameManager.players[i].playerCamera.cam.transform.rotation;
+				text[i].transform.rotation = GameManager.players[i].firstPersonCam.enabled 
+						? GameManager.players[i].firstPersonCam.transform.rotation
+						: GameManager.players[i].playerCamera.cam.transform.rotation;
 			}
 		}
 	}

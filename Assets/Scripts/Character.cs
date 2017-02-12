@@ -640,6 +640,7 @@ public abstract class Character : PossibleObjective, Damageable {
 	// Returns the gameObject the player is facing, or null if there isn't one
 	public GameObject FacingObstruction(out RaycastHit hit, float distance = 1f) {
 		if (Physics.Raycast(transform.position, transform.forward, out hit, distance)) {
+			Debug.Log(hit.collider.transform.parent.name);
 			return hit.collider.gameObject;
 		}
 		return null;

@@ -30,17 +30,30 @@ public class PlayerUI : MonoBehaviour {
 			mousePos += Input.mousePosition - lastMousePos;
 			lastMousePos = Input.mousePosition;
 		}
-		cursor.transform.position = player.playerCamera.cam.ScreenToWorldPoint(mousePos);
+		if (player.firstPersonCam.enabled) {
+			Vector3 pos = new Vector3(player.firstPersonCam.pixelWidth / 2f, player.firstPersonCam.pixelHeight / 2f, 0);
+			pos = player.firstPersonCam.ScreenToWorldPoint(pos);
+			pos.z = 0;
+			cursor.transform.localPosition = pos;
+			Cursor.lockState = CursorLockMode.Locked;
+		} else {
+			cursor.transform.position = player.playerCamera.cam.ScreenToWorldPoint(mousePos);
+			Cursor.lockState = CursorLockMode.None;			
+		}
 		Cursor.visible = false;
 	}
 
 	public void JoystickCursorMove(float dx, float dy) {
-		if (dx == 0 && dy == 0)
-			return;
-		// TODO: make this distance configurable in settings
-		float mouseDist = 180f;
-		Vector3 playerPos = player.playerCamera.cam.WorldToScreenPoint(player.transform.position);
-		mousePos = Vector3.Lerp(mousePos, playerPos + new Vector3(dx, dy, 0).normalized * mouseDist, .1f);
+		if (player.firstPersonCam.enabled) {
+			
+		} else {
+			if (dx == 0 && dy == 0)
+				return;
+			// TODO: make this distance configurable in settings
+			float mouseDist = 180f;
+			Vector3 playerPos = player.playerCamera.cam.WorldToScreenPoint(player.transform.position);
+			mousePos = Vector3.Lerp(mousePos, playerPos + new Vector3(dx, dy, 0).normalized * mouseDist, .1f);
+		}
 	}
 
 	public void UpdateInventory(Dictionary<string, int> dict) {

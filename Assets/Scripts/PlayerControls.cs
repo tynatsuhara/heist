@@ -6,13 +6,20 @@ public class PlayerControls : Character {
 
 	public int id;
 	public PlayerCamera playerCamera;
+	public Camera firstPersonCam;
 	public PlayerUI playerUI;
 
 	public override void Start() {
 		CharacterCustomizationMenu.instance.LoadWeaponsFromPrefs(this);
 		base.Start();
-		CharacterCustomizationMenu.instance.ColorizeFromPrefs(this);	
+		CharacterCustomizationMenu.instance.ColorizeFromPrefs(this);
 		name = "Player " + id;
+
+		// hide accessories from first person camera
+		foreach (Accessory a in GetComponentsInChildren<Accessory>())
+			foreach (Transform t in a.GetComponentsInChildren<Transform>())
+				t.gameObject.layer = LayerMask.NameToLayer("accessory" + id);
+			
 		explosive = GetComponent<Explosive>();	
 	}
 
@@ -71,8 +78,10 @@ public class PlayerControls : Character {
 		}
 
 		if (Input.GetKeyDown(KeyCode.K)) {
-			Vector3 damageDir = Random.insideUnitSphere;
-			Damage(transform.position - damageDir * .5f, damageDir, 1000f, type: DamageType.EXPLOSIVE);
+			// Vector3 damageDir = Random.insideUnitSphere;
+			// Damage(transform.position - damageDir * .5f, damageDir, 1000f, type: DamageType.EXPLOSIVE);
+
+			SwitchCamera(!firstPersonCam.enabled);
 		}
 
 		playerUI.JoystickCursorMove(Input.GetAxis("RSX" + id), Input.GetAxis("RSY" + id));		
@@ -87,6 +96,16 @@ public class PlayerControls : Character {
 		Drag();
 		Rotate();
     }
+
+	private void SwitchCamera(bool firstPerson) {
+		firstPersonCam.enabled = firstPerson;
+		firstPersonCam.GetComponent<BoxCollider>().enabled = firstPerson;
+		firstPersonCam.GetComponent<AudioListener>().enabled = firstPerson;
+		playerUI.GetComponent<Canvas>().worldCamera = firstPerson ? firstPersonCam : playerCamera.cam;
+		playerUI.GetComponent<Canvas>().planeDistance = 20f;
+		playerCamera.cam.enabled = !firstPerson;
+		playerCamera.cam.GetComponent<AudioListener>().enabled = !firstPerson;
+	}
 
 	private void Walk() {
 		float h = 0;
@@ -115,12 +134,16 @@ public class PlayerControls : Character {
 		if (hasBag)
 			speed *= bag.speedMultiplier;
 
-		Vector3 pos = transform.position;
-		pos.x += speed * (z * Mathf.Sin(cameraRotation * Mathf.Deg2Rad) + 
-			x * Mathf.Sin((cameraRotation + 90) * Mathf.Deg2Rad));
-		pos.z += speed * (z * Mathf.Cos(cameraRotation * Mathf.Deg2Rad) + 
-			x * Mathf.Cos((cameraRotation + 90) * Mathf.Deg2Rad));
-		rb.MovePosition(pos);
+		if (firstPersonCam.enabled) {
+			rb.MovePosition(transform.position + transform.right * speed * x + transform.forward * speed * z);
+		} else {
+			Vector3 pos = transform.position;
+			pos.x += speed * (z * Mathf.Sin(cameraRotation * Mathf.Deg2Rad) + 
+				x * Mathf.Sin((cameraRotation + 90) * Mathf.Deg2Rad));
+			pos.z += speed * (z * Mathf.Cos(cameraRotation * Mathf.Deg2Rad) + 
+				x * Mathf.Cos((cameraRotation + 90) * Mathf.Deg2Rad));
+			rb.MovePosition(pos);
+		}
 
 		if ((x != 0 || z != 0) && !walk.isWalking) {
 			walk.StartWalk();
@@ -133,13 +156,18 @@ public class PlayerControls : Character {
 	}
 
 	void LookAtMouse() {
-		// Generate a plane that intersects the transform's position with an upwards normal.
-		Plane playerPlane = new Plane(Vector3.up, transform.position);
-		Ray ray = playerCamera.cam.ScreenPointToRay(playerUI.mousePos);
-		float hitdist = 0f;
-		// If the ray is parallel to the plane, Raycast will return false.
-		if (playerPlane.Raycast(ray, out hitdist)) {
-			LookAt(ray.GetPoint(hitdist));
+		if (firstPersonCam.enabled) {
+			LoseLookTarget();
+			transform.RotateAround(transform.position, transform.up, Input.GetAxis("Mouse X") * 5f);
+		} else {
+			// Generate a plane that intersects the transform's position with an upwards normal.
+			Plane playerPlane = new Plane(Vector3.up, transform.position);
+			Ray ray = playerCamera.cam.ScreenPointToRay(playerUI.mousePos);
+			float hitdist = 0f;
+			// If the ray is parallel to the plane, Raycast will return false.
+			if (playerPlane.Raycast(ray, out hitdist)) {
+				LookAt(ray.GetPoint(hitdist));
+			}
 		}
 	}
 

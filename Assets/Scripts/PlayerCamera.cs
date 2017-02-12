@@ -18,6 +18,7 @@ public class PlayerCamera : MonoBehaviour {
 	private bool rotating;
 	private Quaternion rotationGoal;
 	private Vector3 diff;
+	private Vector3 firstPersonInitPosition;
 
 	private float startTime;
 
@@ -26,6 +27,8 @@ public class PlayerCamera : MonoBehaviour {
 		diff = transform.localPosition;
 		cam.GetComponent<AudioListener>().enabled = player.id == 1;  // can only have one at a time
 		cam.cullingMask |= (1 << LayerMask.NameToLayer("textCam" + (player.id - 1)));
+		player.firstPersonCam.cullingMask = cam.cullingMask & ~(1 << LayerMask.NameToLayer("accessory" + player.id));
+		firstPersonInitPosition = player.firstPersonCam.transform.localPosition;
 	}
 	
 	void Update () {
@@ -34,47 +37,60 @@ public class PlayerCamera : MonoBehaviour {
 
 	private int lastDpadValue;
 	private void UpdatePosition() {
-		transform.localPosition = diff;
-		transform.position = AveragePointBetweenTargets();
-		Vector3 cameraLookAtPosition = transform.position;
-		cam.transform.LookAt(transform.position);
+		if (!player.firstPersonCam.enabled) {
+			transform.localPosition = diff;
+			transform.position = AveragePointBetweenTargets();
+			Vector3 cameraLookAtPosition = transform.position;
+			cam.transform.LookAt(transform.position);
 
-		int newDpadValue = Input.GetAxis("DPX" + player.id) == 0 ? 0 : (int) Mathf.Sign(Input.GetAxis("DPX" + player.id));
-		bool pressedDpad = newDpadValue != lastDpadValue;
-		lastDpadValue = newDpadValue;
+			int newDpadValue = Input.GetAxis("DPX" + player.id) == 0 ? 0 : (int) Mathf.Sign(Input.GetAxis("DPX" + player.id));
+			bool pressedDpad = newDpadValue != lastDpadValue;
+			lastDpadValue = newDpadValue;
 
-		// rotation
-		bool rotateButtonPress = (player.id == 1 && (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.C))) || pressedDpad;
-		if (rotateButtonPress) {
-			startTime = Time.realtimeSinceStartup;
-			int dir = Input.GetKeyDown(KeyCode.Z) ? -1 : 1;
-			if (pressedDpad)
-				dir = newDpadValue;
-			Quaternion tempRot = transform.rotation;
-			transform.rotation = rotationGoal;
-			transform.RotateAround(cameraLookAtPosition, Vector3.up, -rotationAngle * dir);
-			rotationGoal = transform.rotation;
-			transform.RotateAround(cameraLookAtPosition, Vector3.up, rotationAngle * dir);
-			transform.rotation = tempRot;
-			rotating = true;
-		} 
-		if (rotating) {
-			// not linked to deltaTime, since time is frozen when paused
-			float realTimeElapsed = (Time.realtimeSinceStartup - startTime);
-			transform.rotation = Quaternion.Slerp(transform.rotation, rotationGoal, rotationSpeed * realTimeElapsed);
+			// rotation
+			bool rotateButtonPress = (player.id == 1 && (Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.C))) || pressedDpad;
+			if (rotateButtonPress) {
+				startTime = Time.realtimeSinceStartup;
+				int dir = Input.GetKeyDown(KeyCode.Z) ? -1 : 1;
+				if (pressedDpad)
+					dir = newDpadValue;
+				Quaternion tempRot = transform.rotation;
+				transform.rotation = rotationGoal;
+				transform.RotateAround(cameraLookAtPosition, Vector3.up, -rotationAngle * dir);
+				rotationGoal = transform.rotation;
+				transform.RotateAround(cameraLookAtPosition, Vector3.up, rotationAngle * dir);
+				transform.rotation = tempRot;
+				rotating = true;
+			} 
+			if (rotating) {
+				// not linked to deltaTime, since time is frozen when paused
+				float realTimeElapsed = (Time.realtimeSinceStartup - startTime);
+				transform.rotation = Quaternion.Slerp(transform.rotation, rotationGoal, rotationSpeed * realTimeElapsed);
+			}
+
+			// shaking
+			if (timeElapsed < duration && !GameManager.paused) {
+				transform.position += Random.insideUnitSphere * power * (duration - timeElapsed);
+				timeElapsed += Time.deltaTime;
+			}
+
+			// zoom in/out
+			float zoom = player.id == 1 && Input.GetAxis("Mouse ScrollWheel") != 0 
+					? Input.GetAxis("Mouse ScrollWheel") 
+					: Input.GetAxis("DPY" + player.id) * .5f;
+			cam.orthographicSize = Mathf.Min(Mathf.Max(minZoom, cam.orthographicSize - zoom), maxZoom);
+		} else {
+
+			// first person shake
+			player.firstPersonCam.transform.localPosition = firstPersonInitPosition;
+			Vector3 delta = Random.insideUnitSphere * power * (duration - timeElapsed);
+			delta.z = 0;			
+			delta.y *= .5f;
+			if (timeElapsed < duration && !GameManager.paused) {
+				player.firstPersonCam.transform.localPosition = firstPersonInitPosition + delta;
+				timeElapsed += Time.deltaTime;
+			}
 		}
-
-		// shaking
-		if (timeElapsed < duration && !GameManager.paused) {
-			transform.position += Random.insideUnitSphere * power * (duration - timeElapsed);
-			timeElapsed += Time.deltaTime;
-		}
-
-		// zoom in/out
-		float zoom = player.id == 1 && Input.GetAxis("Mouse ScrollWheel") != 0 
-				? Input.GetAxis("Mouse ScrollWheel") 
-				: Input.GetAxis("DPY" + player.id) * .5f;
-		cam.orthographicSize = Mathf.Min(Mathf.Max(minZoom, cam.orthographicSize - zoom), maxZoom);
 	}
 
 	public void Shake(float power, float duration) {

@@ -185,6 +185,8 @@ public class GameManager : MonoBehaviour {
 			cams[2].rect = new Rect(0, 0, .5f, .5f);
 			cams[3].rect = new Rect(.5f, 0f, .5f, .5f);
 		}
+		foreach (PlayerControls pc in result)
+			pc.firstPersonCam.rect = pc.playerCamera.cam.rect;
 		return result;
 	}
 
