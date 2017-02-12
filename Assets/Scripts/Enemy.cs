@@ -12,7 +12,6 @@ public class Enemy : NPC {
 
 	public override void Start() {
 		base.Start();
-		GetComponent<CharacterCustomization>().ColorCharacter(Outfits.fits["cop1"], true);
 
 		if (GameManager.instance.alarmsRaised) {
 			currentState = NPCState.SEARCHING;

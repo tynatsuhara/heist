@@ -9,15 +9,12 @@ using System.Linq;
 
 public class CharacterCustomization : MonoBehaviour {
 
-	public Color32 shirtColor1;   // 0
-	public Color32 shirtColor2;   // 1
-	public Color32 shirtColor3;   // 2
-	public Color32 pantsColor1;   // 3
-	public Color32 pantsColor2;   // 4
-	public Color32 shoesColor;    // 5
-	public Color32 skinColor;     // 6
-	public Color32 hairColor;     // 7
-	public Color32 eyeColor;      // 8
+	public Color32 skinColor;
+	public Color32 hairColor;
+
+	public Accessory[] hair;
+	public Accessory[] accessory;
+	public string[] outfitNames;
 
 	// Each character component
 	public PicaVoxel.Volume head;
@@ -35,14 +32,18 @@ public class CharacterCustomization : MonoBehaviour {
 				Destroy(vol.gameObject);
 			}
 		}
-		Color32[] hairColors = CharacterCustomizationMenu.instance.hairColors;
-		Color32[] skinColors = CharacterCustomizationMenu.instance.skinColors;
-		if (randomize && hairColors != null && hairColors.Length > 0) {
+
+		if (randomize) {
+			Color32[] skinColors = CharacterCustomizationMenu.instance.skinColors;
+			Color32[] hairColors = CharacterCustomizationMenu.instance.skinColors;
 			hairColor = hairColors[Random.Range(0, hairColors.Length)];
-		}
-		if (randomize && skinColors != null && skinColors.Length > 0) {
 			skinColor = skinColors[Random.Range(0, skinColors.Length)];
+			accessories = new Accessory[] {
+				hair[Random.Range(0, hair.Length)], 
+				accessory[Random.Range(0, accessory.Length)] 
+			};
 		}
+
 		List<Accessory> accPrefabs = new List<Accessory>(outfit.accessories);
 		if (accessories != null)
 			accPrefabs.AddRange(accessories);
@@ -80,6 +81,10 @@ public class CharacterCustomization : MonoBehaviour {
 							} else if (volume == head || volume == body || volume == legs ||
 								(volume == arms && vox.Value <= 4) || (gunz.Contains(volume) && vox.Value <= 4)) {
 								vox.Color = skinColor;
+							}
+							if ((vox.Value == 37 || vox.Value == 40) && 
+									(!palette.ContainsKey(vox.Value) || palette[vox.Value].Equals(skinColor))) {
+								vox.Color = Outfits.HexParse("1F1F1F00");
 							}
 							frame.SetVoxelAtArrayPosition(new PicaVoxel.PicaVoxelPoint(new Vector3(x, y, z)), vox);
 						}
@@ -124,8 +129,7 @@ public class CharacterCustomization : MonoBehaviour {
 			outfit.colors[4],
 			outfit.colors[5],
 			skinColor,
-			hairColor,
-			eyeColor
+			hairColor
 		};
 
 		List<string> outfit_ = new List<string>(outfit.pattern);

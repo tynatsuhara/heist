@@ -12,7 +12,7 @@ public class Outfits {
 			"default", 
 			new Outfit(new string[] {
 				"3 0-13 70-73; 0 14-69; 1 44-45 30-31 16-17; 6 58-59",
-				"8 37 40",
+				"",
 				"3 1; 5 0",
 				"0 1-3"
 			},  shirtColor1: "#3D5B8500", shirtColor2: "#2E415A00", shirtColor3: "#F9F79600",
@@ -22,7 +22,7 @@ public class Outfits {
 			"cop1", 
 			new Outfit(new string[] {
 				"0 0-73; 1 57 60 44 45 31; 2 46; 6 58 59; 4 14-27; 3 17",
-				"8 37 40",
+				"",
 				"0 1; 5 0",
 				"0 1-3"
 			}, shirtColor1: "#3D5B8500", shirtColor2: "#2E415A00", shirtColor3: "#F9F79600",

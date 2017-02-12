@@ -19,6 +19,9 @@ public class NPC : Character, Interactable {
 
 	public override void Start() {
 		base.Start();
+		CharacterCustomization cc = GetComponent<CharacterCustomization>();
+		string outfitName = cc.outfitNames[Random.Range(0, cc.outfitNames.Length)];
+		GetComponent<CharacterCustomization>().ColorCharacter(Outfits.fits[outfitName], true);
 		transform.RotateAround(transform.position, transform.up, Random.Range(0, 360));
 		agent = GetComponent<NavMeshAgent>();
 		// InvokeRepeating("CheckForEvidence", 0f, .5f);

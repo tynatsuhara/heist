@@ -175,6 +175,7 @@ public abstract class Character : PossibleObjective, Damageable {
 	}
 
 	public virtual void Die(Vector3 location, Vector3 angle, DamageType type = DamageType.MELEE) {
+		GameManager.instance.AlertInRange(Reaction.AGGRO, transform.position, 2f);
 		InteractCancel();
 		NavMeshAgent agent = GetComponent<NavMeshAgent>();
 		if (agent != null)
