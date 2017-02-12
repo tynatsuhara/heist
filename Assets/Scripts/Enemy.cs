@@ -3,35 +3,22 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-public class Enemy : Character {
+public class Enemy : NPC {
 
 	private static Dictionary<PlayerControls, Vector3?> lastKnownLocations = new Dictionary<PlayerControls, Vector3?>();
-
-	private NavMeshAgent agent;
-
-	private enum EnemyState {
-		PASSIVE,
-		CURIOUS,          // they know something is up, but don't know of the player
-		SEARCHING,   	  // they are aware of the player, but don't know location
-		ATTACKING
-	}
-	private EnemyState currentState;
 
 	public float walkingAnimationThreshold;
 	private bool invoked;
 
 	public override void Start() {
 		base.Start();
-		agent = GetComponent<NavMeshAgent>();
 		GetComponent<CharacterCustomization>().ColorCharacter(Outfits.fits["cop1"], true);
 
 		if (GameManager.instance.alarmsRaised) {
-			currentState = EnemyState.SEARCHING;
+			currentState = NPCState.SEARCHING;
 		} else {
-			currentState = EnemyState.PASSIVE;			
+			currentState = NPCState.PASSIVE;			
 		}
-
-		// InvokeRepeating("CheckForEvidence", 0f, .5f);
 	}
 	
 	// Update is called once per frame
@@ -39,33 +26,22 @@ public class Enemy : Character {
 		if (!isAlive || GameManager.paused)
 			return;
 
-		LegAnimation();
-		walking = agent.enabled && agent.velocity != Vector3.zero;
-		
-		timeInCurrentState += Time.deltaTime;
-
 		switch (currentState) {
-			case EnemyState.PASSIVE:
+			case NPCState.PASSIVE:
 				StatePassive();
 				break;
-			case EnemyState.CURIOUS:
+			case NPCState.CURIOUS:
 				StateCurious();
 				break;
-			case EnemyState.SEARCHING:
+			case NPCState.SEARCHING:
 				StateSearching();
 				break;
-			case EnemyState.ATTACKING:
+			case NPCState.ATTACKING:
 				StateAttacking();
 				break;
 		}
-	}
 
-	void FixedUpdate () {
-		if (!isAlive || GameManager.paused)
-			return;
-
-		// Drag();
-		Rotate();
+		timeInCurrentState += Time.deltaTime;		
 	}
 
 	//=================== STATE FUNCTIONS ===================//
@@ -73,39 +49,58 @@ public class Enemy : Character {
 	// EnemyState.PASSIVE
 	private void StatePassive() {
 		/*
-		patrol
+		PSEUDO:
+		patrol points (stored in queue)
 		
+
 		*/
 	}
 
 	// EnemyState.CURIOUS
-	private void StateCurious() {}
+	private void StateCurious() {
+		/*
+		PSEUDO:
+		investigate point of curiosity
+		*/
+	}
 
 	// EnemyState.SEARCHING
-	private void StateSearching() {}
+	private void StateSearching() {
+		/*
+		PSEUDO:
+		investigate point of curiosity
+		*/
+	}
 
 	// EnemyState.ATTACKING
-	private void StateAttacking() {}
+	private PlayerControls closestPlayer;
+	private void StateAttacking() {
+		/*
+		PSEUDO:
+		investigate point of curiosity
+		*/
 
+		if (closestPlayer == null)
+			closestPlayer = ClosestPlayerInSight();
 
-	private bool transitioningState;
-	private float timeInCurrentState;
-	private EnemyState stateToTransitionTo;
-	private void TransitionState(EnemyState newState, float time = 0f) {
-		stateToTransitionTo = newState;
-		transitioningState = true;
-		if (time <= 0f) {
-			CompleteTransition();
+		if (closestPlayer == null) {
+			TransitionState(NPCState.SEARCHING);
 		} else {
-			Invoke("CompleteTransition", time);
-		} 
+			bool inRange = (closestPlayer.transform.position - transform.position).magnitude < currentGun.range;			
+			if (inRange) {
+				agent.Stop();
+			} else {
+				agent.SetDestination(closestPlayer.transform.position);
+			}
+			if (CanSee(closestPlayer.gameObject, fov:30f)) {
+				Shoot();
+			}
+			LookAt(closestPlayer.transform.position);	
+		}
 	}
-	private void CompleteTransition() {
-		if (currentState != stateToTransitionTo)
-			timeInCurrentState = 0f;
-		currentState = stateToTransitionTo;
-		transitioningState = false;
-	}
+
+
+
 
 	/*private void GlimpsedPlayer() {
 		CheckCanSeeEvidence();
@@ -195,20 +190,6 @@ public class Enemy : Character {
 			float reactionTime = (Random.Range(.2f, 1f));
 			Invoke("GlimpsedPlayer", reactionTime);
 			invoked = true;
-		}
-	}
-
-	private void LegAnimation() {
-		Vector3 velocity = agent.velocity;
-		velocity.y = 0f;
-		if (velocity == Vector3.zero) {
-			if (walk.isWalking) {
-				walk.StopWalk();
-			}
-		} else if (velocity.magnitude > 0f) {
-			if (!walk.isWalking) {
-				walk.StartWalk();
-			}
 		}
 	}
 

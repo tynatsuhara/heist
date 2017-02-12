@@ -1,26 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Civilian : Character, Interactable {
+public class Civilian : NPC {
 
-	public enum CivilianState {
-		PASSIVE,                    // default behavior
-		ALERTING,                   // running to notify guards
-		FLEEING,                    // running off the map
-		ATTACKING,                  // surprising the player
-		HELD_HOSTAGE_UNTIED,
-		HELD_HOSTAGE_TIED,
-		HELD_HOSTAGE_CALLING
-	}
-	public CivilianState currentState;
 	public bool braveCitizen;  // can enter attacking states
 	public bool teller;
 
 	public override void Start() {
 		base.Start();
-		// InvokeRepeating("CheckForEvidence", 0f, .5f);
-		GetComponent<CharacterCustomization>().ColorCharacter(Outfits.fits["cop1"], true, accessories);
-		currentState = CivilianState.PASSIVE;
+		GetComponent<CharacterCustomization>().ColorCharacter(Outfits.fits["default"], true, accessories);
+		currentState = NPCState.PASSIVE;
 		braveCitizen = !teller && Random.Range(0, 100) < 10;
 	}
 	
@@ -29,56 +18,27 @@ public class Civilian : Character, Interactable {
 			return;
 
 		switch (currentState) {
-			case CivilianState.PASSIVE:
+			case NPCState.PASSIVE:
 				StatePassive();
 				break;
-			case CivilianState.ALERTING:
+			case NPCState.ALERTING:
 				StateAlerting();
 				break;
-			case CivilianState.FLEEING:
+			case NPCState.FLEEING:
 				StateFleeing();
 				break;
-			case CivilianState.ATTACKING:
+			case NPCState.ATTACKING:
 				StateAttacking();
 				break;
-			case CivilianState.HELD_HOSTAGE_UNTIED:
+			case NPCState.HELD_HOSTAGE_UNTIED:
 				StateHeldHostageUntied();
 				break;
-			case CivilianState.HELD_HOSTAGE_TIED:
+			case NPCState.HELD_HOSTAGE_TIED:
 				StateHeldHostageTied();
-				break;
-			case CivilianState.HELD_HOSTAGE_CALLING:
-				StateHeldHostageCalling();
 				break;
 		}
 
 		timeInCurrentState += Time.deltaTime;		
-	}
-
-	void FixedUpdate () {
-		if (!isAlive || GameManager.paused)
-			return;
-
-		Rotate();
-	}
-
-	private bool transitioningState;
-	private float timeInCurrentState;
-	private CivilianState stateToTransitionTo;
-	private void TransitionState(CivilianState newState, float time = 0f) {
-		stateToTransitionTo = newState;
-		transitioningState = true;
-		if (time <= 0f) {
-			CompleteTransition();
-		} else {
-			Invoke("CompleteTransition", time);
-		} 
-	}
-	private void CompleteTransition() {
-		if (currentState != stateToTransitionTo)
-			timeInCurrentState = 0f;
-		currentState = stateToTransitionTo;
-		transitioningState = false;
 	}
 
 	//=================== STATE FUNCTIONS ===================//
@@ -97,7 +57,7 @@ public class Civilian : Character, Interactable {
 	}
 	private void CheckDrawWeapon() {
 		if (!SeenByAnyPlayers()) {
-			TransitionState(CivilianState.ATTACKING, 0f);
+			TransitionState(NPCState.ATTACKING, 0f);
 		} else {
 			checkDrawWeaponInvoked = false;
 		}
@@ -112,7 +72,7 @@ public class Civilian : Character, Interactable {
 
 		if (braveCitizen && !checkDrawWeaponInvoked && playerScript.IsEquipped() && playerScript.isAlive) {
 			// switch to attacking
-			bool canSeePlayer = currentState == CivilianState.PASSIVE 
+			bool canSeePlayer = currentState == NPCState.PASSIVE 
 					? CanSee(playerScript.gameObject) 
 					: ClearShot(playerScript.gameObject);
 			if (canSeePlayer && !playerScript.CanSee(gameObject)) {
@@ -149,10 +109,11 @@ public class Civilian : Character, Interactable {
 	private void StateFleeing() {
 		if (timeInCurrentState == 0) {
 			ResetRB();
-			Vector3 destPos = Random.insideUnitCircle * 400f;
+			NavMeshAgent agent = GetComponent<NavMeshAgent>();
+			Vector3 destPos = Random.insideUnitCircle * 30;				
 			destPos.z = destPos.y;
 			destPos.y = transform.position.y;
-			GetComponent<NavMeshAgent>().destination = destPos;
+			agent.destination = destPos;
 		}
 	}
 
@@ -171,6 +132,9 @@ public class Civilian : Character, Interactable {
 
 	// CivilianState.HELD_HOSTAGE_UNTIED
 	private void StateHeldHostageUntied() {
+		if (timeInCurrentState == 0)
+			arms.SetFrame(1);  // hands up
+			
 		BraveCitizenCheck();
 		LoseLookTarget();						
 
@@ -191,36 +155,23 @@ public class Civilian : Character, Interactable {
 		}
 	}
 
-	// CivilianState.HELD_HOSTAGE_CALLING
-	private void StateHeldHostageCalling() {}
-
 
 	public override void Alert(Character.Reaction importance, Vector3 position) {
 		if (!isAlive||
-			currentState == CivilianState.ATTACKING ||
-			currentState == CivilianState.HELD_HOSTAGE_UNTIED ||
-			currentState == CivilianState.HELD_HOSTAGE_TIED)
+			currentState == NPCState.ATTACKING ||
+			currentState == NPCState.HELD_HOSTAGE_UNTIED ||
+			currentState == NPCState.HELD_HOSTAGE_TIED)
 			return;
 
-		if (currentState == CivilianState.HELD_HOSTAGE_CALLING) {
-			TransitionState(CivilianState.HELD_HOSTAGE_UNTIED);
+		if (currentState == NPCState.ALERTING) {
+			TransitionState(NPCState.HELD_HOSTAGE_UNTIED);
 			return;
 		}
 
 		if (Random.Range(0, 2) == 0) {
-			TransitionState(CivilianState.FLEEING, Random.Range(.3f, 1f));
+			TransitionState(NPCState.FLEEING, Random.Range(.3f, 1f));
 		} else {
-			arms.SetFrame(1);  // hands up
-			TransitionState(CivilianState.HELD_HOSTAGE_UNTIED, Random.Range(.3f, 1f));
+			TransitionState(NPCState.HELD_HOSTAGE_UNTIED, Random.Range(.3f, 1f));
 		}
 	}
-
-	public void Interact(Character character) {
-		if (character.zipties > 0 && (currentState == CivilianState.HELD_HOSTAGE_UNTIED || 
-				currentState == CivilianState.HELD_HOSTAGE_CALLING)) {
-			character.zipties--;
-			TransitionState(CivilianState.HELD_HOSTAGE_TIED);
-		}
-	}
-	public void Uninteract(Character character) {}
 }

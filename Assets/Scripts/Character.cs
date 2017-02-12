@@ -462,14 +462,11 @@ public abstract class Character : PossibleObjective, Damageable {
 		if (seenPlayers.Count > 0 || canSeeOnCameras)
 			return true;
 		
-		foreach (Character c in GameManager.characters) {
+		foreach (NPC c in GameManager.characters) {
 			bool isEvidence = !c.isAlive;
-			if (c is Civilian) {
-				Civilian civ = (Civilian) c;
-				isEvidence |= civ.currentState == Civilian.CivilianState.HELD_HOSTAGE_CALLING;
-				isEvidence |= civ.currentState == Civilian.CivilianState.HELD_HOSTAGE_TIED;
-				isEvidence |= civ.currentState == Civilian.CivilianState.HELD_HOSTAGE_UNTIED;
-			}
+			isEvidence |= c.currentState == Civilian.NPCState.ALERTING;
+			isEvidence |= c.currentState == Civilian.NPCState.HELD_HOSTAGE_TIED;
+			isEvidence |= c.currentState == Civilian.NPCState.HELD_HOSTAGE_UNTIED;
 			if ((isEvidence && CanSee(c.gameObject)) || 
 			    (isEvidence && cameraScreen != null && cameraScreen.InSight(c.gameObject))) {
 				return true;
@@ -544,9 +541,9 @@ public abstract class Character : PossibleObjective, Damageable {
 			return;
 		
 		List<Character> draggableChars = GameManager.allCharacters.Where(x => {
-			if (x is Civilian) {
-				Civilian z = (Civilian) x;
-				return !x.isAlive || z.currentState == Civilian.CivilianState.HELD_HOSTAGE_TIED;
+			if (x is NPC) {
+				NPC z = (NPC) x;
+				return !x.isAlive || z.currentState == NPC.NPCState.HELD_HOSTAGE_TIED;
 			}
 			return !x.isAlive;
 		}).ToList();

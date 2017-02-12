@@ -18,11 +18,11 @@ public class GameManager : MonoBehaviour {
 	public bool objectivesComplete;
 
 	private List<PossibleObjective> objectives;
-	public static List<Character> characters;  // NPCs
+	public static List<NPC> characters;  // NPCs
 	public static List<PlayerControls> players;	
 	public static List<Character> allCharacters {
-		get { 
-			List<Character> lst = characters.ToList();
+		get {
+			List<Character> lst = characters.Select(x => (Character) x).ToList();
 			lst.AddRange(players.Select(x => (Character) x));
 			return lst;
 		}
@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour {
 		GetComponent<LevelBuilder>().BuildLevel();
 
 		// 2. spawn characters?
-		characters = Object.FindObjectsOfType<Character>().Where(x => !(x is PlayerControls)).ToList();
+		characters = Object.FindObjectsOfType<NPC>().ToList();
 		players = SpawnPlayers(playersToSpawn);
 
 		// 3. get objectives
@@ -191,7 +191,7 @@ public class GameManager : MonoBehaviour {
 	public void SpawnCop() {
 		GameObject enemy = (GameObject) Instantiate(enemyPrefabs[0], 
 			new Vector3(6f, 1f, 6f) + 5f * Random.insideUnitSphere, Quaternion.identity);
-		characters.Add(enemy.GetComponent<Character>());
+		characters.Add(enemy.GetComponent<NPC>());
 	}
 
 	public void MarkObjectiveComplete(PossibleObjective po) {
