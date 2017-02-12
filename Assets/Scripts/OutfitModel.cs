@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 public class OutfitModel : MonoBehaviour {
 
-	public string name;
 	public Color32 skinPlaceholder;
 	public Color32 hairPlaceholder;
 	public Accessory[] accessories;

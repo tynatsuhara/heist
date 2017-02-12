@@ -187,8 +187,9 @@ public abstract class Character : PossibleObjective, Damageable {
 		walk.StopWalk();
 		rb.constraints = RigidbodyConstraints.None;
 
-		if (weaponDrawn)
+		if (weaponDrawn) {
 			DropWeapon(angle * Random.Range(5, 10) + Vector3.up * Random.Range(2, 6));
+		}
 
 		if (type == DamageType.SLICE) {
 			if (Random.Range(0, 2) == 0)
@@ -197,11 +198,16 @@ public abstract class Character : PossibleObjective, Damageable {
 			exploder.Explode(angle * 3);
 			// BloodSplatter(location);
 		}
+		if (type == DamageType.NONLETHAL) {
+			SpurtBlood();
+			PuddleBlood();
+		} else {
+			BleedEverywhere();
+		}
 
-		if (isObjective && !isCompleted)
+		if (isObjective && !isCompleted) {
 			MarkCompleted();
-
-		BleedEverywhere();
+		}
 
 		if (Random.Range(0, 2) == 0) {
 			speech.SayRandom(Speech.DEATH_QUOTES, showFlash: true);

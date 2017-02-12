@@ -79,6 +79,12 @@ public class NPC : Character, Interactable {
 	protected virtual void StateHeldHostageTied() {}
 	protected virtual void StateAttacking() {}
 
+	public override void Die(Vector3 location, Vector3 angle, DamageType type = DamageType.MELEE) {
+		if (Random.Range(0, 2) == 0 && currentState != NPCState.HELD_HOSTAGE_TIED)
+			arms.SetFrame(0);
+		base.Die(location, angle, type);		
+	}
+
 	private void LegAnimation() {
 		Vector3 velocity = agent.velocity;
 		velocity.y = 0f;
