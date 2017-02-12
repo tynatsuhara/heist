@@ -105,20 +105,18 @@ public class Civilian : NPC {
 
 	// CivilianState.HELD_HOSTAGE_UNTIED
 	protected override void StateHeldHostageUntied() {
-		if (timeInCurrentState == 0)
-			arms.SetFrame(1);  // hands up
-			
-		BraveCitizenCheck();
 		LoseLookTarget();						
 
-		if (rb.constraints == RigidbodyConstraints.None)
-			return;
-
-		rb.constraints = RigidbodyConstraints.None;
-		GetComponent<NavMeshAgent>().enabled = false;
-		Vector3 rot = rb.rotation.eulerAngles;
-		rot.x += 32f;
-		rb.MoveRotation(Quaternion.Euler(rot));
+		if (timeInCurrentState == 0) {
+			arms.SetFrame(1);  // hands up
+			rb.constraints = RigidbodyConstraints.None;
+			GetComponent<NavMeshAgent>().enabled = false;
+			Vector3 rot = rb.rotation.eulerAngles;
+			rot.x += 32f;
+			rb.MoveRotation(Quaternion.Euler(rot));
+		} else {
+			BraveCitizenCheck();
+		}
 	}
 
 	// CivilianState.HELD_HOSTAGE_TIED

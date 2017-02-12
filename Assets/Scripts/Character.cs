@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
 
 public abstract class Character : PossibleObjective, Damageable {
@@ -115,9 +116,12 @@ public abstract class Character : PossibleObjective, Damageable {
 		}
 	}
 
-	protected List<Rigidbody> separateBodyParts = new List<Rigidbody>();	
+	protected List<Rigidbody> separateBodyParts = new List<Rigidbody>();
+	private bool lastDamageNonlethal;
+	private bool killedByPlayer;
 	public virtual bool Damage(Vector3 location, Vector3 angle, float damage, bool playerAttacker = false, DamageType type = DamageType.BULLET) {
 		bool isPlayer = tag.Equals("Player");
+		lastDamageNonlethal = type == DamageType.NONLETHAL;
 
 		if (!weaponDrawn)
 			damage *= 2f;
@@ -146,9 +150,8 @@ public abstract class Character : PossibleObjective, Damageable {
 		health = Mathf.Max(0, health - damage);
 		exploder.transform.position = location + angle * Random.Range(-.1f, .15f) + new Vector3(0, Random.Range(-.7f, .3f), 0);
 		if (!isAlive && wasAlive) {
+			killedByPlayer = isPlayer;
 			Die(location, angle, type);
-		} else if (!isAlive && explosive) {
-			exploder.Explode(angle * 3);
 		}
 
 		// regular knockback
@@ -189,7 +192,7 @@ public abstract class Character : PossibleObjective, Damageable {
 		if (type == DamageType.SLICE) {
 			if (Random.Range(0, 2) == 0)
 				Decapitate();
-		} else if (type != DamageType.MELEE) {
+		} else if (type != DamageType.MELEE && type != DamageType.NONLETHAL) {
 			exploder.Explode(angle * 3);
 			// BloodSplatter(location);
 		}
@@ -203,7 +206,27 @@ public abstract class Character : PossibleObjective, Damageable {
 			speech.SayRandom(Speech.DEATH_QUOTES, showFlash: true);
 		}
 
+		StartCoroutine("FallOver");
 		// Invoke("RemoveBody", 60f);
+	}
+
+	private IEnumerator FallOver() {
+		yield return new WaitForSeconds(Random.Range(.3f, 1f));
+		for (int i = 0; i < 10; i++) {
+			int decidingAngle = 8;
+			if (Mathf.Abs(transform.eulerAngles.z) < decidingAngle && Mathf.Abs(transform.eulerAngles.x) < decidingAngle) {	
+				Vector3 fallDir = Random.insideUnitCircle;
+				fallDir.z = fallDir.y;
+				fallDir.y = 0;
+				for (int j = 0; j < 3; j++) {
+					GetComponent<Rigidbody>().AddForce(fallDir * (400f + i * 150f), ForceMode.Impulse);
+					yield return new WaitForSeconds(.08f);
+				}
+			}
+			if (Mathf.Abs(transform.eulerAngles.z) >= decidingAngle || Mathf.Abs(transform.eulerAngles.x) >= decidingAngle) {
+				yield return new WaitForSeconds(.5f);
+			}
+		}
 	}
 
 	private void Decapitate() {

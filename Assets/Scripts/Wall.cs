@@ -30,6 +30,9 @@ public class Wall : MonoBehaviour, Damageable {
 	// The return value is used for projectile damage. If the bullet should go
 	// through the object and continue, return true. Otherwise return false.
 	public bool Damage(Vector3 location, Vector3 angle, float damage, bool playerAttacker = false, DamageType type = DamageType.BULLET) {
+		if (type == DamageType.MELEE || type == DamageType.NONLETHAL || type == DamageType.SLICE)
+			return false;
+		
 		if (damage >= damangeThreshold && exploder != null) {
 			for (int i = 0; i < (type == DamageType.EXPLOSIVE ? 10 : 1); i++) {
 				exploder.ExplosionRadius = Random.Range(.05f, .25f);
