@@ -155,7 +155,7 @@ public class Civilian : NPC {
 	}
 
 	private void SpeechAlerted() {
-		if (Random.Range(0, 3) == 0) {
+		if (!speech.currentlyDisplaying && Random.Range(0, 3) == 0) {
 			speech.SayRandom(Speech.CIVILIAN_ALERTED, showFlash: true);
 		}
 	}
