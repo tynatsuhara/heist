@@ -21,7 +21,7 @@ public class MeleeWeapon : Gun {
 
 	public override bool Shoot() {
 		bool couldSwing = canSwing;
-		Melee(DamageType.SLICE, swingDirection);
+		Melee(damageType, swingDirection);
 		return couldSwing;
 	}
 	private void ResetShoot() {
