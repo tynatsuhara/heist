@@ -10,7 +10,7 @@ public class Civilian : NPC {
 		base.Start();
 		GetComponent<CharacterCustomization>().ColorCharacter(Outfits.fits["default"], true, accessories);
 		currentState = NPCState.PASSIVE;
-		braveCitizen = !teller && Random.Range(0, 100) < 10;
+		braveCitizen = !teller && Random.Range(0, 10) == 0;
 	}
 
 	//=================== STATE FUNCTIONS ===================//
