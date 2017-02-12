@@ -150,5 +150,5 @@ public class PlayerControls : Character {
 		GameManager.instance.AlertInRange(Reaction.AGGRO, transform.position, 4f);
 	}
 
-	public override void Alert(Character.Reaction importance, Vector3 position) {}
+	public override void Alert(Reaction importance, Vector3 position) {}
 }

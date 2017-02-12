@@ -73,7 +73,7 @@ public abstract class Character : PossibleObjective, Damageable {
 		speech = GetComponentInChildren<TextObject>();
 	}
 
-	public abstract void Alert(Character.Reaction importance, Vector3 position);
+	public abstract void Alert(Reaction importance, Vector3 position);
 	public void Alert() {
 		PlayerControls pc = ClosestPlayerInSight();
 		if (pc != null)

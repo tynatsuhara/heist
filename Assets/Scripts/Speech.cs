@@ -32,6 +32,15 @@ public class Speech {
 		"OH IT'S LIT"
 	};
 
+	public static readonly string[] CIVILIAN_ALERTED = {
+		"OH SHIT",
+		"JESUS FUCK",
+		"DON'T SHOOT",
+		"HELP",
+		"DON'T KILL ME",
+		"AAAAHHH"
+	};
+
 	public static readonly string[] PLAYER_SHOUT = {
 		"EAT THAT DIRT",
 		"GET DOWN",

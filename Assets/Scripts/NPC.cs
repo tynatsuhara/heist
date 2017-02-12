@@ -19,6 +19,7 @@ public class NPC : Character, Interactable {
 
 	public override void Start() {
 		base.Start();
+		transform.RotateAround(transform.position, transform.up, Random.Range(0, 360));
 		agent = GetComponent<NavMeshAgent>();
 		// InvokeRepeating("CheckForEvidence", 0f, .5f);
 	}

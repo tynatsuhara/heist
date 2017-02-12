@@ -148,7 +148,7 @@ public class Enemy : NPC {
 		CheckCanSeeEvidence();
 	}*/
 
-	public void Alert(Character.Reaction importance) {
+	public void Alert(Reaction importance) {
 		Alert(importance, transform.position + transform.forward);
 	}
 

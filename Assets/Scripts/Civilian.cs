@@ -129,7 +129,7 @@ public class Civilian : NPC {
 	}
 
 
-	public override void Alert(Character.Reaction importance, Vector3 position) {
+	public override void Alert(Reaction importance, Vector3 position) {
 		if (!isAlive||
 			currentState == NPCState.ATTACKING ||
 			currentState == NPCState.HELD_HOSTAGE_UNTIED ||
@@ -141,10 +141,24 @@ public class Civilian : NPC {
 			return;
 		}
 
-		if (Random.Range(0, 2) == 0) {
-			TransitionState(NPCState.FLEEING, Random.Range(.3f, 1f));
-		} else {
-			TransitionState(NPCState.HELD_HOSTAGE_UNTIED, Random.Range(.3f, 1f));
+		if (importance == Reaction.SUSPICIOUS && currentState == NPCState.PASSIVE) {
+			// random chance that they actually care
+			if (Random.Range(0, 2) == 0) {
+				TransitionState(NPCState.ALERTING, Random.Range(.3f, 1f));
+			}
+		} else if (importance == Reaction.AGGRO) {
+			Invoke("SpeechAlerted", Random.Range(.3f, 1f));
+			if (Random.Range(0, 2) == 0) {
+				TransitionState(NPCState.FLEEING, Random.Range(.3f, 1f));
+			} else {
+				TransitionState(NPCState.HELD_HOSTAGE_UNTIED, Random.Range(.3f, 1f));
+			}
+		}
+	}
+
+	private void SpeechAlerted() {
+		if (Random.Range(0, 3) == 0) {
+			speech.SayRandom(Speech.CIVILIAN_ALERTED, showFlash: true);
 		}
 	}
 }
