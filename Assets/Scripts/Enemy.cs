@@ -20,34 +20,11 @@ public class Enemy : NPC {
 			currentState = NPCState.PASSIVE;			
 		}
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		if (!isAlive || GameManager.paused)
-			return;
-
-		switch (currentState) {
-			case NPCState.PASSIVE:
-				StatePassive();
-				break;
-			case NPCState.CURIOUS:
-				StateCurious();
-				break;
-			case NPCState.SEARCHING:
-				StateSearching();
-				break;
-			case NPCState.ATTACKING:
-				StateAttacking();
-				break;
-		}
-
-		timeInCurrentState += Time.deltaTime;		
-	}
 
 	//=================== STATE FUNCTIONS ===================//
 
 	// EnemyState.PASSIVE
-	private void StatePassive() {
+	protected override void StatePassive() {
 		/*
 		PSEUDO:
 		patrol points (stored in queue)
@@ -57,7 +34,7 @@ public class Enemy : NPC {
 	}
 
 	// EnemyState.CURIOUS
-	private void StateCurious() {
+	protected override void StateCurious() {
 		/*
 		PSEUDO:
 		investigate point of curiosity
@@ -65,7 +42,7 @@ public class Enemy : NPC {
 	}
 
 	// EnemyState.SEARCHING
-	private void StateSearching() {
+	protected override void StateSearching() {
 		/*
 		PSEUDO:
 		investigate point of curiosity
@@ -74,7 +51,7 @@ public class Enemy : NPC {
 
 	// EnemyState.ATTACKING
 	private PlayerControls closestPlayer;
-	private void StateAttacking() {
+	protected override void StateAttacking() {
 		/*
 		PSEUDO:
 		investigate point of curiosity

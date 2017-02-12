@@ -23,6 +23,40 @@ public class NPC : Character, Interactable {
 		// InvokeRepeating("CheckForEvidence", 0f, .5f);
 	}
 
+	void Update() {
+		if (!isAlive || GameManager.paused)
+			return;
+
+		switch (currentState) {
+			case NPCState.PASSIVE:
+				StatePassive();
+				break;
+			case NPCState.CURIOUS:
+				StateCurious();
+				break;
+			case NPCState.SEARCHING:
+				StateSearching();
+				break;
+			case NPCState.ALERTING:
+				StateAlerting();
+				break;
+			case NPCState.FLEEING:
+				StateFleeing();
+				break;
+			case NPCState.HELD_HOSTAGE_UNTIED:
+				StateHeldHostageUntied();
+				break;
+			case NPCState.HELD_HOSTAGE_TIED:
+				StateHeldHostageTied();
+				break;
+			case NPCState.ATTACKING:
+				StateAttacking();
+				break;
+		}
+
+		timeInCurrentState += Time.deltaTime;
+	}
+
 	void FixedUpdate () {
 		if (!isAlive || GameManager.paused)
 			return;
@@ -31,6 +65,15 @@ public class NPC : Character, Interactable {
 		walking = agent.enabled && agent.velocity != Vector3.zero;
 		Rotate();
 	}
+
+	protected virtual void StatePassive() {}
+	protected virtual void StateCurious() {}
+	protected virtual void StateSearching() {}
+	protected virtual void StateAlerting() {}
+	protected virtual void StateFleeing() {}
+	protected virtual void StateHeldHostageUntied() {}
+	protected virtual void StateHeldHostageTied() {}
+	protected virtual void StateAttacking() {}
 
 	private void LegAnimation() {
 		Vector3 velocity = agent.velocity;

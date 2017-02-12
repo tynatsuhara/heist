@@ -12,40 +12,12 @@ public class Civilian : NPC {
 		currentState = NPCState.PASSIVE;
 		braveCitizen = !teller && Random.Range(0, 100) < 10;
 	}
-	
-	void Update () {
-		if (!isAlive || GameManager.paused)
-			return;
-
-		switch (currentState) {
-			case NPCState.PASSIVE:
-				StatePassive();
-				break;
-			case NPCState.ALERTING:
-				StateAlerting();
-				break;
-			case NPCState.FLEEING:
-				StateFleeing();
-				break;
-			case NPCState.ATTACKING:
-				StateAttacking();
-				break;
-			case NPCState.HELD_HOSTAGE_UNTIED:
-				StateHeldHostageUntied();
-				break;
-			case NPCState.HELD_HOSTAGE_TIED:
-				StateHeldHostageTied();
-				break;
-		}
-
-		timeInCurrentState += Time.deltaTime;		
-	}
 
 	//=================== STATE FUNCTIONS ===================//
 
 	// CivilianState.PASSIVE
 	private bool checkDrawWeaponInvoked = false;
-	private void StatePassive() {
+	protected override void StatePassive() {
 		LoseLookTarget();
 
 		if (seesEvidence) {
@@ -103,12 +75,13 @@ public class Civilian : NPC {
 	}
 
 	// CivilianState.ALERTING
-	private void StateAlerting() {}
+	protected override void StateAlerting() {}
 
 	// CivilianState.FLEEING
-	private void StateFleeing() {
+	protected override void StateFleeing() {
 		if (timeInCurrentState == 0) {
 			ResetRB();
+			arms.SetFrame(1);
 			NavMeshAgent agent = GetComponent<NavMeshAgent>();
 			Vector3 destPos = Random.insideUnitCircle * 30;				
 			destPos.z = destPos.y;
@@ -118,7 +91,7 @@ public class Civilian : NPC {
 	}
 
 	// CivilianState.ATTACKING
-	private void StateAttacking() {
+	protected override void StateAttacking() {
 		ResetRB();
 		DrawWeapon();
 		PlayerControls pc = ClosestPlayerInSight();
@@ -131,7 +104,7 @@ public class Civilian : NPC {
 	}
 
 	// CivilianState.HELD_HOSTAGE_UNTIED
-	private void StateHeldHostageUntied() {
+	protected override void StateHeldHostageUntied() {
 		if (timeInCurrentState == 0)
 			arms.SetFrame(1);  // hands up
 			
@@ -149,7 +122,7 @@ public class Civilian : NPC {
 	}
 
 	// CivilianState.HELD_HOSTAGE_TIED
-	private void StateHeldHostageTied() {
+	protected override void StateHeldHostageTied() {
 		if (arms.CurrentFrame != 2) {
 			arms.SetFrame(2);
 		}
