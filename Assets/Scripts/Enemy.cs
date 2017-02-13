@@ -30,6 +30,7 @@ public class Enemy : NPC {
 		
 
 		*/
+		LookForEvidence();
 	}
 
 	// EnemyState.CURIOUS
@@ -38,30 +39,29 @@ public class Enemy : NPC {
 		PSEUDO:
 		investigate point of curiosity
 		*/
+		LookForEvidence();		
 	}
 
 	// EnemyState.SEARCHING
 	protected override void StateSearching() {
 		/*
 		PSEUDO:
-		investigate point of curiosity
+		look for a player if you can, otherwise look for points of interest
 		*/
+		LookForEvidence();		
 	}
 
 	// EnemyState.ATTACKING
 	private PlayerControls closestPlayer;
 	protected override void StateAttacking() {
-		/*
-		PSEUDO:
-		investigate point of curiosity
-		*/
-
 		if (closestPlayer == null)
 			closestPlayer = ClosestPlayerInSight();
 
 		if (closestPlayer == null) {
 			TransitionState(NPCState.SEARCHING);
 		} else {
+			if (timeInCurrentState == 0)
+				speech.SayRandom(Speech.ENEMY_SPOTTED_PLAYER, showFlash: true, color: "red");				
 			bool inRange = (closestPlayer.transform.position - transform.position).magnitude < currentGun.range;			
 			if (inRange) {
 				agent.Stop();
@@ -78,18 +78,17 @@ public class Enemy : NPC {
 
 
 
-	/*private void GlimpsedPlayer() {
-		CheckCanSeeEvidence();
+	private void GlimpsedEvidence() {
+		CheckForEvidence();
 		if (!seesEvidence)
 			return;
 		
-		speech.SayRandom(Speech.ENEMY_SPOTTED_PLAYER, showFlash: true, color: "red");
-		Alert(Reaction.AGGRO, player.transform.position);
+		Alert(Reaction.AGGRO, evidencePoint.Value);
 	}
 
 	// TODO: being alerted without knowing location   <- could accomplish with global lastKnownLocation?
 
-	private void AggroBehavior() {
+	/*private void AggroBehavior() {
 		bool inRange = (player.transform.position - transform.position).magnitude < gunScript.range;
 
 		DrawWeapon();		
@@ -161,16 +160,15 @@ public class Enemy : NPC {
 			Reload();
 	}
 
-	private void CheckCanSeeEvidence() {
+	private void LookForEvidence() {
 		if (!invoked && seesEvidence) {
-			float reactionTime = (Random.Range(.2f, 1f));
-			Invoke("GlimpsedPlayer", reactionTime);
+			Invoke("GlimpsedEvidence", Random.Range(.2f, 1f));
 			invoked = true;
 		}
 	}
 
 	void OnCollisionEnter(Collision collision) {
-		PlayerControls pc =collision.collider.GetComponentInParent<PlayerControls>();
+		PlayerControls pc = collision.collider.GetComponentInParent<PlayerControls>();
 		if (pc != null) {
 			Alert(Reaction.SUSPICIOUS);
 			LookAt(pc.transform);			

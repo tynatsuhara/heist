@@ -480,39 +480,6 @@ public abstract class Character : PossibleObjective, Damageable {
 		return weaponDrawn || hasBag || isHacking || inRestrictedArea;
 	}
 
-	public bool seesEvidence;
-	public void CheckForEvidence() {
-		seesEvidence = CanSeeEvidence();
-	}
-
-	private bool CanSeeEvidence() {
-		Computer cameraScreen = CheckForCameraComputer();
-		bool canSeeOnCameras = cameraScreen != null && cameraScreen.PlayerInSight();
-		List<PlayerControls> seenPlayers = GameManager.players.Where(x => CanSee(x.gameObject) && x.IsEquipped()).ToList();
-		if (seenPlayers.Count > 0 || canSeeOnCameras)
-			return true;
-		
-		foreach (NPC c in GameManager.characters) {
-			bool isEvidence = !c.isAlive;
-			isEvidence |= c.currentState == Civilian.NPCState.ALERTING;
-			isEvidence |= c.currentState == Civilian.NPCState.HELD_HOSTAGE_TIED;
-			isEvidence |= c.currentState == Civilian.NPCState.HELD_HOSTAGE_UNTIED;
-			if ((isEvidence && CanSee(c.gameObject)) || 
-			    (isEvidence && cameraScreen != null && cameraScreen.InSight(c.gameObject))) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-	private Computer CheckForCameraComputer() {
-		RaycastHit hit;
-		if (Physics.Raycast(transform.position, transform.forward, out hit, 2f)) {
-			return hit.collider.GetComponentInParent<Computer>();
-		}
-		return null;
-	}
-
 	public bool CanSee(GameObject target, float fov = 130f, float viewDist = 20f) {
 		Vector3 targetPos = target.transform.position;
 		targetPos.y = transform.position.y;

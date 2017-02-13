@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Linq;
+using System.Collections.Generic;
 
 public class NPC : Character, Interactable {
 
@@ -24,7 +26,7 @@ public class NPC : Character, Interactable {
 		GetComponent<CharacterCustomization>().ColorCharacter(Outfits.fits[outfitName], true);
 		transform.RotateAround(transform.position, transform.up, Random.Range(0, 360));
 		agent = GetComponent<NavMeshAgent>();
-		// InvokeRepeating("CheckForEvidence", 0f, .5f);
+		InvokeRepeating("CheckForEvidence", 0f, .5f);
 	}
 
 	void Update() {
@@ -125,6 +127,44 @@ public class NPC : Character, Interactable {
 		}
 	}
 	public void Uninteract(Character character) {}
+
+	public bool seesEvidence;
+	public Vector3? evidencePoint;
+	public void CheckForEvidence() {
+		evidencePoint = EvidenceInSight();
+		seesEvidence = evidencePoint != null;
+	}
+
+	private Vector3? EvidenceInSight() {
+		Computer cameraScreen = CheckForCameraComputer();
+		bool canSeeOnCameras = cameraScreen != null && cameraScreen.PlayerInSight();
+		List<PlayerControls> seenPlayers = GameManager.players
+				.Where(x => CanSee(x.gameObject) && x.IsEquipped())
+				.OrderBy(x => (x.transform.position - transform.position).magnitude)
+				.ToList();
+		if (seenPlayers.Count > 0 || canSeeOnCameras)
+			return seenPlayers[0].transform.position;
+		
+		foreach (NPC c in GameManager.characters) {
+			bool isEvidence = !c.isAlive;
+			isEvidence |= c.currentState == Civilian.NPCState.ALERTING;
+			isEvidence |= c.currentState == Civilian.NPCState.HELD_HOSTAGE_TIED;
+			isEvidence |= c.currentState == Civilian.NPCState.HELD_HOSTAGE_UNTIED;
+			if ((isEvidence && CanSee(c.gameObject)) || 
+			    (isEvidence && cameraScreen != null && cameraScreen.InSight(c.gameObject))) {
+				return c.transform.position;
+			}
+		}
+
+		return null;
+	}
+	private Computer CheckForCameraComputer() {
+		RaycastHit hit;
+		if (Physics.Raycast(transform.position, transform.forward, out hit, 2f)) {
+			return hit.collider.GetComponentInParent<Computer>();
+		}
+		return null;
+	}
 
 	public override void Alert(Reaction importance, Vector3 position) {}
 }
