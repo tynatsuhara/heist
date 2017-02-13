@@ -77,10 +77,7 @@ public class PlayerControls : Character {
 			SelectGun(1);
 		}
 
-		if (Input.GetKeyDown(KeyCode.K)) {
-			// Vector3 damageDir = Random.insideUnitSphere;
-			// Damage(transform.position - damageDir * .5f, damageDir, 1000f, type: DamageType.EXPLOSIVE);
-
+		if (Input.GetKeyDown(KeyCode.P)) {
 			SwitchCamera(!firstPersonCam.enabled);
 		}
 

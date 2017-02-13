@@ -10,6 +10,7 @@ Keyboard/PS4
 * R/Square - Reload
 * Mouse0/R2 - Shoot
 * Mouse1/L2 - Melee
+* P - Change perspective
 * MouseWheel/D-Pad Up+Down - Zoom
 * Z+C/D-Pad Left+Right - Rotate Camera
 * ESC/Options - Pause
