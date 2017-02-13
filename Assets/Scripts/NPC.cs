@@ -26,7 +26,7 @@ public class NPC : Character, Interactable {
 		GetComponent<CharacterCustomization>().ColorCharacter(Outfits.fits[outfitName], true);
 		transform.RotateAround(transform.position, transform.up, Random.Range(0, 360));
 		agent = GetComponent<NavMeshAgent>();
-		InvokeRepeating("CheckForEvidence", 0f, .5f);
+		InvokeRepeating("UpdateEvidenceInSight", 0f, .5f);
 	}
 
 	void Update() {
@@ -111,7 +111,7 @@ public class NPC : Character, Interactable {
 			CompleteTransition();
 		} else {
 			Invoke("CompleteTransition", time);
-		} 
+		}
 	}
 	private void CompleteTransition() {
 		if (currentState != stateToTransitionTo)
@@ -128,9 +128,25 @@ public class NPC : Character, Interactable {
 	}
 	public void Uninteract(Character character) {}
 
+	protected void LookForEvidence() {
+		if (!glimseInvoked && seesEvidence) {
+			Invoke("GlimpsedEvidence", Random.Range(.2f, .6f));
+			glimseInvoked = true;
+		}
+	}
+	private bool glimseInvoked;
+	private void GlimpsedEvidence() {
+		UpdateEvidenceInSight();
+		glimseInvoked = false;
+		if (!seesEvidence)
+			return;
+		
+		Alert(Reaction.SUSPICIOUS, evidencePoint.Value);
+	}
+
 	public bool seesEvidence;
 	public Vector3? evidencePoint;
-	public void CheckForEvidence() {
+	public void UpdateEvidenceInSight() {
 		evidencePoint = EvidenceInSight();
 		seesEvidence = evidencePoint != null;
 	}

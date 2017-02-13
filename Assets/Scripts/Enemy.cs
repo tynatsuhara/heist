@@ -8,7 +8,6 @@ public class Enemy : NPC {
 	private static Dictionary<PlayerControls, Vector3?> lastKnownLocations = new Dictionary<PlayerControls, Vector3?>();
 
 	public float walkingAnimationThreshold;
-	private bool invoked;
 
 	public override void Start() {
 		base.Start();
@@ -39,7 +38,7 @@ public class Enemy : NPC {
 		PSEUDO:
 		investigate point of curiosity
 		*/
-		LookForEvidence();		
+		LookForEvidence();
 	}
 
 	// EnemyState.SEARCHING
@@ -76,15 +75,6 @@ public class Enemy : NPC {
 	}
 
 
-
-
-	private void GlimpsedEvidence() {
-		CheckForEvidence();
-		if (!seesEvidence)
-			return;
-		
-		Alert(Reaction.AGGRO, evidencePoint.Value);
-	}
 
 	// TODO: being alerted without knowing location   <- could accomplish with global lastKnownLocation?
 
@@ -158,13 +148,6 @@ public class Enemy : NPC {
 		base.Shoot();
 		if (currentGun.NeedsToReload())
 			Reload();
-	}
-
-	private void LookForEvidence() {
-		if (!invoked && seesEvidence) {
-			Invoke("GlimpsedEvidence", Random.Range(.2f, 1f));
-			invoked = true;
-		}
 	}
 
 	void OnCollisionEnter(Collision collision) {

@@ -486,7 +486,6 @@ public abstract class Character : PossibleObjective, Damageable {
 		float angle = Vector3.Dot(Vector3.Normalize(transform.position - targetPos), transform.forward);
 		float angleDegrees = 90 + Mathf.Asin(angle) * Mathf.Rad2Deg;
 		if (angleDegrees > fov / 2f) {
-			// Debug.Log(target.name + " " + angle);
 			return false;
 		}
 
@@ -494,16 +493,10 @@ public abstract class Character : PossibleObjective, Damageable {
 		hits = Physics.RaycastAll(transform.position, target.transform.position - transform.position, viewDist, sightLayers)
 					  .Where(x => x.transform.root != transform.root)
 					  .OrderBy(x => (x.point - transform.position).magnitude).ToArray();
-		if (hits.Length > 0) {
-			// return target.GetComponentsInChildren<Collider>().Contains(hit.collider);
-			// if (hits[0].collider.transform.root != target.transform.root)
-			// 	Debug.Log("hit " + hits[0].collider.transform.root.name + " instead");
-			// else
-			// 	Debug.Log("hit " + hits[0].collider.transform.root.name + " as intended");			
+		if (hits.Length > 0) {		
 			return hits[0].collider.transform.root == target.transform.root;
 		}
 
-		// Debug.Log(target.name + " not hit");
 		return false;
 	}
 

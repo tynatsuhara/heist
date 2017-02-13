@@ -20,12 +20,8 @@ public class Civilian : NPC {
 	protected override void StatePassive() {
 		LoseLookTarget();
 
-		if (seesEvidence) {
-			// TODO: switch to ALERTING
-
-			
-		}
 		BraveCitizenCheck();		
+		LookForEvidence();
 	}
 	private void CheckDrawWeapon() {
 		if (!SeenByAnyPlayers()) {
@@ -75,7 +71,10 @@ public class Civilian : NPC {
 	}
 
 	// CivilianState.ALERTING
-	protected override void StateAlerting() {}
+	protected override void StateAlerting() {
+		if (timeInCurrentState == 0)
+			Debug.Log("ALERT ALERT OH SHIT");
+	}
 
 	// CivilianState.FLEEING
 	protected override void StateFleeing() {
