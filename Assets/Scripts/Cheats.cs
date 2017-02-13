@@ -47,6 +47,7 @@ public class Cheats : MonoBehaviour {
 		// multiplies speed of the player
 		cheats.Add("konami", new KeyCode[]{ up, up, down, down, left, right, left, right, KeyCode.B, KeyCode.A });
 		cheats.Add("pride", new KeyCode[]{ KeyCode.P, KeyCode.R, KeyCode.I, KeyCode.D, KeyCode.E });
+		cheats.Add("slowmo", new KeyCode[]{ KeyCode.T, KeyCode.U, KeyCode.R, KeyCode.T, KeyCode.L, KeyCode.E });
 
 		foreach (string key in cheats.Keys) {
 			enabledCheats[key] = false;
@@ -90,9 +91,19 @@ public class Cheats : MonoBehaviour {
 
 			if (match && !enabledCheats[key]) {
 				enabledCheats[key] = true;
-				GameUI.instance.topCenterText.Say("Cheat Enabled: " + key.ToUpper(), showFlash:true);
-				Debug.Log(key + " cheat enabled");
+				CheatTrigger(key);
 			}
+		}
+	}
+
+	private void CheatTrigger(string key) {
+		GameUI.instance.topCenterText.Say("Cheat Enabled: " + key.ToUpper(), showFlash:true);
+		Debug.Log(key + " cheat enabled");
+
+		switch (key) {
+			case "slowmo":
+				GameManager.instance.SetTimeScale(.1f);
+				break;
 		}
 	}
 
