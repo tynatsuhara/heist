@@ -73,11 +73,14 @@ public class GameManager : MonoBehaviour {
 		CancelInvoke("SpawnCop");
 		Debug.Log("game over! you " + (success ? "win!" : "lose!"));
 		GameUI.instance.objectivesText.gameObject.SetActive(false);
-		foreach (PlayerControls pc in players)
+		foreach (PlayerControls pc in players) {
+			pc.SwitchCamera(false);
 			pc.playerUI.gameObject.SetActive(false);
+		}
 
 		if (success) {
 			getaway.destination = GameObject.Find("EscapePoint").transform;
+			Statistics();			
 			GameUI.instance.ShowWinScreen(lootAmounts);
 		} else {
 			SetTimeScale(.2f);
@@ -204,6 +207,21 @@ public class GameManager : MonoBehaviour {
 
 	private bool CheckObjectivesComplete() {
 		return objectives.All(x => !x.isRequired || x.isCompleted);
+	}
+
+	private void Statistics() {
+		List<NPC> dead = characters.Where(x => !x.isAlive).ToList();
+		List<NPC> enemies = characters.Where(x => x is Enemy).ToList();
+		if (enemies.Count > 0 && enemies.All(x => !x.isAlive)) {
+			AddLoot("killed all enemies", 10000);
+		}
+		if (!alarmsRaised) {
+			AddLoot("alarm-free", 10000);
+		} else if (dead.Count == 0) {
+			AddLoot("peaceful", 10000);
+		} else if (dead.All(x => x.lastDamageNonlethal)) {
+			AddLoot("Non-lethal", 10000);
+		}
 	}
 
 	private Dictionary<string, List<int>> lootAmounts = new Dictionary<string, List<int>>();

@@ -117,8 +117,8 @@ public abstract class Character : PossibleObjective, Damageable {
 	}
 
 	protected List<Rigidbody> separateBodyParts = new List<Rigidbody>();
-	private bool lastDamageNonlethal;
-	private bool killedByPlayer;
+	public bool lastDamageNonlethal;
+	public bool killedByPlayer;
 	public virtual bool Damage(Vector3 location, Vector3 angle, float damage, bool playerAttacker = false, DamageType type = DamageType.BULLET) {
 		bool isPlayer = tag.Equals("Player");
 		lastDamageNonlethal = type == DamageType.NONLETHAL;

@@ -49,7 +49,9 @@ public class GameUI : MonoBehaviour {
 		string right = "";
 		int bigSum = 0;
 		foreach (string s in loot.Keys) {
-			left += loot[s].Count + " x " + s.ToUpper();
+			if (loot[s].Count > 1)
+				left += loot[s].Count + " x ";
+			left += s.ToUpper();
 			int sum = 0;
 			foreach (int x in loot[s])
 				sum += x;

@@ -94,7 +94,7 @@ public class PlayerControls : Character {
 		Rotate();
     }
 
-	private void SwitchCamera(bool firstPerson) {
+	public void SwitchCamera(bool firstPerson) {
 		firstPersonCam.enabled = firstPerson;
 		firstPersonCam.GetComponent<BoxCollider>().enabled = firstPerson;
 		firstPersonCam.GetComponent<AudioListener>().enabled = firstPerson;
