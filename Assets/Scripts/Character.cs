@@ -76,7 +76,7 @@ public abstract class Character : PossibleObjective, Damageable {
 
 	public abstract void Alert(Reaction importance, Vector3 position);
 	public void Alert() {
-		PlayerControls pc = ClosestPlayerInSight();
+		PlayerControls pc = ClosestEnemyPlayerInSight();
 		if (pc != null)
 			Alert(Reaction.AGGRO, pc.transform.position);
 	}
@@ -500,10 +500,10 @@ public abstract class Character : PossibleObjective, Damageable {
 		return false;
 	}
 
-	public PlayerControls ClosestPlayerInSight() {
+	public PlayerControls ClosestEnemyPlayerInSight() {
 		PlayerControls playerScript = null;
 		foreach (PlayerControls pc in GameManager.players) {
-			if (!CanSee(pc.gameObject))
+			if (!pc.IsEquipped() || !CanSee(pc.gameObject))
 				continue;
 
 			if (playerScript == null || ((transform.position - pc.transform.position).magnitude < 

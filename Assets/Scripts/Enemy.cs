@@ -54,7 +54,7 @@ public class Enemy : NPC {
 	private PlayerControls closestPlayer;
 	protected override void StateAttacking() {
 		if (closestPlayer == null)
-			closestPlayer = ClosestPlayerInSight();
+			closestPlayer = ClosestEnemyPlayerInSight();
 
 		if (closestPlayer == null) {
 			TransitionState(NPCState.SEARCHING);

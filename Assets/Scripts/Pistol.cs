@@ -25,10 +25,9 @@ public class Pistol : Gun {
 	}
 
 	public override bool Shoot() {
-		if (delayed || shooting || reloading || bulletsFired == clipSize)
+		if (delayed || shooting || reloading || bulletsFired == clipSize || owner == null)
 			return false;
 		
-		owner.KnockBack(knockback);
 		RaycastShoot(transform.root.position, -transform.forward);
 		// SetFrame before Play to avoid delay
 		volume.SetFrame(ANIM_START_FRAME);

@@ -34,7 +34,7 @@ public class Civilian : NPC {
 		if (SeenByAnyPlayers())
 			return;
 		
-		PlayerControls playerScript = ClosestPlayerInSight();
+		PlayerControls playerScript = ClosestEnemyPlayerInSight();
 		if (playerScript == null)
 			return;
 
@@ -93,7 +93,7 @@ public class Civilian : NPC {
 	protected override void StateAttacking() {
 		ResetRB();
 		DrawWeapon();
-		PlayerControls pc = ClosestPlayerInSight();
+		PlayerControls pc = ClosestEnemyPlayerInSight();
 		if (pc != null) {
 			LookAt(pc.transform);
 			if (CanSee(pc.gameObject, fov:40f)) {
