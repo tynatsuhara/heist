@@ -47,7 +47,7 @@ public class Enemy : NPC {
 		PSEUDO:
 		look for a player if you can, otherwise look for points of interest
 		*/
-		LookForEvidence();		
+		LookForEvidence();
 	}
 
 	// EnemyState.ATTACKING
@@ -59,6 +59,10 @@ public class Enemy : NPC {
 		if (closestPlayer == null) {
 			TransitionState(NPCState.SEARCHING);
 		} else {
+			DrawWeapon();
+			if (!lastKnownLocations.ContainsKey(closestPlayer))
+				lastKnownLocations.Add(closestPlayer, null);
+			lastKnownLocations[closestPlayer] = closestPlayer.transform.position;
 			if (timeInCurrentState == 0)
 				speech.SayRandom(Speech.ENEMY_SPOTTED_PLAYER, showFlash: true, color: "red");				
 			bool inRange = (closestPlayer.transform.position - transform.position).magnitude < currentGun.range;			
@@ -141,7 +145,7 @@ public class Enemy : NPC {
 	}
 
 	public override void Alert(Reaction importance, Vector3 position) {
-
+		TransitionState(NPCState.ATTACKING);
 	}
 
 	public override void Shoot() {

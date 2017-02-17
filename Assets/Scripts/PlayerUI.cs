@@ -88,12 +88,8 @@ public class PlayerUI : MonoBehaviour {
 	}
 
 	public void UpdateHealth(float health, float healthMax, float armor, float armorMax) {
-		if (health <= 0) {
-			healthText.text = armorText.text = "";
-		} else {
-			healthText.text = "**************************************************".Substring(0, Mathf.CeilToInt(health));
-			armorText.text = "**************************************************".Substring(0, Mathf.CeilToInt(armor));
-		}
+		healthText.text = health > 0 ? new string('*', Mathf.CeilToInt(health)) : "";
+		armorText.text = armor > 0 ? new string('*', Mathf.CeilToInt(armor)) : "";
 	}
 
 	public void HitMarker() {
