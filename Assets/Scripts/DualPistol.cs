@@ -14,12 +14,19 @@ public class DualPistol : Pistol {
 	}
 
 	public override bool Shoot() {
-		shellDropLocation = volume.transform.position + transform.forward * .45f;		
 		if (base.Shoot()) {
 			SwapArms();
 			return true;
 		}
 		return false;
+	}
+
+	protected override void EjectCasing() {
+		byte[] bytes = new byte[6];
+		bytes[0] = (byte)PicaVoxel.VoxelState.Active;
+		PicaVoxel.Voxel vox = new PicaVoxel.Voxel(bytes);
+		PicaVoxel.VoxelParticleSystem.Instance.SpawnSingle(volume.transform.position + transform.forward * .45f,
+			vox, .05f, (transform.up - transform.right) * 2.5f + Random.insideUnitSphere * .5f);
 	}
 
 	private void SwapArms() {
