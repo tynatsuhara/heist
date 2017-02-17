@@ -448,7 +448,6 @@ public abstract class Character : PossibleObjective, Damageable {
 		SelectGun(guns.Length > 1 ? 1 : 0);
 	}
 
-	private bool swapping;
 	public void SelectGun(int index) {
 		index = Mathf.Clamp(index, 0, guns.Length);
 		if (this is PlayerControls)
@@ -470,7 +469,8 @@ public abstract class Character : PossibleObjective, Damageable {
 			g.SetActive(false);
 		guns[gunIndex].SetActive(true);
 		currentGun = guns[gunIndex].GetComponent<Gun>();
-		currentGun.DelayAttack(.25f);
+		if (!(currentGun is MeleeWeapon))
+			currentGun.DelayAttack(.25f);
 	}
 
 	// Basically, they're not a civilian. Has a weapon/mask/whatever. Cops should attack!

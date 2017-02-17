@@ -7,7 +7,7 @@ public class DualPistol : Pistol {
 	public GunAnimation anim2;
 	public Collider droppedCollider2;
 
-	public override void Start() {
+	public override void Awake() {
 		owner = transform.root.GetComponent<Character>();
 		if (Random.Range(0, 2) == 0)
 			SwapArms();

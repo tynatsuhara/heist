@@ -4,8 +4,6 @@ using System.Collections;
 
 public class MeleeWeapon : Gun {
 
-	public float swingSpeed;
-	private bool canSwing = true;
 	private Dictionary<byte, Color32> originalColors;	
 	private Dictionary<byte, Vector3[]> locations;	
 	public int swingDirection;
@@ -14,29 +12,27 @@ public class MeleeWeapon : Gun {
 	public byte bloodyVoxelMax;
 
 
-	public override void Start() {
-		base.Start();
+	public override void Awake() {
+		base.Awake();
 		SaveColors();
 	}
 
-	public override bool Shoot() {
-		bool couldSwing = canSwing;
-		Melee(damageType, swingDirection);
-		return couldSwing;
+	void Update() {
+		if (!meleeing && volume.CurrentFrame == ANIM_START_FRAME)
+			volume.SetFrame(GUN_BASE_FRAME);
 	}
-	private void ResetShoot() {
-		canSwing = true;
-		volume.SetFrame(GUN_BASE_FRAME);
+
+	public override bool Shoot() {
+		bool wasMeleeing = meleeing;
+		Melee(damageType, swingDirection);
+		return wasMeleeing;
 	}
 
 	public override void Melee(DamageType type = DamageType.MELEE, int dir = 0) {
-		if (!canSwing)
+		if (meleeing)
 			return;
-		canSwing = false;
 		volume.SetFrame(ANIM_START_FRAME);
-		bool couldSwing = canSwing;		
 		base.Melee(type, swingDirection);
-		Invoke("ResetShoot", swingSpeed);		
 	}
 
 	public override void Release() {}

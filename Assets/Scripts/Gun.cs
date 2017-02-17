@@ -24,7 +24,7 @@ public abstract class Gun : MonoBehaviour {
 	public bool isPlayer;
 	public PlayerControls player;
 
-	public virtual void Start() {
+	public virtual void Awake() {
 		owner = transform.root.GetComponent<Character>();
 		volume = GetComponent<PicaVoxel.Volume>();
 		anim = GetComponent<GunAnimation>();
@@ -74,7 +74,7 @@ public abstract class Gun : MonoBehaviour {
 	public bool meleeing;
 	private float meleeDirection;
 	public virtual void Melee(DamageType type = DamageType.MELEE, int dir = 0) {
-		if (meleeing)
+		if (meleeing || delayed)
 			return;
 		meleeDirection = dir != 0 ? Mathf.Clamp(dir, -1, 1) : Random.Range(0, 2) * 2 - 1;
 		meleeing = true;
@@ -107,6 +107,8 @@ public abstract class Gun : MonoBehaviour {
 	}
 	private IEnumerator MeleeAnimation() {
 		int angle = 40;
+		transform.localPosition = inPlayerPos;
+		transform.localEulerAngles = Vector3.up * 180;
 		Quaternion initialRotation = transform.localRotation;
 		Vector3 initialPosition = transform.localPosition;
 		transform.RotateAround(transform.root.position, Vector3.up, angle * meleeDirection);
