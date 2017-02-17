@@ -5,12 +5,17 @@ using System.Linq;
 
 public class Enemy : NPC {
 
-	private static Dictionary<PlayerControls, Vector3?> lastKnownLocations = new Dictionary<PlayerControls, Vector3?>();
+	private static Dictionary<PlayerControls, PlayerKnowledge> knowledge;
 
 	public float walkingAnimationThreshold;
 
 	public override void Start() {
 		base.Start();
+		if (knowledge == null) {
+			knowledge = new Dictionary<PlayerControls, PlayerKnowledge>();
+			foreach (PlayerControls pc in GameManager.players)
+				knowledge.Add(pc, new PlayerKnowledge());
+		}
 
 		if (GameManager.instance.alarmsRaised) {
 			currentState = NPCState.SEARCHING;
@@ -47,22 +52,38 @@ public class Enemy : NPC {
 		PSEUDO:
 		look for a player if you can, otherwise look for points of interest
 		*/
-		LookForEvidence();
+		if (timeInCurrentState == 0) {
+			Debug.Log("first search round");
+			DrawWeapon();
+			PlayerControls closestLastKnownPlayer = null;
+			foreach (PlayerControls pc in GameManager.players) {
+				if (closestLastKnownPlayer == null || (transform.position - closestLastKnownPlayer.transform.position).magnitude > 
+						(transform.position - pc.transform.position).magnitude)
+					closestLastKnownPlayer = pc;
+				Debug.Log(closestLastKnownPlayer.transform.position);
+			}
+			if (closestLastKnownPlayer != null) {
+				agent.SetDestination(closestLastKnownPlayer.transform.position);
+			}
+		}
+		LookForEvidence();		
 	}
 
 	// EnemyState.ATTACKING
 	private PlayerControls closestPlayer;
 	protected override void StateAttacking() {
-		if (closestPlayer == null)
+		if (closestPlayer == null || Time.time - knowledge[closestPlayer].lastSeenTime > .3) {
 			closestPlayer = ClosestEnemyPlayerInSight();
+			if (closestPlayer != null) {
+				knowledge[closestPlayer].lastKnownLocation = closestPlayer.transform.position;
+				knowledge[closestPlayer].lastSeenTime = Time.time;
+			}
+		}
 
 		if (closestPlayer == null) {
 			TransitionState(NPCState.SEARCHING);
 		} else {
 			DrawWeapon();
-			if (!lastKnownLocations.ContainsKey(closestPlayer))
-				lastKnownLocations.Add(closestPlayer, null);
-			lastKnownLocations[closestPlayer] = closestPlayer.transform.position;
 			if (timeInCurrentState == 0)
 				speech.SayRandom(Speech.ENEMY_SPOTTED_PLAYER, showFlash: true, color: "red");				
 			bool inRange = (closestPlayer.transform.position - transform.position).magnitude < currentGun.range;			
@@ -71,49 +92,13 @@ public class Enemy : NPC {
 			} else {
 				agent.SetDestination(closestPlayer.transform.position);
 			}
-			if (CanSee(closestPlayer.gameObject, fov:30f)) {
+			if (CanSee(closestPlayer.gameObject, fov:20f)) {
 				Shoot();
 			}
 			LookAt(closestPlayer.transform.position);	
 		}
 	}
-
-
-
-	// TODO: being alerted without knowing location   <- could accomplish with global lastKnownLocation?
-
-	/*private void AggroBehavior() {
-		bool inRange = (player.transform.position - transform.position).magnitude < gunScript.range;
-
-		DrawWeapon();		
-		// If one enemy can see the player, they all know where he is
-		if (CanSee(player)) {
-			knowsPlayerLocation = true;
-			enemyIsKnown = true;
-			lastKnownPlayerLocation = player.transform.position;
-			if (inRange) {
-				agent.destination = transform.position;
-			} else {
-				agent.destination = player.transform.position;
-			}
-			if (CanSee(player, fov:30f)) {
-				Shoot();
-			}
-			LookAt(lastKnownPlayerLocation);			
-		// If they can't see him, go to where they know he was last
-		} else if (knowsPlayerLocation) {
-			LoseLookTarget();
-			agent.destination = lastKnownPlayerLocation;
-			if (agent.velocity.magnitude == 0f) {
-				knowsPlayerLocation = false;
-				// TODO: What happens when you can't find the enemy?
-				//       Maybe regroup with other officers. Maybe explore.
-			}
-		} else {
-			LoseLookTarget();			
-			agent.destination = investigatePoint;
-		}
-	}
+/*
 
 	private void SuspiciousBehavior() {
 		float followDistance = 4f;
@@ -146,6 +131,7 @@ public class Enemy : NPC {
 
 	public override void Alert(Reaction importance, Vector3 position) {
 		TransitionState(NPCState.ATTACKING);
+		// GameManager.instance.WereGoingLoudBoys();
 	}
 
 	public override void Shoot() {
@@ -161,5 +147,10 @@ public class Enemy : NPC {
 			LookAt(pc.transform);			
 		}
     }
+
+	private class PlayerKnowledge {
+		public Vector3? lastKnownLocation;
+		public float lastSeenTime;
+	}
 }
 

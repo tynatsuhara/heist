@@ -130,7 +130,7 @@ public class NPC : Character, Interactable {
 
 	protected void LookForEvidence() {
 		if (!glimseInvoked && seesEvidence) {
-			Invoke("GlimpsedEvidence", Random.Range(.2f, .5f));
+			Invoke("GlimpsedEvidence", Random.Range(.3f, .6f));
 			glimseInvoked = true;
 		}
 	}
