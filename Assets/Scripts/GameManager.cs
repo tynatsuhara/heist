@@ -213,10 +213,10 @@ public class GameManager : MonoBehaviour {
 		List<NPC> dead = characters.Where(x => !x.isAlive).ToList();
 		List<NPC> enemies = characters.Where(x => x is Enemy).ToList();
 		if (enemies.Count > 0 && enemies.All(x => !x.isAlive)) {
-			AddLoot("killed all enemies", 10000);
+			AddLoot("bloodbath", 10000);
 		}
 		if (!alarmsRaised) {
-			AddLoot("alarm-free", 10000);
+			AddLoot("no alarms", 10000);
 		} else if (dead.Count == 0) {
 			AddLoot("peaceful", 10000);
 		} else if (dead.All(x => x.lastDamageNonlethal)) {
