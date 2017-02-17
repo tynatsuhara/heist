@@ -80,7 +80,7 @@ public class GameManager : MonoBehaviour {
 
 		if (success) {
 			getaway.destination = GameObject.Find("EscapePoint").transform;
-			Statistics();			
+			Statistics();
 			GameUI.instance.ShowWinScreen(lootAmounts);
 		} else {
 			// SetTimeScale(.2f);
