@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour {
 
 	void Awake() {
 		instance = this;
+		players = SpawnPlayers(playersToSpawn);		
 	}
 
 	void Start () {
@@ -43,7 +44,6 @@ public class GameManager : MonoBehaviour {
 
 		// 2. spawn characters?
 		characters = Object.FindObjectsOfType<NPC>().ToList();
-		players = SpawnPlayers(playersToSpawn);
 
 		// 3. get objectives
 		objectives = Object.FindObjectsOfType<PossibleObjective>().Where(x => x.isObjective && !x.isCompleted).ToList();
@@ -83,7 +83,7 @@ public class GameManager : MonoBehaviour {
 			Statistics();			
 			GameUI.instance.ShowWinScreen(lootAmounts);
 		} else {
-			SetTimeScale(.2f);
+			// SetTimeScale(.2f);
 		}
 	}
 
