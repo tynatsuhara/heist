@@ -185,7 +185,7 @@ public class NPC : Character, Interactable {
 
 		return null;
 	}
-	
+
 	private Computer CheckForCameraComputer() {
 		RaycastHit hit;
 		if (Physics.Raycast(transform.position, transform.forward, out hit, 2f)) {
@@ -197,7 +197,7 @@ public class NPC : Character, Interactable {
 	public PlayerControls ClosestEnemyPlayerInSight() {
 		PlayerControls playerScript = null;
 		foreach (PlayerControls pc in GameManager.players) {
-			if (!pc.IsEquipped() || !CanSee(pc.gameObject))
+			if (!pc.IsEquipped() || !CanSee(pc.gameObject) || !pc.isAlive)
 				continue;
 
 			if (playerScript == null || ((transform.position - pc.transform.position).magnitude < 

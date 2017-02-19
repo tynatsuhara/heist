@@ -52,53 +52,61 @@ public class Enemy : NPC {
 		PSEUDO:
 		look for a player if you can, otherwise look for points of interest
 		*/
-		if (firstStateIteration || closestPlayer == null) {
+		if (firstStateIteration || targetPlayer == null) {
 			DrawWeapon();
-			closestPlayer = null;
+			targetPlayer = null;
 			foreach (PlayerControls pc in GameManager.players) {
-				if (closestPlayer == null || (transform.position - closestPlayer.transform.position).magnitude > 
+				if (targetPlayer == null || (transform.position - targetPlayer.transform.position).magnitude > 
 						(transform.position - pc.transform.position).magnitude)
-					closestPlayer = pc;
+					targetPlayer = pc;
 			}
-			if (closestPlayer != null) {
-				agent.SetDestination(closestPlayer.transform.position);
+			if (targetPlayer != null) {
+				agent.SetDestination(targetPlayer.transform.position);
 			}
 		} else {
-			foreach (PlayerControls pc in GameManager.players.Where(x => x.IsEquipped())) {
+			foreach (PlayerControls pc in GameManager.players.OrderBy(x => (transform.position - x.transform.position).magnitude)) {
+				if (!knowledge[pc].unknownLocation) {
+					targetPlayer = pc;
+					TransitionState(NPCState.ATTACKING);
+					return;
+				}
+			}
+			foreach (PlayerControls pc in GameManager.players.Where(x => x.IsEquipped() && x.isAlive)) {
 				if (CanSee(pc.gameObject)) {
 					TransitionState(NPCState.ATTACKING);
+					return;
 				}
 			}
 		}
 	}
 
 	// EnemyState.ATTACKING
-	private PlayerControls closestPlayer;
+	private PlayerControls targetPlayer;
 	protected override void StateAttacking() {
-		if (closestPlayer == null || Time.time - knowledge[closestPlayer].lastSeenTime > .3) {
-			closestPlayer = ClosestEnemyPlayerInSight();
-			if (closestPlayer != null) {
-				knowledge[closestPlayer].lastKnownLocation = closestPlayer.transform.position;
-				knowledge[closestPlayer].lastSeenTime = Time.time;
+		if (targetPlayer == null || !targetPlayer.isAlive || knowledge[targetPlayer].unknownLocation) {
+			targetPlayer = ClosestEnemyPlayerInSight();
+			if (targetPlayer != null) {
+				knowledge[targetPlayer].lastKnownLocation = targetPlayer.transform.position;
+				knowledge[targetPlayer].lastSeenTime = Time.time;
 			}
 		}
 
-		if (closestPlayer == null) {
+		if (targetPlayer == null) {
 			TransitionState(NPCState.SEARCHING);
 		} else {
 			DrawWeapon();
 			if (firstStateIteration)
 				speech.SayRandom(Speech.ENEMY_SPOTTED_PLAYER, showFlash: true, color: "red");				
-			bool inRange = (closestPlayer.transform.position - transform.position).magnitude < currentGun.range;			
-			if (inRange) {
+			bool inRange = (targetPlayer.transform.position - transform.position).magnitude < currentGun.range;			
+			if (inRange || !targetPlayer.isAlive) {
 				agent.SetDestination(transform.position);
 			} else {
-				agent.SetDestination(closestPlayer.transform.position);
+				agent.SetDestination(targetPlayer.transform.position);
 			}
-			if (CanSee(closestPlayer.gameObject, fov:20f)) {
+			if (CanSee(targetPlayer.gameObject, fov:20f)) {
 				Shoot();
 			}
-			LookAt(closestPlayer.transform.position);	
+			LookAt(targetPlayer.transform.position);	
 		}
 	}
 
@@ -112,7 +120,7 @@ public class Enemy : NPC {
 		if (currentState == NPCState.PASSIVE) {
 			TransitionState(NPCState.ATTACKING);
 			LookAt(position);
-			// GameManager.instance.WereGoingLoudBoys();			
+			GameManager.instance.WereGoingLoudBoys();			
 		}
 	}
 
@@ -136,6 +144,9 @@ public class Enemy : NPC {
 	private class PlayerKnowledge {
 		public Vector3? lastKnownLocation;
 		public float lastSeenTime;
+		public bool unknownLocation {
+			get { return Time.time - lastSeenTime > .3; }
+		}
 	}
 }
 
