@@ -152,7 +152,7 @@ public class NPC : Character, Interactable {
 		if (!seesEvidence)
 			return;
 		
-		Alert(Reaction.SUSPICIOUS, evidencePoint.Value);
+		Alert(Reaction.AGGRO, evidencePoint.Value);
 	}
 
 	public bool seesEvidence;

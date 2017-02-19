@@ -9,11 +9,6 @@ public class Menu : MonoBehaviour {
 	public int playerId;
 
 	public MenuNode selectedNode;
-	private MenuNode[] all;
-
-	void Awake() {
-		all = GetComponentsInChildren<MenuNode>();
-	}
 
 	void Update () {
 		if (tint != null)
