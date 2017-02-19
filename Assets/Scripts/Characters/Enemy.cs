@@ -95,7 +95,7 @@ public class Enemy : NPC {
 			TransitionState(NPCState.SEARCHING);
 		} else {
 			DrawWeapon();
-			if (firstStateIteration)
+			if (firstStateIteration && Random.Range(0, 3) == 0)
 				speech.SayRandom(Speech.ENEMY_SPOTTED_PLAYER, showFlash: true, color: "red");				
 			bool inRange = (targetPlayer.transform.position - transform.position).magnitude < currentGun.range;			
 			if (inRange || !targetPlayer.isAlive) {
