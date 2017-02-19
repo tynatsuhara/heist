@@ -72,13 +72,13 @@ public class Civilian : NPC {
 
 	// CivilianState.ALERTING
 	protected override void StateAlerting() {
-		if (timeInCurrentState == 0)
+		if (firstStateIteration)
 			Debug.Log("ALERT ALERT OH SHIT");
 	}
 
 	// CivilianState.FLEEING
 	protected override void StateFleeing() {
-		if (timeInCurrentState == 0) {
+		if (firstStateIteration) {
 			ResetRB();
 			arms.SetFrame(1);
 			NavMeshAgent agent = GetComponent<NavMeshAgent>();
@@ -106,7 +106,7 @@ public class Civilian : NPC {
 	protected override void StateHeldHostageUntied() {
 		LoseLookTarget();						
 
-		if (timeInCurrentState == 0) {
+		if (firstStateIteration) {
 			arms.SetFrame(1);  // hands up
 			rb.constraints = RigidbodyConstraints.None;
 			GetComponent<NavMeshAgent>().enabled = false;

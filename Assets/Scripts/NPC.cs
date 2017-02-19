@@ -16,6 +16,10 @@ public class NPC : Character, Interactable {
 		ATTACKING
 	}
 
+	public bool firstStateIteration {
+		get { return timeInCurrentState == 0; }
+	}
+
 	public NPCState currentState;
 	protected NavMeshAgent agent;
 
@@ -32,6 +36,11 @@ public class NPC : Character, Interactable {
 	void Update() {
 		if (!isAlive || GameManager.paused)
 			return;
+
+		if (resetTimeFlag) {
+			resetTimeFlag = false;
+			timeInCurrentState = 0;
+		}
 
 		switch (currentState) {
 			case NPCState.PASSIVE:
@@ -101,9 +110,10 @@ public class NPC : Character, Interactable {
 		}
 	}
 
-	private bool transitioningState;
+	protected bool transitioningState;
 	protected float timeInCurrentState;
 	private NPCState stateToTransitionTo;
+	private bool resetTimeFlag;
 	public void TransitionState(NPCState newState, float time = 0f) {
 		stateToTransitionTo = newState;
 		transitioningState = true;
@@ -114,8 +124,9 @@ public class NPC : Character, Interactable {
 		}
 	}
 	private void CompleteTransition() {
-		if (currentState != stateToTransitionTo)
-			timeInCurrentState = 0f;
+		if (currentState != stateToTransitionTo) {
+			resetTimeFlag = true;
+		}
 		currentState = stateToTransitionTo;
 		transitioningState = false;
 	}

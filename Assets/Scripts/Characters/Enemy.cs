@@ -52,7 +52,7 @@ public class Enemy : NPC {
 		PSEUDO:
 		look for a player if you can, otherwise look for points of interest
 		*/
-		if (timeInCurrentState == 0) {
+		if (firstStateIteration) {
 			Debug.Log("first search round");
 			DrawWeapon();
 			PlayerControls closestLastKnownPlayer = null;
@@ -65,8 +65,14 @@ public class Enemy : NPC {
 			if (closestLastKnownPlayer != null) {
 				agent.SetDestination(closestLastKnownPlayer.transform.position);
 			}
+		} else {
+			foreach (PlayerControls pc in GameManager.players.Where(x => x.IsEquipped())) {
+				if (CanSee(pc.gameObject)) {
+					closestPlayer = pc;
+					TransitionState(NPCState.ATTACKING);
+				}
+			}
 		}
-		LookForEvidence();		
 	}
 
 	// EnemyState.ATTACKING
@@ -84,11 +90,11 @@ public class Enemy : NPC {
 			TransitionState(NPCState.SEARCHING);
 		} else {
 			DrawWeapon();
-			if (timeInCurrentState == 0)
+			if (firstStateIteration)
 				speech.SayRandom(Speech.ENEMY_SPOTTED_PLAYER, showFlash: true, color: "red");				
 			bool inRange = (closestPlayer.transform.position - transform.position).magnitude < currentGun.range;			
 			if (inRange) {
-				agent.Stop();
+				agent.SetDestination(transform.position);
 			} else {
 				agent.SetDestination(closestPlayer.transform.position);
 			}
@@ -98,40 +104,17 @@ public class Enemy : NPC {
 			LookAt(closestPlayer.transform.position);	
 		}
 	}
-/*
-
-	private void SuspiciousBehavior() {
-		float followDistance = 4f;
-		if (CanSee(player)) {
-			lastKnownPlayerLocation = player.transform.position;
-			knowsPlayerLocation = true;
-			if ((transform.position - player.transform.position).magnitude < followDistance) {
-				agent.destination = transform.position;			
-			} else {
-				agent.destination = lastKnownPlayerLocation;
-			}
-			timeSpentWatchingPlayer += Time.deltaTime;
-			float timeSpentWatchingBeforeGivingUp = 5f;
-			if (timeSpentWatchingPlayer > timeSpentWatchingBeforeGivingUp) {
-				suspicious = false;
-				agent.destination = transform.position;
-				LoseLookTarget();					
-			}			
-		} else if (knowsPlayerLocation) {
-			agent.destination = lastKnownPlayerLocation;
-		} else {
-			agent.destination = investigatePoint;
-		}
-		CheckCanSeeEvidence();
-	}*/
 
 	public void Alert(Reaction importance) {
 		Alert(importance, transform.position + transform.forward);
 	}
 
 	public override void Alert(Reaction importance, Vector3 position) {
-		TransitionState(NPCState.ATTACKING);
-		// GameManager.instance.WereGoingLoudBoys();
+		if (currentState == NPCState.PASSIVE) {
+			TransitionState(NPCState.ATTACKING);
+			LookAt(position);
+			// GameManager.instance.WereGoingLoudBoys();			
+		}
 	}
 
 	public override void Shoot() {

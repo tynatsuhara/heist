@@ -137,10 +137,11 @@ public abstract class Character : PossibleObjective, Damageable {
 				return false;
 			}
 			damage = -armor;  // for applying leftover damage later
+			armor = Mathf.Max(0, armor);
 		}
 
 		if (isAlive && !isPlayer)
-			Invoke("Alert", .7f);
+			Alert(Reaction.AGGRO, location - angle.normalized);
 
 		if (isAlive)
 			Bleed(Random.Range(0, 10), location, angle);
