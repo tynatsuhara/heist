@@ -121,7 +121,7 @@ public class GameManager : MonoBehaviour {
 	// severity and range. If visual is nonnull, the character must have line
 	// of sight to the visual to be alerted.
 	public void AlertInRange(Character.Reaction importance, Vector3 location, float range, GameObject visual = null) {
-		foreach (Character c in characters) {
+		foreach (Character c in characters.Where(x => x.isAlive)) {
 			if ((c.transform.position - location).magnitude < range) {
 				if (visual != null && !c.CanSee(visual))
 					continue;
