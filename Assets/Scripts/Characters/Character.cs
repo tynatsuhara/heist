@@ -75,11 +75,7 @@ public abstract class Character : PossibleObjective, Damageable {
 	}
 
 	public abstract void Alert(Reaction importance, Vector3 position);
-	public void Alert() {
-		PlayerControls pc = ClosestEnemyPlayerInSight();
-		if (pc != null)
-			Alert(Reaction.AGGRO, pc.transform.position);
-	}
+	public void Alert() {}
 
 	public void KnockBack(float force) {
 		rb.AddForce(force * -transform.forward, ForceMode.Impulse);
@@ -497,27 +493,6 @@ public abstract class Character : PossibleObjective, Damageable {
 		if (hits.Length > 0) {		
 			return hits[0].collider.transform.root == target.transform.root;
 		}
-
-		return false;
-	}
-
-	public PlayerControls ClosestEnemyPlayerInSight() {
-		PlayerControls playerScript = null;
-		foreach (PlayerControls pc in GameManager.players) {
-			if (!pc.IsEquipped() || !CanSee(pc.gameObject))
-				continue;
-
-			if (playerScript == null || ((transform.position - pc.transform.position).magnitude < 
-									     (transform.position - playerScript.transform.position).magnitude))
-				playerScript = pc;
-		}
-		return playerScript;
-	}
-
-	public bool ClearShot(GameObject target, float dist = 20f) {
-		RaycastHit hit;
-		if (Physics.Raycast(transform.position, target.transform.position - transform.position, out hit, dist))
-			return hit.collider.transform.root.gameObject == target;
 
 		return false;
 	}

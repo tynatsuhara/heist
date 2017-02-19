@@ -52,23 +52,20 @@ public class Enemy : NPC {
 		PSEUDO:
 		look for a player if you can, otherwise look for points of interest
 		*/
-		if (firstStateIteration) {
-			Debug.Log("first search round");
+		if (firstStateIteration || closestPlayer == null) {
 			DrawWeapon();
-			PlayerControls closestLastKnownPlayer = null;
+			closestPlayer = null;
 			foreach (PlayerControls pc in GameManager.players) {
-				if (closestLastKnownPlayer == null || (transform.position - closestLastKnownPlayer.transform.position).magnitude > 
+				if (closestPlayer == null || (transform.position - closestPlayer.transform.position).magnitude > 
 						(transform.position - pc.transform.position).magnitude)
-					closestLastKnownPlayer = pc;
-				Debug.Log(closestLastKnownPlayer.transform.position);
+					closestPlayer = pc;
 			}
-			if (closestLastKnownPlayer != null) {
-				agent.SetDestination(closestLastKnownPlayer.transform.position);
+			if (closestPlayer != null) {
+				agent.SetDestination(closestPlayer.transform.position);
 			}
 		} else {
 			foreach (PlayerControls pc in GameManager.players.Where(x => x.IsEquipped())) {
 				if (CanSee(pc.gameObject)) {
-					closestPlayer = pc;
 					TransitionState(NPCState.ATTACKING);
 				}
 			}
@@ -110,6 +107,8 @@ public class Enemy : NPC {
 	}
 
 	public override void Alert(Reaction importance, Vector3 position) {
+		if (importance == Reaction.SUSPICIOUS) {
+		}
 		if (currentState == NPCState.PASSIVE) {
 			TransitionState(NPCState.ATTACKING);
 			LookAt(position);
@@ -125,8 +124,11 @@ public class Enemy : NPC {
 
 	void OnCollisionEnter(Collision collision) {
 		PlayerControls pc = collision.collider.GetComponentInParent<PlayerControls>();
-		if (pc != null) {
+		if (pc != null && !GameManager.instance.alarmsRaised) {
 			Alert(Reaction.SUSPICIOUS);
+			LookAt(pc.transform);		
+		} else if (pc != null) {
+			Alert(Reaction.AGGRO);
 			LookAt(pc.transform);			
 		}
     }

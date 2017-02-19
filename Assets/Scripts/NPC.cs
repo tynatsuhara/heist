@@ -185,12 +185,34 @@ public class NPC : Character, Interactable {
 
 		return null;
 	}
+	
 	private Computer CheckForCameraComputer() {
 		RaycastHit hit;
 		if (Physics.Raycast(transform.position, transform.forward, out hit, 2f)) {
 			return hit.collider.GetComponentInParent<Computer>();
 		}
 		return null;
+	}
+
+	public PlayerControls ClosestEnemyPlayerInSight() {
+		PlayerControls playerScript = null;
+		foreach (PlayerControls pc in GameManager.players) {
+			if (!pc.IsEquipped() || !CanSee(pc.gameObject))
+				continue;
+
+			if (playerScript == null || ((transform.position - pc.transform.position).magnitude < 
+									     (transform.position - playerScript.transform.position).magnitude))
+				playerScript = pc;
+		}
+		return playerScript;
+	}
+
+	public bool ClearShot(GameObject target, float dist = 20f) {
+		RaycastHit hit;
+		if (Physics.Raycast(transform.position, target.transform.position - transform.position, out hit, dist))
+			return hit.collider.transform.root.gameObject == target;
+
+		return false;
 	}
 
 	public override void Alert(Reaction importance, Vector3 position) {}
