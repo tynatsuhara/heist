@@ -115,10 +115,13 @@ public class Enemy : NPC {
 	}
 
 	public override void Alert(Reaction importance, Vector3 position) {
-		if (currentState == NPCState.PASSIVE) {
+		if (importance == Reaction.SUSPICIOUS && currentState != NPCState.ATTACKING) {
+			TransitionState(NPCState.CURIOUS);
+			LookAt(position);
+		} else if (currentState != NPCState.ATTACKING) {
 			TransitionState(NPCState.ATTACKING);
 			LookAt(position);
-			GameManager.instance.WereGoingLoudBoys();			
+			GameManager.instance.WereGoingLoudBoys();
 		}
 	}
 
@@ -130,13 +133,8 @@ public class Enemy : NPC {
 
 	void OnCollisionEnter(Collision collision) {
 		PlayerControls pc = collision.collider.GetComponentInParent<PlayerControls>();
-		if (pc != null && !GameManager.instance.alarmsRaised) {
-			Alert(Reaction.SUSPICIOUS);
-			LookAt(pc.transform);		
-		} else if (pc != null) {
-			Alert(Reaction.AGGRO);
-			LookAt(pc.transform);			
-		}
+		if (pc != null)
+			Alert(GameManager.instance.alarmsRaised ? Reaction.AGGRO : Reaction.SUSPICIOUS, pc.transform.position);
     }
 
 	private class PlayerKnowledge {
