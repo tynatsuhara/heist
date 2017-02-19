@@ -115,8 +115,6 @@ public class Enemy : NPC {
 	}
 
 	public override void Alert(Reaction importance, Vector3 position) {
-		if (importance == Reaction.SUSPICIOUS) {
-		}
 		if (currentState == NPCState.PASSIVE) {
 			TransitionState(NPCState.ATTACKING);
 			LookAt(position);
