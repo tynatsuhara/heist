@@ -117,14 +117,17 @@ public class NPC : Character, Interactable {
 		if (pathToFollow == null || pathToFollow.Length == 0)
 			return;
 		WorldPoint currentPoint = pathToFollow[currentPointIndex];
-		bool atPoint = (currentPoint.transform.position - transform.position).magnitude < .1f;
+		bool atPoint = (currentPoint.transform.position - transform.position).magnitude < 1f;
 		if (atPoint) {
 			timeAtCurrentPoint++;
-			if (currentPoint.faceDirection)
+			if (currentPoint.faceDirection) {
 				LookAt(transform.position + currentPoint.lookDirection);
+			}
 			if (timeAtCurrentPoint > currentPoint.timeToStayHere && currentPoint.timeToStayHere >= 0) {
+				int oldIndex = currentPointIndex;
 				currentPointIndex = (currentPointIndex + 1) % pathToFollow.Length;
-				agent.SetDestination(currentPoint.transform.position);
+				if (oldIndex != currentPointIndex)
+					agent.SetDestination(currentPoint.transform.position);
 			}
 		}
 		if (agent.destination != pathToFollow[currentPointIndex].transform.position)
@@ -185,12 +188,11 @@ public class NPC : Character, Interactable {
 
 	private Vector3? EvidenceInSight() {
 		Computer cameraScreen = CheckForCameraComputer();
-		bool canSeeOnCameras = cameraScreen != null && cameraScreen.PlayerInSight();
 		List<PlayerControls> seenPlayers = GameManager.players
-				.Where(x => CanSee(x.gameObject) && x.IsEquipped())
+				.Where(x => x.IsEquipped() && (CanSee(x.gameObject) || (cameraScreen != null && cameraScreen.InSight(x.gameObject))))
 				.OrderBy(x => (x.transform.position - transform.position).magnitude)
 				.ToList();
-		if (seenPlayers.Count > 0 || canSeeOnCameras)
+		if (seenPlayers.Count > 0)
 			return seenPlayers[0].transform.position;
 		
 		foreach (NPC c in GameManager.characters) {
