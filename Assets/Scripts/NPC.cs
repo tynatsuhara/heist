@@ -110,6 +110,27 @@ public class NPC : Character, Interactable {
 		}
 	}
 
+	public WorldPoint[] pathToFollow;
+	private int currentPointIndex;
+	private float timeAtCurrentPoint;
+	protected void FollowPath() {
+		if (pathToFollow == null || pathToFollow.Length == 0)
+			return;
+		WorldPoint currentPoint = pathToFollow[currentPointIndex];
+		bool atPoint = (currentPoint.transform.position - transform.position).magnitude < .1f;
+		if (atPoint) {
+			timeAtCurrentPoint++;
+			if (currentPoint.faceDirection)
+				LookAt(transform.position + currentPoint.lookDirection);
+			if (timeAtCurrentPoint > currentPoint.timeToStayHere && currentPoint.timeToStayHere >= 0) {
+				currentPointIndex = (currentPointIndex + 1) % pathToFollow.Length;
+				agent.SetDestination(currentPoint.transform.position);
+			}
+		}
+		if (agent.destination != pathToFollow[currentPointIndex].transform.position)
+			agent.SetDestination(pathToFollow[currentPointIndex].transform.position);
+	}
+
 	protected bool transitioningState;
 	protected float timeInCurrentState;
 	private NPCState stateToTransitionTo;

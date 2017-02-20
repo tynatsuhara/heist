@@ -34,6 +34,7 @@ public class Enemy : NPC {
 		
 
 		*/
+		FollowPath();
 		LookForEvidence();
 	}
 
