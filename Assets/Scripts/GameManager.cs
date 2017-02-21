@@ -74,7 +74,6 @@ public class GameManager : MonoBehaviour {
 		Debug.Log("game over! you " + (success ? "win!" : "lose!"));
 		GameUI.instance.objectivesText.gameObject.SetActive(false);
 		foreach (PlayerControls pc in players) {
-			pc.SwitchCamera(false);
 			pc.playerUI.gameObject.SetActive(false);
 		}
 
