@@ -84,6 +84,7 @@ public class Enemy : NPC {
 	// EnemyState.ATTACKING
 	private PlayerControls targetPlayer;
 	protected override void StateAttacking() {
+		GameManager.instance.WereGoingLoudBoys();		
 		if (targetPlayer == null || !targetPlayer.isAlive || knowledge[targetPlayer].unknownLocation) {
 			targetPlayer = ClosestEnemyPlayerInSight();
 			if (targetPlayer != null) {
@@ -117,12 +118,11 @@ public class Enemy : NPC {
 
 	public override void Alert(Reaction importance, Vector3 position) {
 		if (importance == Reaction.SUSPICIOUS && currentState != NPCState.ATTACKING) {
-			TransitionState(NPCState.CURIOUS);
+			TransitionState(NPCState.CURIOUS, Random.Range(.2f, .4f));
 			LookAt(position);
 		} else if (currentState != NPCState.ATTACKING) {
-			TransitionState(NPCState.ATTACKING);
+			TransitionState(NPCState.ATTACKING, Random.Range(.2f, .4f));
 			LookAt(position);
-			GameManager.instance.WereGoingLoudBoys();
 		}
 	}
 
