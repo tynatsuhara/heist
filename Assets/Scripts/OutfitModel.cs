@@ -14,6 +14,9 @@ public class OutfitModel : MonoBehaviour {
 	public PicaVoxel.Volume legs;
 
 	void Awake() {
+		if (Outfits.fits.ContainsKey(name))
+			return;
+		
 		Outfits.fits.Add(name, new Outfits.Outfit(new string[] {
 			Encode(body),
 			Encode(head),
