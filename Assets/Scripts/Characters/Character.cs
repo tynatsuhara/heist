@@ -26,7 +26,6 @@ public abstract class Character : PossibleObjective, Damageable {
 	public float armor;
 
 	public Inventory inventory;
-	public Inventory weaponInv;
 	public Bag bag;
 	public bool hasBag {
 		get { return bag != null; }
