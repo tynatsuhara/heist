@@ -25,9 +25,9 @@ public class PlayerCamera : MonoBehaviour {
 	void Start () {
 		rotationGoal = transform.rotation;
 		diff = transform.localPosition;
-		cam.GetComponent<AudioListener>().enabled = player.id == 1;  // can only have one at a time
 		cam.cullingMask |= (1 << LayerMask.NameToLayer("textCam" + (player.id - 1)));
 		player.firstPersonCam.cullingMask = cam.cullingMask & ~(1 << LayerMask.NameToLayer("accessory" + player.id));
+		player.firstPersonCam.GetComponent<AudioListener>().enabled = player.id == 1;  // can only have one at a time		
 		firstPersonInitPosition = player.firstPersonCam.transform.localPosition;
 	}
 	

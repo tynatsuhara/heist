@@ -97,11 +97,9 @@ public class PlayerControls : Character {
 	public void SwitchCamera(bool firstPerson) {
 		firstPersonCam.enabled = firstPerson;
 		firstPersonCam.GetComponent<BoxCollider>().enabled = firstPerson;
-		firstPersonCam.GetComponent<AudioListener>().enabled = firstPerson;
 		playerUI.GetComponent<Canvas>().worldCamera = firstPerson ? firstPersonCam : playerCamera.cam;
 		playerUI.GetComponent<Canvas>().planeDistance = 20f;
 		playerCamera.cam.enabled = !firstPerson;
-		playerCamera.cam.GetComponent<AudioListener>().enabled = !firstPerson;
 	}
 
 	private void Walk() {
