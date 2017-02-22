@@ -46,6 +46,9 @@ public class Menu : MonoBehaviour {
 		if (GetEnter()) {
 			Enter(selectedNode);
 		}
+		if (GetEsc()) {
+			Back(selectedNode);
+		}
 	}
 
 	private Vector2 lastDPad;
@@ -81,7 +84,13 @@ public class Menu : MonoBehaviour {
 			   (!perPerson && Input.GetKeyDown("joystick button 1")) || 
 			   (perPerson && Input.GetKeyDown("joystick " + playerId + " button 1")));
 	}
+	private bool GetEsc() {
+		return (Input.GetKeyDown(KeyCode.Escape) && (!perPerson || playerId == 1) || 
+			   (!perPerson && Input.GetKeyDown("joystick button 2")) || 
+			   (perPerson && Input.GetKeyDown("joystick " + playerId + " button 2")));
+	}
 
 	public virtual void Carousel(MenuNode node, int dir) {}
 	public virtual void Enter(MenuNode node) {}
+	public virtual void Back(MenuNode node) {}
 }
