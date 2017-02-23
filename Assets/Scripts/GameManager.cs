@@ -9,7 +9,6 @@ public class GameManager : MonoBehaviour {
 	public static bool paused = false;
 	public static int[] playersToSpawn;
 
-	public GameObject[] enemyPrefabs;
 	public GameObject playerPrefab;
 	public GameObject playerCamPrefab;
 	public GameObject playerUIPrefab;
@@ -70,7 +69,6 @@ public class GameManager : MonoBehaviour {
 			return;
 		
 		gameOver = true;
-		CancelInvoke("SpawnCop");
 		Debug.Log("game over! you " + (success ? "win!" : "lose!"));
 		GameUI.instance.objectivesText.gameObject.SetActive(false);
 		foreach (PlayerControls pc in players) {
@@ -83,6 +81,7 @@ public class GameManager : MonoBehaviour {
 			GameUI.instance.ShowWinScreen(lootAmounts);
 		} else {
 			// SetTimeScale(.2f);
+			
 		}
 	}
 
@@ -149,7 +148,7 @@ public class GameManager : MonoBehaviour {
 		alarmsRaised = true;
 		foreach (PlayerControls pc in players)
 			pc.DrawWeapon();
-		InvokeRepeating("SpawnCop", 1f, 5f);
+		GetComponent<EnemySpawner>().StartSpawning();
 	}
 
 	private List<PlayerControls> SpawnPlayers(int[] playersToSpawn) {
@@ -190,12 +189,6 @@ public class GameManager : MonoBehaviour {
 		foreach (PlayerControls pc in result)
 			pc.firstPersonCam.rect = pc.playerCamera.cam.rect;
 		return result;
-	}
-
-	public void SpawnCop() {
-		GameObject enemy = (GameObject) Instantiate(enemyPrefabs[0], 
-			new Vector3(6f, 1f, 6f) + 5f * Random.insideUnitSphere, Quaternion.identity);
-		characters.Add(enemy.GetComponent<NPC>());
 	}
 
 	public void MarkObjectiveComplete(PossibleObjective po) {
