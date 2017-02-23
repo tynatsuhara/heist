@@ -6,13 +6,15 @@ using System.Linq;
 public class EnemySpawner : MonoBehaviour {
 
 	public GameObject[] enemyPrefabs;
-	public GameObject[] enemyVehicles;
+	public GameObject[] enemyVehiclePrefabs;
 	public float spawnRate;
 
 	private List<SpawnPoint> enemySpawnPoints;
+	private List<SpawnPoint> vehicleSpawnPoints;
 
 	void Start() {
 		enemySpawnPoints = Object.FindObjectsOfType<SpawnPoint>().Where(x => x.enemies).ToList();
+		vehicleSpawnPoints = Object.FindObjectsOfType<SpawnPoint>().Where(x => x.vehicles).ToList();
 	}
 
 	public void StartSpawning() {
