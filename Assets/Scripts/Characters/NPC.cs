@@ -182,11 +182,14 @@ public class NPC : Character, Interactable {
 	public bool seesEvidence;
 	public Vector3? evidencePoint;
 	public void UpdateEvidenceInSight() {
-		evidencePoint = EvidenceInSight();
+		evidencePoint = EquippedPlayerInSight();
+		if (evidencePoint == null) {
+			evidencePoint = CorpsesInSight();
+		}
 		seesEvidence = evidencePoint != null;
 	}
 
-	private Vector3? EvidenceInSight() {
+	private Vector3? EquippedPlayerInSight() {
 		Computer cameraScreen = CheckForCameraComputer();
 		List<PlayerControls> seenPlayers = GameManager.players
 				.Where(x => x.IsEquipped() && (CanSee(x.gameObject) || (cameraScreen != null && cameraScreen.InSight(x.gameObject))))
@@ -194,7 +197,10 @@ public class NPC : Character, Interactable {
 				.ToList();
 		if (seenPlayers.Count > 0)
 			return seenPlayers[0].transform.position;
-		
+		return null;
+	}
+	private Vector3? CorpsesInSight() {
+		Computer cameraScreen = CheckForCameraComputer();		
 		foreach (NPC c in GameManager.characters) {
 			bool isEvidence = !c.isAlive;
 			isEvidence |= c.currentState == Civilian.NPCState.ALERTING;
@@ -205,7 +211,6 @@ public class NPC : Character, Interactable {
 				return c.transform.position;
 			}
 		}
-
 		return null;
 	}
 
