@@ -31,6 +31,7 @@ public class NPC : Character, Interactable {
 		transform.RotateAround(transform.position, transform.up, Random.Range(0, 360));
 		agent = GetComponent<NavMeshAgent>();
 		InvokeRepeating("UpdateEvidenceInSight", 0f, .5f);
+		InvokeRepeating("UpdatePlayerTimeInSight", 0f, .05f);
 	}
 
 	void Update() {
@@ -163,38 +164,28 @@ public class NPC : Character, Interactable {
 	}
 	public void Uninteract(Character character) {}
 
-	protected void LookForEvidence() {
-		if (!glimseInvoked && seesEvidence) {
-			Invoke("GlimpsedEvidence", Random.Range(.3f, .6f));
-			glimseInvoked = true;
-		}
-	}
-	private bool glimseInvoked;
-	private void GlimpsedEvidence() {
-		UpdateEvidenceInSight();
-		glimseInvoked = false;
-		if (!seesEvidence)
-			return;
-		
-		Alert(Reaction.AGGRO, evidencePoint.Value);
-	}
-
 	public bool seesEvidence;
 	public Vector3? evidencePoint;
 	public void UpdateEvidenceInSight() {
 		Computer cameraScreen = CheckForCameraComputer();		
-		evidencePoint = EquippedPlayerInSight(cameraScreen);
+		evidencePoint = UpdateEquippedPlayersInSight(cameraScreen);
 		if (evidencePoint == null) {
 			evidencePoint = CorpsesInSight(cameraScreen);
 		}
 		seesEvidence = evidencePoint != null;
 	}
 
-	private Vector3? EquippedPlayerInSight(Computer cameraScreen) {
+	// Returns the point of the closest enemy in sight
+	private Dictionary<PlayerControls, float> enemyPlayersInSight = new Dictionary<PlayerControls, float>();	
+	private Vector3? UpdateEquippedPlayersInSight(Computer cameraScreen) {
 		List<PlayerControls> seenPlayers = GameManager.players
 				.Where(x => x.IsEquipped() && (CanSee(x.gameObject) || (cameraScreen != null && cameraScreen.InSight(x.gameObject))))
 				.OrderBy(x => (x.transform.position - transform.position).magnitude)
 				.ToList();
+		foreach (PlayerControls pc in seenPlayers) {
+			if (!enemyPlayersInSight.ContainsKey(pc))
+				enemyPlayersInSight.Add(pc, 0f);
+		}
 		if (seenPlayers.Count > 0)
 			return seenPlayers[0].transform.position;
 		return null;
@@ -211,6 +202,24 @@ public class NPC : Character, Interactable {
 			}
 		}
 		return null;
+	}
+
+	protected void LookForEvidence() {
+		foreach (PlayerControls pc in enemyPlayersInSight.Keys) {
+			if (enemyPlayersInSight[pc] > .5f) {
+				Alert(Reaction.AGGRO, evidencePoint.Value);				
+			}
+		}
+	}
+	private void UpdatePlayerTimeInSight() {
+		PlayerControls[] pcs = enemyPlayersInSight.Keys.ToArray();
+		foreach (PlayerControls pc in pcs) {
+			if (CanSee(pc.gameObject)) {
+				enemyPlayersInSight[pc] += .05f;
+			} else {
+				enemyPlayersInSight.Remove(pc);
+			}
+		}
 	}
 
 	private Computer CheckForCameraComputer() {
