@@ -33,18 +33,16 @@ public class GameManager : MonoBehaviour {
 
 	void Awake() {
 		instance = this;
-		players = SpawnPlayers(playersToSpawn);		
+		players = SpawnPlayers(playersToSpawn);
+		characters = Object.FindObjectsOfType<NPC>().ToList();			
 	}
 
 	void Start () {
 
-		// 1. generate level
+		// generate level
 		GetComponent<LevelBuilder>().BuildLevel();
 
-		// 2. spawn characters?
-		characters = Object.FindObjectsOfType<NPC>().ToList();
-
-		// 3. get objectives
+		// get objectives
 		objectives = Object.FindObjectsOfType<PossibleObjective>().Where(x => x.isObjective && !x.isCompleted).ToList();
 		objectivesComplete = CheckObjectivesComplete();
 		GameUI.instance.UpdateObjectives(objectives.ToArray());
